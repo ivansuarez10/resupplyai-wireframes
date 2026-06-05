@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI — Sign Up</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root {
+    --navy: #21325f;
+    --primary: #2a3d88;
+  }
+  .btn-primary {
+    background: var(--primary);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  }
+  .btn-primary:hover {
+    background: var(--navy);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(42,61,136,0.35);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(42,61,136,0.12);
+  }
+
+  /* Page fade-in */
+  .page-enter {
+    animation: pageFadeIn 0.45s ease both;
+  }
+  @keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Label float micro-interaction */
+  .form-group { position: relative; }
+  .form-group input:not(:placeholder-shown) + .hint,
+  .form-group input:focus + .hint {
+    color: var(--primary);
+  }
+
+  /* Shake animation for validation error */
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+  }
+  .shake { animation: shake 0.4s ease; }
+
+  /* Logo pulse */
+  .logo-icon {
+    background: var(--primary);
+    transition: transform 0.2s;
+  }
+  .logo-icon:hover { transform: rotate(-8deg) scale(1.08); }
+
+  /* Divider line */
+  .divider { border-color: #e2e8f0; }
+
+  /* Password strength bar */
+  .strength-bar { height: 3px; border-radius: 2px; transition: width 0.4s ease, background 0.4s ease; }
+
+  /* Checkbox custom */
+  input[type=checkbox]:checked { accent-color: var(--primary); }
+
+  /* Link hover */
+  a.link { color: var(--primary); transition: opacity 0.15s; }
+  a.link:hover { opacity: 0.75; }
+</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center py-12 px-4">
+
+<div class="w-full max-w-md page-enter">
+
+  <!-- Logo -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center gap-2.5 mb-5">
+      <div class="logo-icon w-9 h-9 rounded-lg flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+      <span class="text-xl font-bold text-slate-900 tracking-tight">ResupplyAI</span>
+    </div>
+    <h1 class="text-2xl font-bold text-slate-900">Create your account</h1>
+    <p class="text-slate-500 mt-1.5 text-sm">Start winning DLA contracts with intelligence</p>
+  </div>
+
+  <!-- Card -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+
+    <form id="signupForm" class="space-y-5" novalidate>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">First name</label>
+          <input type="text" placeholder="John"
+            class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all">
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">Last name</label>
+          <input type="text" placeholder="Doe"
+            class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Business email</label>
+        <input type="email" id="emailInput" placeholder="john@yourcompany.com"
+          class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all">
+        <p class="text-xs text-slate-400 mt-1.5">Personal emails (Gmail, Yahoo, etc.) are not accepted.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">CAGE Code</label>
+        <input type="text" placeholder="e.g. 1ABC2"
+          class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all font-mono tracking-widest uppercase">
+        <p class="text-xs text-slate-400 mt-1.5">Your 5-character CAGE code from SAM.gov.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1.5">Password</label>
+        <div class="relative">
+          <input type="password" id="passwordInput" placeholder="Min. 8 characters"
+            class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all pr-10">
+          <button type="button" onclick="togglePwd()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+            <svg id="eyeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Password strength -->
+        <div class="mt-2 flex gap-1">
+          <div class="strength-bar flex-1 bg-slate-100" id="s1"></div>
+          <div class="strength-bar flex-1 bg-slate-100" id="s2"></div>
+          <div class="strength-bar flex-1 bg-slate-100" id="s3"></div>
+          <div class="strength-bar flex-1 bg-slate-100" id="s4"></div>
+        </div>
+        <p id="strengthLabel" class="text-xs text-slate-400 mt-1"></p>
+      </div>
+
+      <div class="flex items-start gap-3 pt-1">
+        <input type="checkbox" id="terms" class="mt-0.5 w-4 h-4 rounded border-slate-300">
+        <label for="terms" class="text-sm text-slate-600">
+          I agree to the <a href="#" class="link font-bold">Terms of Service</a> and <a href="#" class="link font-bold">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button type="submit" id="submitBtn"
+        class="btn-primary w-full text-white font-bold py-3 rounded-xl text-sm">
+        Create account — $49/mo
+      </button>
+
+    </form>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-3 my-6">
+      <div class="flex-1 h-px bg-slate-100"></div>
+      <span class="text-xs text-slate-400">or</span>
+      <div class="flex-1 h-px bg-slate-100"></div>
+    </div>
+
+    <p class="text-center text-sm text-slate-500">
+      Already have an account?
+      <a href="04-dashboard-overview.html" class="link font-bold">Sign in</a>
+    </p>
+
+  </div>
+
+  <!-- Social proof -->
+  <p class="text-center text-xs text-slate-400 mt-5">
+    Trusted by 200+ small contractors bidding DLA daily
+  </p>
+
+</div>
+
+<script>
+// Toggle password visibility
+function togglePwd() {
+  const input = document.getElementById('passwordInput');
+  const icon = document.getElementById('eyeIcon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>`;
+  } else {
+    input.type = 'password';
+    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+  }
+}
+
+// Password strength
+document.getElementById('passwordInput').addEventListener('input', function() {
+  const val = this.value;
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const colors = ['', '#ef4444', '#f97316', '#eab308', '#22c55e'];
+  const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('s' + i).style.backgroundColor = i <= score ? colors[score] : '#e2e8f0';
+  }
+  document.getElementById('strengthLabel').textContent = val.length ? labels[score] : '';
+  document.getElementById('strengthLabel').style.color = colors[score] || '#94a3b8';
+});
+
+// Form submit demo
+document.getElementById('signupForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Creating account…';
+  btn.style.opacity = '0.75';
+  btn.style.transform = 'scale(0.98)';
+  setTimeout(() => {
+    window.location.href = '02-onboarding.html';
+  }, 900);
+});
+</script>
+</body>
+</html>

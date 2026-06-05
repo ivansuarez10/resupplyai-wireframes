@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI — Empty States</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f8fafc; padding: 32px; }
+  .btn-primary { background: var(--primary); transition: background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background: var(--navy); transform: translateY(-1px); }
+
+  .empty-card { background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 48px 32px; text-align: center; }
+  .empty-icon { width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; }
+
+  /* Pulse animation for the icon */
+  @keyframes iconPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+  .empty-icon { animation: iconPulse 3s ease-in-out infinite; }
+
+  .page-label { font-size: 11px; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<h1 class="text-2xl font-black text-slate-900 mb-2">Empty States</h1>
+<p class="text-slate-500 text-sm mb-8">What users see when there's no data — with context and next action.</p>
+
+<div class="grid grid-cols-3 gap-5">
+
+  <!-- 1. No opportunities (wrong FSC) -->
+  <div class="empty-card">
+    <p class="page-label">Opportunities</p>
+    <div class="empty-icon" style="background:rgba(42,61,136,0.08)">
+      <svg class="w-7 h-7" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    </div>
+    <h3 class="text-lg font-black text-slate-900 mb-2">No matches in your FSCs right now</h3>
+    <p class="text-sm text-slate-500 mb-1">DLA is posting 347 active RFQs, but none match your current category filters.</p>
+    <p class="text-sm text-slate-500 mb-5">Try expanding your FSC selection or checking back tomorrow.</p>
+    <div class="flex gap-2 justify-center">
+      <button class="btn-primary text-white font-bold py-2 px-4 rounded-xl text-sm">Update My FSCs</button>
+      <button class="border border-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl text-sm hover:border-slate-300 transition-colors">View All DLA RFQs</button>
+    </div>
+    <p class="text-xs text-slate-400 mt-4">Similar categories: 2540, 2520, 2590 have 28 active RFQs</p>
+  </div>
+
+  <!-- 2. Empty pipeline -->
+  <div class="empty-card">
+    <p class="page-label">My Pipeline</p>
+    <div class="empty-icon" style="background:#fef3c7">
+      <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+    </div>
+    <h3 class="text-lg font-black text-slate-900 mb-2">Your pipeline is empty</h3>
+    <p class="text-sm text-slate-500 mb-5">Start tracking opportunities by clicking "Add to Pipeline" on any RFQ detail page. We'll track the status for you.</p>
+    <button onclick="location.href='05-opportunities.html'" class="btn-primary text-white font-bold py-2 px-5 rounded-xl text-sm">Browse Opportunities →</button>
+    <p class="text-xs text-slate-400 mt-4">23 opportunities score 75+ right now</p>
+  </div>
+
+  <!-- 3. No alerts configured -->
+  <div class="empty-card">
+    <p class="page-label">Alerts</p>
+    <div class="empty-icon" style="background:#f0fdf4">
+      <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+    </div>
+    <h3 class="text-lg font-black text-slate-900 mb-2">No alerts set up</h3>
+    <p class="text-sm text-slate-500 mb-5">Create your first alert to get notified instantly when high-score opportunities appear in your FSC categories.</p>
+    <button onclick="location.href='10-alerts.html'" class="btn-primary text-white font-bold py-2 px-5 rounded-xl text-sm">Create First Alert</button>
+    <p class="text-xs text-slate-400 mt-4">Daily digest is active · arrives at 7 AM</p>
+  </div>
+
+  <!-- 4. New user — no data yet (first login) -->
+  <div class="empty-card col-span-2">
+    <p class="page-label">First Login</p>
+    <div class="empty-icon" style="background:rgba(42,61,136,0.08);width:80px;height:80px;border-radius:20px">
+      <svg class="w-9 h-9" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+    </div>
+    <h3 class="text-xl font-black text-slate-900 mb-2">Intelligence loading for the first time</h3>
+    <p class="text-slate-500 mb-2">We're building your personalized feed based on your FSC categories and criteria. This takes about 30 seconds.</p>
+    <p class="text-slate-500 mb-6">In the meantime, here's what the platform found for your categories in the last 24 hours:</p>
+    <!-- Skeleton preview -->
+    <div class="bg-slate-50 rounded-xl p-4 max-w-md mx-auto mb-5">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-slate-200 animate-pulse"></div>
+        <div class="flex-1 space-y-1.5">
+          <div class="h-3 bg-slate-200 rounded animate-pulse w-3/4"></div>
+          <div class="h-2.5 bg-slate-200 rounded animate-pulse w-1/2"></div>
+        </div>
+        <div class="h-8 w-8 rounded-full bg-slate-200 animate-pulse"></div>
+      </div>
+      <div class="space-y-2">
+        <div class="h-2.5 bg-slate-200 rounded animate-pulse"></div>
+        <div class="h-2.5 bg-slate-200 rounded animate-pulse w-4/5"></div>
+        <div class="h-2.5 bg-slate-200 rounded animate-pulse w-3/5"></div>
+      </div>
+    </div>
+    <div class="flex gap-3 justify-center">
+      <button onclick="location.href='04-dashboard-overview.html'" class="btn-primary text-white font-bold py-2.5 px-6 rounded-xl text-sm">Go to Dashboard</button>
+      <button onclick="location.href='05-opportunities.html'" class="border border-slate-200 text-slate-700 font-bold py-2.5 px-6 rounded-xl text-sm hover:border-slate-300 transition-colors">Browse All RFQs</button>
+    </div>
+  </div>
+
+  <!-- 5. Market Intel no data for FSC -->
+  <div class="empty-card">
+    <p class="page-label">Market Intel</p>
+    <div class="empty-icon" style="background:rgba(42,61,136,0.08)">
+      <svg class="w-7 h-7" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    </div>
+    <h3 class="text-lg font-black text-slate-900 mb-2">Not enough history yet</h3>
+    <p class="text-sm text-slate-500 mb-5">Market trends need at least 30 days of data to be meaningful. Check back soon — your chart will populate automatically.</p>
+    <p class="text-xs text-slate-400">Data available: 7 of 30 days</p>
+    <div class="w-full bg-slate-100 rounded-full h-2 mt-2">
+      <div class="h-2 rounded-full" style="width:23%;background:var(--primary);transition:width 1s ease"></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

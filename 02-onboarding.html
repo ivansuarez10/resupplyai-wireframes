@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI — Onboarding</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+
+  .btn-primary { background: var(--primary); transition: background 0.2s, transform 0.15s, box-shadow 0.2s; }
+  .btn-primary:hover { background: var(--navy); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(42,61,136,.35); }
+  .btn-primary:active { transform: translateY(0); }
+  input:focus, select:focus { outline: none; border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(42,61,136,0.12); }
+
+  .step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; transition: all 0.35s cubic-bezier(.34,1.56,.64,1); }
+  .step-dot.active { background: var(--primary); color: white; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(42,61,136,0.15); }
+  .step-dot.done { background: var(--navy); color: white; }
+  .step-dot.pending { background: #e2e8f0; color: #94a3b8; }
+  .step-line { flex: 1; height: 2px; transition: background 0.35s; }
+  .step-line.done { background: var(--navy); }
+  .step-line.pending { background: #e2e8f0; }
+
+  .step-panel { display: none; animation: stepIn 0.35s ease both; }
+  .step-panel.active { display: block; }
+  @keyframes stepIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+
+  .page-enter { animation: pageFadeIn 0.4s ease both; }
+  @keyframes pageFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .fsc-pill { border: 1.5px solid #e2e8f0; border-radius: 9999px; padding: 6px 14px; font-size: 13px; cursor: pointer; transition: all 0.18s; user-select: none; font-weight: 700; }
+  .fsc-pill:hover { border-color: var(--primary); color: var(--primary); }
+  .fsc-pill.selected { background: var(--primary); border-color: var(--primary); color: white; }
+
+  input[type=checkbox]:checked { accent-color: var(--primary); }
+  input[type=radio]:checked { accent-color: var(--primary); }
+  input[type=range] { accent-color: var(--primary); }
+</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center py-12 px-4">
+<div class="w-full max-w-xl page-enter">
+
+  <div class="flex items-center justify-center gap-2.5 mb-8">
+    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--primary)">
+      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+    </div>
+    <span class="text-lg font-bold text-slate-900">ResupplyAI</span>
+  </div>
+
+  <div class="flex items-center mb-8">
+    <div class="step-dot active" id="dot1">1</div>
+    <div class="step-line pending" id="line1"></div>
+    <div class="step-dot pending" id="dot2">2</div>
+    <div class="step-line pending" id="line2"></div>
+    <div class="step-dot pending" id="dot3">3</div>
+    <div class="step-line pending" id="line3"></div>
+    <div class="step-dot pending" id="dot4">4</div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+
+    <!-- STEP 1 -->
+    <div class="step-panel active" id="panel1">
+      <h2 class="text-xl font-black text-slate-900 mb-1">Tell us about your company</h2>
+      <p class="text-sm text-slate-500 mb-6">We'll personalize your intelligence feed based on your profile.</p>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1.5">Company name</label>
+          <input type="text" placeholder="Acme Defense Supply LLC" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-all">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1.5">State</label>
+            <select class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-700 transition-all bg-white">
+              <option>Select state…</option>
+              <option>Texas</option><option>Florida</option><option>California</option><option>Virginia</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1.5">Years in business</label>
+            <select class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-700 transition-all bg-white">
+              <option>Select…</option>
+              <option>Less than 1 year</option><option>1–3 years</option><option>3–5 years</option><option>5+ years</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Set-aside eligibility</label>
+          <div class="flex flex-wrap gap-2">
+            <span class="fsc-pill selected" onclick="this.classList.toggle('selected')">Small Business</span>
+            <span class="fsc-pill" onclick="this.classList.toggle('selected')">HUBZone</span>
+            <span class="fsc-pill" onclick="this.classList.toggle('selected')">Veteran-Owned</span>
+            <span class="fsc-pill" onclick="this.classList.toggle('selected')">Woman-Owned</span>
+            <span class="fsc-pill" onclick="this.classList.toggle('selected')">8(a)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-panel" id="panel2">
+      <h2 class="text-xl font-black text-slate-900 mb-1">What do you supply?</h2>
+      <p class="text-sm text-slate-500 mb-6">Select the FSC categories you work with. We'll filter your feed to match.</p>
+      <div class="flex flex-wrap gap-2">
+        <span class="fsc-pill selected" onclick="this.classList.toggle('selected')">2510 — Vehicle Parts</span>
+        <span class="fsc-pill selected" onclick="this.classList.toggle('selected')">5340 — Hardware</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">5305 — Bolts & Screws</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">4730 — Hose & Fittings</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">5120 — Hand Tools</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">6150 — Wire & Cable</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">2530 — Brake Systems</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">4810 — Valves</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">5930 — Switches</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">2590 — Misc. Vehicles</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">1560 — Aircraft Parts</span>
+        <span class="fsc-pill" onclick="this.classList.toggle('selected')">3110 — Bearings</span>
+      </div>
+      <p class="text-xs text-slate-400 mt-4">Don't see your category? Add more in Settings later.</p>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-panel" id="panel3">
+      <h2 class="text-xl font-black text-slate-900 mb-1">Your bidding criteria</h2>
+      <p class="text-sm text-slate-500 mb-6">We'll score opportunities based on what matters to you.</p>
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Min. quantity to bid</label>
+          <input type="range" min="1" max="500" value="50" class="w-full" oninput="document.getElementById('qtyVal').textContent=this.value">
+          <div class="flex justify-between text-xs text-slate-400 mt-1">
+            <span>1</span>
+            <span class="font-bold" style="color:var(--primary)">Min qty: <span id="qtyVal">50</span> units</span>
+            <span>500+</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Preferred AML competition level</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="radio" name="aml" checked class="w-4 h-4">
+              <div><p class="text-sm font-bold text-slate-800">Exclusive (1–2 sources)</p><p class="text-xs text-slate-500">Highest win probability, fewer opportunities</p></div>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="radio" name="aml" class="w-4 h-4">
+              <div><p class="text-sm font-bold text-slate-800">Selective (3–5 sources)</p><p class="text-xs text-slate-500">Balanced competition and volume</p></div>
+            </label>
+            <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
+              <input type="radio" name="aml" class="w-4 h-4">
+              <div><p class="text-sm font-bold text-slate-800">Open (all opportunities)</p><p class="text-xs text-slate-500">Maximum volume, filter manually</p></div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-panel" id="panel4">
+      <h2 class="text-xl font-black text-slate-900 mb-1">Set up your alerts</h2>
+      <p class="text-sm text-slate-500 mb-6">Get notified when high-score opportunities appear for your categories.</p>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Alert me when Win Score is above…</label>
+          <input type="range" min="50" max="95" value="75" class="w-full" oninput="document.getElementById('scoreVal').textContent=this.value">
+          <div class="flex justify-between text-xs text-slate-400 mt-1">
+            <span>50</span>
+            <span class="font-bold" style="color:var(--primary)">Threshold: <span id="scoreVal">75</span>/100</span>
+            <span>95</span>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked class="w-4 h-4 rounded">
+            <div><p class="text-sm font-bold text-slate-800">Daily digest email (7 AM)</p><p class="text-xs text-slate-500">Top opportunities delivered every morning</p></div>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked class="w-4 h-4 rounded">
+            <div><p class="text-sm font-bold text-slate-800">Instant alerts for Quick Wins</p><p class="text-xs text-slate-500">Contracts expiring soon with low competition</p></div>
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" class="w-4 h-4 rounded">
+            <div><p class="text-sm font-bold text-slate-800">New HUBZone set-asides</p><p class="text-xs text-slate-500">Only if eligible based on your profile</p></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mt-8 pt-6 border-t border-slate-100">
+      <button onclick="prevStep()" id="backBtn" class="text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors invisible">← Back</button>
+      <button onclick="nextStep()" id="nextBtn" class="btn-primary text-white font-bold py-2.5 px-6 rounded-xl text-sm">Continue →</button>
+    </div>
+  </div>
+
+  <p class="text-center text-xs text-slate-400 mt-5">Step <span id="stepNum">1</span> of 4 — You can change these settings anytime</p>
+</div>
+
+<script>
+let current = 1;
+function updateUI() {
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('dot'+i).className = 'step-dot '+(i<current?'done':i===current?'active':'pending');
+    document.getElementById('panel'+i).className = 'step-panel '+(i===current?'active':'');
+    if(i<4) document.getElementById('line'+i).className = 'step-line '+(i<current?'done':'pending');
+  }
+  document.getElementById('backBtn').style.visibility = current>1?'visible':'hidden';
+  document.getElementById('nextBtn').textContent = current===4?'Launch my dashboard →':'Continue →';
+  document.getElementById('stepNum').textContent = current;
+}
+function nextStep() { if(current<4){current++;updateUI();}else{window.location.href='03-welcome.html';} }
+function prevStep() { if(current>1){current--;updateUI();} }
+</script>
+</body>
+</html>
