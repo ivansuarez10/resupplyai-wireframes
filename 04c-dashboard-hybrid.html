@@ -64,18 +64,18 @@
 
   .qw-glow {
     background: #ffffff; border-radius: 22px;
-    border: 1px solid rgba(245,158,11,0.25);
-    box-shadow: 0 24px 60px rgba(245,158,11,0.13), 0 4px 16px rgba(33,50,95,0.05);
+    border: 1px solid rgba(42,61,136,0.15);
+    box-shadow: 0 24px 60px rgba(33,50,95,0.12), 0 4px 16px rgba(33,50,95,0.05);
     position: relative; z-index: 1;
     transition: box-shadow 0.3s ease;
   }
-  .qw-glow:hover { box-shadow: 0 28px 72px rgba(245,158,11,0.2), 0 4px 16px rgba(33,50,95,0.06); }
+  .qw-glow:hover { box-shadow: 0 28px 72px rgba(33,50,95,0.18), 0 4px 16px rgba(33,50,95,0.06); }
 
   /* ── LIVE pulse badge ── */
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; position: relative; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #9db4ff; position: relative; }
   .live-dot::after {
     content: ''; position: absolute; inset: -4px; border-radius: 50%;
-    border: 1.5px solid #4ade80; animation: pulse 1.8s ease-out infinite;
+    border: 1.5px solid #9db4ff; animation: pulse 1.8s ease-out infinite;
   }
   @keyframes pulse { 0%{transform:scale(0.5);opacity:1} 100%{transform:scale(1.6);opacity:0} }
 
@@ -144,7 +144,7 @@
     cursor: pointer; transition: transform 0.2s;
   }
   .avatar:hover { transform: scale(1.08); }
-  .alert-badge { background: #ef4444; color: white; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 9999px; }
+  .alert-badge { background: linear-gradient(135deg, var(--primary), var(--navy)); color: white; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 9999px; }
 
   /* ── Cursor interactivity ── */
   /* Spotlight that follows cursor inside hero */
@@ -276,7 +276,7 @@
       </div>
       <button class="relative w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors bg-white" style="box-shadow:0 4px 16px rgba(33,50,95,0.08)">
         <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white" style="background:linear-gradient(135deg,#5e7ee8,var(--primary))"></span>
       </button>
       <div class="avatar">JD</div>
     </div>
@@ -304,7 +304,7 @@
             <h2 class="text-5xl font-black text-white leading-none mb-2" style="letter-spacing:-0.03em">
               <span id="kpiHero">0</span>
             </h2>
-            <p class="text-sm mb-6" style="color:rgba(255,255,255,0.7)">open RFQs · <span class="font-bold" style="color:#86efac">+24 today</span></p>
+            <p class="text-sm mb-6" style="color:rgba(255,255,255,0.7)">open RFQs · <span class="font-bold" style="color:#aab9f5">+24 today</span></p>
 
             <div class="flex gap-7 mb-7">
               <div>
@@ -313,7 +313,7 @@
                 <div class="spark"><span style="height:40%"></span><span style="height:55%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:60%"></span><span style="height:100%"></span></div>
               </div>
               <div>
-                <p class="text-2xl font-black" style="color:#fbbf24" id="kpi3">0</p>
+                <p class="text-2xl font-black" style="color:#fff" id="kpi3">0</p>
                 <p class="text-xs font-bold mt-0.5" style="color:rgba(255,255,255,0.6)">Quick Wins</p>
                 <div class="spark"><span style="height:30%"></span><span style="height:50%"></span><span style="height:80%"></span><span style="height:60%"></span><span style="height:75%"></span><span style="height:100%"></span></div>
               </div>
@@ -357,15 +357,15 @@
       <div class="qw-glow card-enter card-spot tilt p-5" style="animation-delay:0.15s">
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,0.12)">
-              <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10))">
+              <svg class="w-3.5 h-3.5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
             <h2 class="font-black text-slate-900 text-sm">Quick Wins</h2>
           </div>
-          <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(245,158,11,0.15);color:#92400e">7 active</span>
+          <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10));color:var(--navy)">7 active</span>
         </div>
         <div class="space-y-2.5">
-          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg" style="background:#fffdf7;border:1px solid rgba(245,158,11,0.2)" onclick="location.href='06-opportunity-detail.html'">
+          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg" style="background:#fafbff;border:1px solid rgba(42,61,136,0.10)" onclick="location.href='06-opportunity-detail.html'">
             <div class="flex items-center justify-between mb-1">
               <p class="text-xs font-black text-slate-800">2530-01-689-2211</p>
               <!-- score ring -->
@@ -376,11 +376,11 @@
             </div>
             <p class="text-xs text-slate-400 mb-2">Caliper Assy — M2 Bradley</p>
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-red-500">⏱ Exp. Jun 7</span>
+              <span class="text-xs font-black" style="color:var(--navy)">⏱ Exp. Jun 7</span>
               <span class="text-xs font-black" style="color:var(--primary)">91</span>
             </div>
           </div>
-          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg" style="background:#fffdf7;border:1px solid rgba(245,158,11,0.2)">
+          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg" style="background:#fafbff;border:1px solid rgba(42,61,136,0.10)">
             <div class="flex items-center justify-between mb-1">
               <p class="text-xs font-black text-slate-800">5340-01-201-9988</p>
               <svg width="30" height="30" viewBox="0 0 36 36" class="score-ring">
@@ -390,12 +390,12 @@
             </div>
             <p class="text-xs text-slate-400 mb-2">Bracket, Support — Aluminum</p>
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-orange-500">⏱ Exp. Jun 8</span>
+              <span class="text-xs font-bold" style="color:var(--primary);opacity:0.75">⏱ Exp. Jun 8</span>
               <span class="text-xs font-black" style="color:var(--primary)">86</span>
             </div>
           </div>
         </div>
-        <a href="05-opportunities.html" class="block text-center text-xs font-bold mt-3 transition-opacity hover:opacity-75" style="color:#b45309">See all 7 →</a>
+        <a href="05-opportunities.html" class="block text-center text-xs font-bold mt-3 transition-opacity hover:opacity-75" style="color:var(--primary)">See all 7 →</a>
       </div>
     </div>
 
@@ -436,7 +436,7 @@
                 <p class="text-xs text-slate-400">Brake Drum Assembly — M1151A1</p>
               </td>
               <td class="px-3 py-3.5"><span class="text-sm font-bold text-slate-800">1</span> <span class="text-xs text-slate-400">source</span></td>
-              <td class="px-3 py-3.5"><span class="text-xs font-bold text-red-500 px-2 py-0.5 rounded-md bg-red-50">Jun 8</span></td>
+              <td class="px-3 py-3.5"><span class="text-xs font-black px-2 py-0.5 rounded-md" style="background:linear-gradient(135deg, rgba(42,61,136,0.18), rgba(94,126,232,0.14));color:var(--navy)">Jun 8</span></td>
               <td class="px-3 py-3.5 text-sm font-bold text-slate-800">120</td>
               <td class="pr-4"><span class="row-arrow">→</span></td>
             </tr>
@@ -453,7 +453,7 @@
                 <p class="text-xs text-slate-400">Bracket, Mounting — Steel</p>
               </td>
               <td class="px-3 py-3.5"><span class="text-sm font-bold text-slate-800">2</span> <span class="text-xs text-slate-400">sources</span></td>
-              <td class="px-3 py-3.5"><span class="text-xs font-bold text-orange-500 px-2 py-0.5 rounded-md bg-orange-50">Jun 11</span></td>
+              <td class="px-3 py-3.5"><span class="text-xs font-bold px-2 py-0.5 rounded-md" style="background:rgba(42,61,136,0.10);color:var(--primary)">Jun 11</span></td>
               <td class="px-3 py-3.5 text-sm font-bold text-slate-800">500</td>
               <td class="pr-4"><span class="row-arrow">→</span></td>
             </tr>
@@ -478,8 +478,8 @@
               <td class="px-5 py-3.5">
                 <svg width="38" height="38" viewBox="0 0 36 36" class="score-ring">
                   <circle class="track" cx="18" cy="18" r="15.9"/>
-                  <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#d97706" stroke-dashoffset="100" data-score="74"/>
-                  <text x="18" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#b45309" transform="rotate(90 18 18)">74</text>
+                  <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#5e7ee8" stroke-dashoffset="100" data-score="74"/>
+                  <text x="18" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#5e7ee8" transform="rotate(90 18 18)">74</text>
                 </svg>
               </td>
               <td class="px-3 py-3.5">
@@ -511,7 +511,7 @@
             </div>
           </div>
           <div class="alert-item flex items-start gap-2.5">
-            <div class="w-2 h-2 rounded-full mt-1 flex-shrink-0" style="background:#f59e0b;box-shadow:0 0 8px rgba(245,158,11,0.4)"></div>
+            <div class="w-2 h-2 rounded-full mt-1 flex-shrink-0" style="background:#5e7ee8;box-shadow:0 0 8px rgba(94,126,232,0.45)"></div>
             <div>
               <p class="text-xs font-bold text-slate-800">Quick Win expiring in 2 days</p>
               <p class="text-xs text-slate-400 mt-0.5">1 hour ago</p>
