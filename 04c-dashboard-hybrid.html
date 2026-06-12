@@ -10,7 +10,15 @@
   * { font-family: 'Lato', sans-serif; }
   :root { --navy: #21325f; --primary: #2a3d88; }
 
-  body { background: #f5f7fc; min-height: 100vh; color: #0f172a; }
+  body { background: #f5f7fc; min-height: 100vh; color: #0f172a; overflow-x: hidden; }
+
+  /* ── Ambient background orbs ── */
+  .bg-orb {
+    position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+    filter: blur(80px); opacity: 0.5;
+    animation: orbFloat 14s ease-in-out infinite;
+  }
+  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,-40px) scale(1.1)} }
 
   /* ── Animated gradient hero (brand navy blobs) ── */
   @property --gx1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
@@ -27,15 +35,11 @@
     background-color: var(--primary);
     background-image:
       radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent var(--gs1)),
-      radial-gradient(circle at var(--gx2) var(--gy2), #21325f 0px, transparent var(--gs2)),
+      radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent var(--gs2)),
       radial-gradient(circle at var(--gx3) var(--gy3), #5e7ee8 0px, transparent var(--gs3));
     animation:
-      blob1 7s ease-in-out infinite,
-      blob2 8s ease-in-out infinite,
-      blob3 6s ease-in-out infinite,
-      size1 5s ease-in-out infinite,
-      size2 5.8s ease-in-out infinite,
-      size3 4.6s ease-in-out infinite;
+      blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite, blob3 6s ease-in-out infinite,
+      size1 5s ease-in-out infinite, size2 5.8s ease-in-out infinite, size3 4.6s ease-in-out infinite;
   }
   @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 33%{--gx1:40%;--gy1:40%} 66%{--gx1:15%;--gy1:70%} }
   @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
@@ -43,7 +47,7 @@
   @keyframes size1 { 0%,100%{--gs1:45%} 50%{--gs1:75%} }
   @keyframes size2 { 0%,100%{--gs2:45%} 50%{--gs2:80%} }
   @keyframes size3 { 0%,100%{--gs3:50%} 50%{--gs3:82%} }
-  @media (prefers-reduced-motion: reduce) { .hero-gradient { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero-gradient, .bg-orb { animation: none; } }
 
   /* ── Floating white cards ── */
   .float-card {
@@ -51,28 +55,46 @@
     border-radius: 22px;
     box-shadow: 0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05);
     border: 1px solid rgba(255,255,255,0.9);
-    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    position: relative; z-index: 1;
   }
-  .float-card.hoverable:hover { box-shadow: 0 32px 80px rgba(33,50,95,0.15), 0 6px 20px rgba(33,50,95,0.07); transform: translateY(-2px); }
+  .float-card.hoverable:hover { box-shadow: 0 36px 90px rgba(33,50,95,0.16), 0 8px 24px rgba(33,50,95,0.08); transform: translateY(-3px); }
 
-  /* Hero shadow — deeper, navy tinted */
-  .hero-shadow { box-shadow: 0 32px 80px rgba(33,50,95,0.30), 0 8px 24px rgba(33,50,95,0.18); }
+  .hero-shadow { box-shadow: 0 32px 80px rgba(33,50,95,0.32), 0 8px 24px rgba(33,50,95,0.18); }
 
-  /* Quick wins: white card + amber outer glow */
   .qw-glow {
-    background: #ffffff;
-    border-radius: 22px;
+    background: #ffffff; border-radius: 22px;
     border: 1px solid rgba(245,158,11,0.25);
-    box-shadow: 0 24px 60px rgba(245,158,11,0.12), 0 4px 16px rgba(33,50,95,0.05);
+    box-shadow: 0 24px 60px rgba(245,158,11,0.13), 0 4px 16px rgba(33,50,95,0.05);
+    position: relative; z-index: 1;
+    transition: box-shadow 0.3s ease;
   }
+  .qw-glow:hover { box-shadow: 0 28px 72px rgba(245,158,11,0.2), 0 4px 16px rgba(33,50,95,0.06); }
 
-  /* Sidebar — clean white floating panel */
+  /* ── LIVE pulse badge ── */
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; position: relative; }
+  .live-dot::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    border: 1.5px solid #4ade80; animation: pulse 1.8s ease-out infinite;
+  }
+  @keyframes pulse { 0%{transform:scale(0.5);opacity:1} 100%{transform:scale(1.6);opacity:0} }
+
+  /* ── Hero area chart ── */
+  .chart-line { fill: none; stroke: rgba(255,255,255,0.9); stroke-width: 2.5; stroke-linecap: round;
+    stroke-dasharray: 600; stroke-dashoffset: 600; animation: drawLine 2s ease-out 0.6s forwards; }
+  @keyframes drawLine { to { stroke-dashoffset: 0; } }
+  .chart-fill { fill: url(#chartGrad); opacity: 0; animation: fadeFill 1s ease 1.6s forwards; }
+  @keyframes fadeFill { to { opacity: 1; } }
+  .chart-dot { fill: #fff; opacity: 0; animation: dotIn 0.4s cubic-bezier(.34,1.56,.64,1) 2.2s forwards; }
+  @keyframes dotIn { from{opacity:0;r:0} to{opacity:1;r:4.5} }
+
+  /* Sidebar */
   .sidebar {
     width: 200px; flex-shrink: 0;
     background: #ffffff;
     border-right: 1px solid rgba(33,50,95,0.06);
     display: flex; flex-direction: column; padding: 20px 0;
-    position: sticky; top: 0; height: 100vh;
+    position: sticky; top: 0; height: 100vh; z-index: 2;
     box-shadow: 4px 0 24px rgba(33,50,95,0.04);
   }
   .nav-item {
@@ -80,22 +102,35 @@
     padding: 8px 14px; border-radius: 10px;
     font-size: 13px; font-weight: 700; color: #64748b;
     cursor: pointer; transition: all 0.18s; margin: 1px 10px;
+    position: relative;
   }
-  .nav-item:hover { background: rgba(42,61,136,0.06); color: var(--primary); }
+  .nav-item:hover { background: rgba(42,61,136,0.06); color: var(--primary); transform: translateX(2px); }
   .nav-item.active { background: rgba(42,61,136,0.1); color: var(--primary); }
+  .nav-item.active::before {
+    content: ''; position: absolute; left: -10px; top: 20%; bottom: 20%;
+    width: 3px; border-radius: 3px; background: var(--primary);
+  }
   .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-  /* Table */
-  .opp-row { transition: background 0.15s; cursor: pointer; border-top: 1px solid rgba(33,50,95,0.05); }
-  .opp-row:hover { background: rgba(42,61,136,0.03); }
-
-  .score-pill {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; border-radius: 10px;
-    font-size: 12px; font-weight: 900;
+  /* Table rows with stagger */
+  .opp-row {
+    cursor: pointer; border-top: 1px solid rgba(33,50,95,0.05);
+    opacity: 0; transform: translateX(-12px);
+    animation: rowIn 0.5s cubic-bezier(.16,1,.3,1) forwards;
+    transition: background 0.15s;
   }
-  .score-high { background: rgba(42,61,136,0.1); color: var(--primary); }
-  .score-med  { background: rgba(245,158,11,0.12); color: #b45309; }
+  .opp-row:nth-child(1){animation-delay:.7s} .opp-row:nth-child(2){animation-delay:.82s}
+  .opp-row:nth-child(3){animation-delay:.94s} .opp-row:nth-child(4){animation-delay:1.06s}
+  @keyframes rowIn { to{opacity:1;transform:translateX(0)} }
+  .opp-row:hover { background: rgba(42,61,136,0.035); }
+  .opp-row:hover .row-arrow { opacity: 1; transform: translateX(0); }
+  .row-arrow { opacity: 0; transform: translateX(-6px); transition: all 0.2s; color: var(--primary); }
+
+  /* Score ring */
+  .score-ring { transform: rotate(-90deg); }
+  .score-ring .track { fill: none; stroke: rgba(42,61,136,0.1); stroke-width: 3.5; }
+  .score-ring .fill { fill: none; stroke-width: 3.5; stroke-linecap: round;
+    stroke-dasharray: 100; transition: stroke-dashoffset 1.2s cubic-bezier(.16,1,.3,1); }
 
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -106,7 +141,9 @@
     color: white; display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 900;
     box-shadow: 0 4px 12px rgba(33,50,95,0.3);
+    cursor: pointer; transition: transform 0.2s;
   }
+  .avatar:hover { transform: scale(1.08); }
   .alert-badge { background: #ef4444; color: white; font-size: 9px; font-weight: 900; padding: 1px 5px; border-radius: 9999px; }
 
   .hero-enter { animation: heroIn 0.7s cubic-bezier(.16,1,.3,1) both; }
@@ -114,16 +151,52 @@
   .card-enter { animation: cardIn 0.6s cubic-bezier(.16,1,.3,1) both; }
   @keyframes cardIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
+  /* Search input */
+  .search-input {
+    background: #fff; border: 1px solid rgba(33,50,95,0.08); border-radius: 12px;
+    padding: 8px 14px 8px 36px; font-size: 13px; width: 230px;
+    box-shadow: 0 4px 16px rgba(33,50,95,0.05);
+    transition: all 0.2s; outline: none;
+  }
+  .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(42,61,136,0.1), 0 4px 16px rgba(33,50,95,0.05); width: 270px; }
+
+  /* Buttons */
+  .btn-white {
+    transition: all 0.2s cubic-bezier(.16,1,.3,1);
+  }
+  .btn-white:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,0.35) !important; }
+  .btn-ghost { transition: all 0.2s; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.22) !important; }
+
+  /* Alert items slide on hover */
+  .alert-item { padding: 8px 10px; margin: 0 -10px; border-radius: 12px; transition: background 0.18s, transform 0.18s; cursor: pointer; }
+  .alert-item:hover { background: rgba(42,61,136,0.04); transform: translateX(3px); }
+
+  /* Sparkline in hero KPIs */
+  .spark { display: flex; align-items: flex-end; gap: 2px; height: 16px; margin-top: 6px; }
+  .spark span { flex: 1; min-width: 3px; border-radius: 2px; background: rgba(255,255,255,0.35);
+    transform: scaleY(0); transform-origin: bottom; animation: sparkIn 0.6s cubic-bezier(.34,1.56,.64,1) forwards; }
+  .spark span:last-child { background: #fff; }
+  .spark span:nth-child(1){animation-delay:1.0s} .spark span:nth-child(2){animation-delay:1.08s}
+  .spark span:nth-child(3){animation-delay:1.16s} .spark span:nth-child(4){animation-delay:1.24s}
+  .spark span:nth-child(5){animation-delay:1.32s} .spark span:nth-child(6){animation-delay:1.4s}
+  @keyframes sparkIn { to { transform: scaleY(1); } }
+
   /* Responsive */
   @media (max-width: 1023px) {
     .sidebar { display: none; }
     .hero-grid { grid-template-columns: 1fr !important; }
     .main-grid { grid-template-columns: 1fr !important; }
     .col-span-2 { grid-column: span 1 !important; }
+    .search-input { display: none; }
   }
 </style>
 </head>
 <body class="flex">
+
+<!-- Ambient orbs -->
+<div class="bg-orb" style="width:400px;height:400px;background:#c7d4f8;top:-120px;right:-100px"></div>
+<div class="bg-orb" style="width:300px;height:300px;background:#dbe4fb;bottom:-80px;left:30%;animation-delay:-7s"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
@@ -163,7 +236,7 @@
 </div>
 
 <!-- MAIN -->
-<div class="flex-1 flex flex-col overflow-hidden">
+<div class="flex-1 flex flex-col overflow-hidden" style="position:relative;z-index:1">
 
   <!-- Topbar -->
   <div class="px-6 py-4 flex items-center justify-between">
@@ -172,6 +245,10 @@
       <p class="text-xs text-slate-400 mt-0.5">Thursday, June 5, 2026</p>
     </div>
     <div class="flex items-center gap-3">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input class="search-input" placeholder="Search NSN, FSC, keyword…">
+      </div>
       <button class="relative w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors bg-white" style="box-shadow:0 4px 16px rgba(33,50,95,0.08)">
         <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
         <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
@@ -183,38 +260,74 @@
   <!-- Content -->
   <div class="flex-1 overflow-y-auto px-6 pb-8 pt-2 space-y-6">
 
-    <!-- HERO: animated navy gradient floating over light bg -->
+    <!-- HERO -->
     <div class="hero-grid grid gap-6" style="grid-template-columns: 1.7fr 1fr">
 
       <div class="hero-gradient hero-shadow hero-enter rounded-3xl p-8 relative overflow-hidden">
-        <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:rgba(255,255,255,0.55)">Active Market · Your FSC Categories</p>
-        <h2 class="text-4xl font-black text-white leading-tight mb-1" style="letter-spacing:-0.02em">
-          <span id="kpiHero">0</span> open RFQs
-        </h2>
-        <p class="text-sm mb-7" style="color:rgba(255,255,255,0.7)">24 new since yesterday · intelligence updated 6:00 AM</p>
 
-        <div class="flex gap-8 mb-7">
-          <div>
-            <p class="text-3xl font-black text-white" id="kpi2">0</p>
-            <p class="text-xs font-bold mt-1" style="color:rgba(255,255,255,0.6)">Score 75+</p>
-          </div>
-          <div>
-            <p class="text-3xl font-black" style="color:#fbbf24" id="kpi3">0</p>
-            <p class="text-xs font-bold mt-1" style="color:rgba(255,255,255,0.6)">Quick Wins</p>
-          </div>
-          <div>
-            <p class="text-3xl font-black text-white" id="kpi4">0</p>
-            <p class="text-xs font-bold mt-1" style="color:rgba(255,255,255,0.6)">In Pipeline</p>
-          </div>
+        <!-- Live badge -->
+        <div class="flex items-center gap-2 mb-4">
+          <span class="flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.15)">
+            <span class="live-dot"></span> LIVE · updated 6:00 AM
+          </span>
         </div>
 
-        <div class="flex gap-3">
-          <button onclick="location.href='05-opportunities.html'" class="text-sm font-black px-6 py-3 rounded-xl bg-white hover:bg-slate-50 transition-all hover:-translate-y-0.5" style="color:var(--navy);box-shadow:0 10px 24px rgba(0,0,0,0.25)">View Opportunities</button>
-          <button class="text-sm font-bold px-6 py-3 rounded-xl text-white transition-colors hover:bg-white/20" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)">Download Report</button>
+        <div class="flex items-end justify-between gap-6 flex-wrap">
+          <div style="min-width:260px">
+            <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:rgba(255,255,255,0.55)">Active Market · Your FSC Categories</p>
+            <h2 class="text-5xl font-black text-white leading-none mb-2" style="letter-spacing:-0.03em">
+              <span id="kpiHero">0</span>
+            </h2>
+            <p class="text-sm mb-6" style="color:rgba(255,255,255,0.7)">open RFQs · <span class="font-bold" style="color:#86efac">+24 today</span></p>
+
+            <div class="flex gap-7 mb-7">
+              <div>
+                <p class="text-2xl font-black text-white" id="kpi2">0</p>
+                <p class="text-xs font-bold mt-0.5" style="color:rgba(255,255,255,0.6)">Score 75+</p>
+                <div class="spark"><span style="height:40%"></span><span style="height:55%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:60%"></span><span style="height:100%"></span></div>
+              </div>
+              <div>
+                <p class="text-2xl font-black" style="color:#fbbf24" id="kpi3">0</p>
+                <p class="text-xs font-bold mt-0.5" style="color:rgba(255,255,255,0.6)">Quick Wins</p>
+                <div class="spark"><span style="height:30%"></span><span style="height:50%"></span><span style="height:80%"></span><span style="height:60%"></span><span style="height:75%"></span><span style="height:100%"></span></div>
+              </div>
+              <div>
+                <p class="text-2xl font-black text-white" id="kpi4">0</p>
+                <p class="text-xs font-bold mt-0.5" style="color:rgba(255,255,255,0.6)">In Pipeline</p>
+                <div class="spark"><span style="height:50%"></span><span style="height:45%"></span><span style="height:62%"></span><span style="height:70%"></span><span style="height:85%"></span><span style="height:100%"></span></div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <button onclick="location.href='05-opportunities.html'" class="btn-white text-sm font-black px-6 py-3 rounded-xl bg-white" style="color:var(--navy);box-shadow:0 10px 24px rgba(0,0,0,0.25)">View Opportunities</button>
+              <button class="btn-ghost text-sm font-bold px-6 py-3 rounded-xl text-white" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)">Download Report</button>
+            </div>
+          </div>
+
+          <!-- Animated area chart -->
+          <div class="flex-1" style="min-width:220px;max-width:340px">
+            <svg viewBox="0 0 320 140" class="w-full">
+              <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+                  <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                </linearGradient>
+              </defs>
+              <path class="chart-fill" d="M0,110 C40,95 60,100 90,80 C120,60 150,72 180,55 C210,40 240,48 270,28 C290,16 305,20 320,12 L320,140 L0,140 Z"/>
+              <path class="chart-line" d="M0,110 C40,95 60,100 90,80 C120,60 150,72 180,55 C210,40 240,48 270,28 C290,16 305,20 320,12"/>
+              <circle class="chart-dot" cx="320" cy="12" r="4.5"/>
+              <text x="318" y="38" text-anchor="end" font-size="11" font-weight="900" fill="#fff">347</text>
+              <text x="318" y="52" text-anchor="end" font-size="8" fill="rgba(255,255,255,0.6)">RFQs today</text>
+            </svg>
+            <div class="flex justify-between mt-1 px-1">
+              <span class="text-xs" style="color:rgba(255,255,255,0.4)">May 30</span>
+              <span class="text-xs" style="color:rgba(255,255,255,0.4)">Jun 5</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Quick Wins: white card + amber glow -->
+      <!-- Quick Wins -->
       <div class="qw-glow card-enter p-5" style="animation-delay:0.15s">
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
@@ -226,20 +339,33 @@
           <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(245,158,11,0.15);color:#92400e">7 active</span>
         </div>
         <div class="space-y-2.5">
-          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5" style="background:#fffdf7;border:1px solid rgba(245,158,11,0.2)" onclick="location.href='06-opportunity-detail.html'">
-            <p class="text-xs font-black text-slate-800">2530-01-689-2211</p>
+          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg" style="background:#fffdf7;border:1px solid rgba(245,158,11,0.2)" onclick="location.href='06-opportunity-detail.html'">
+            <div class="flex items-center justify-between mb-1">
+              <p class="text-xs font-black text-slate-800">2530-01-689-2211</p>
+              <!-- score ring -->
+              <svg width="30" height="30" viewBox="0 0 36 36" class="score-ring">
+                <circle class="track" cx="18" cy="18" r="15.9"/>
+                <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#2a3d88" stroke-dashoffset="100" data-score="91"/>
+              </svg>
+            </div>
             <p class="text-xs text-slate-400 mb-2">Caliper Assy — M2 Bradley</p>
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-red-500">Exp. Jun 7</span>
-              <span class="text-xs font-black" style="color:var(--primary)">Score 91</span>
+              <span class="text-xs font-bold text-red-500">⏱ Exp. Jun 7</span>
+              <span class="text-xs font-black" style="color:var(--primary)">91</span>
             </div>
           </div>
-          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5" style="background:#fffdf7;border:1px solid rgba(245,158,11,0.2)">
-            <p class="text-xs font-black text-slate-800">5340-01-201-9988</p>
+          <div class="rounded-xl p-3 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg" style="background:#fffdf7;border:1px solid rgba(245,158,11,0.2)">
+            <div class="flex items-center justify-between mb-1">
+              <p class="text-xs font-black text-slate-800">5340-01-201-9988</p>
+              <svg width="30" height="30" viewBox="0 0 36 36" class="score-ring">
+                <circle class="track" cx="18" cy="18" r="15.9"/>
+                <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#2a3d88" stroke-dashoffset="100" data-score="86"/>
+              </svg>
+            </div>
             <p class="text-xs text-slate-400 mb-2">Bracket, Support — Aluminum</p>
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-orange-500">Exp. Jun 8</span>
-              <span class="text-xs font-black" style="color:var(--primary)">Score 86</span>
+              <span class="text-xs font-bold text-orange-500">⏱ Exp. Jun 8</span>
+              <span class="text-xs font-black" style="color:var(--primary)">86</span>
             </div>
           </div>
         </div>
@@ -247,7 +373,7 @@
       </div>
     </div>
 
-    <!-- Opportunities table + alerts -->
+    <!-- Table + alerts -->
     <div class="main-grid grid grid-cols-3 gap-6">
 
       <div class="col-span-2 float-card overflow-hidden reveal" id="r1">
@@ -256,7 +382,7 @@
             <h2 class="font-black text-slate-900 text-sm">Top Opportunities</h2>
             <p class="text-xs text-slate-400 mt-0.5">Ranked by Win Score</p>
           </div>
-          <a href="05-opportunities.html" class="text-xs font-bold px-3 py-1.5 rounded-lg transition-opacity hover:opacity-75" style="color:var(--primary);background:rgba(42,61,136,0.08)">View all →</a>
+          <a href="05-opportunities.html" class="text-xs font-bold px-3 py-1.5 rounded-lg transition-all hover:-translate-y-0.5 inline-block" style="color:var(--primary);background:rgba(42,61,136,0.08)">View all →</a>
         </div>
         <div style="overflow-x:auto">
         <table class="w-full">
@@ -267,11 +393,18 @@
               <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">AML</th>
               <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Deadline</th>
               <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Qty</th>
+              <th class="w-8"></th>
             </tr>
           </thead>
           <tbody>
             <tr class="opp-row" onclick="location.href='06-opportunity-detail.html'">
-              <td class="px-5 py-3.5"><div class="score-pill score-high">94</div></td>
+              <td class="px-5 py-3.5">
+                <svg width="38" height="38" viewBox="0 0 36 36" class="score-ring">
+                  <circle class="track" cx="18" cy="18" r="15.9"/>
+                  <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#2a3d88" stroke-dashoffset="100" data-score="94"/>
+                  <text x="18" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#2a3d88" transform="rotate(90 18 18)">94</text>
+                </svg>
+              </td>
               <td class="px-3 py-3.5">
                 <p class="text-sm font-bold text-slate-900">2530-01-687-4521</p>
                 <p class="text-xs text-slate-400">Brake Drum Assembly — M1151A1</p>
@@ -279,9 +412,16 @@
               <td class="px-3 py-3.5"><span class="text-sm font-bold text-slate-800">1</span> <span class="text-xs text-slate-400">source</span></td>
               <td class="px-3 py-3.5"><span class="text-xs font-bold text-red-500 px-2 py-0.5 rounded-md bg-red-50">Jun 8</span></td>
               <td class="px-3 py-3.5 text-sm font-bold text-slate-800">120</td>
+              <td class="pr-4"><span class="row-arrow">→</span></td>
             </tr>
             <tr class="opp-row" onclick="location.href='06-opportunity-detail.html'">
-              <td class="px-5 py-3.5"><div class="score-pill score-high">88</div></td>
+              <td class="px-5 py-3.5">
+                <svg width="38" height="38" viewBox="0 0 36 36" class="score-ring">
+                  <circle class="track" cx="18" cy="18" r="15.9"/>
+                  <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#2a3d88" stroke-dashoffset="100" data-score="88"/>
+                  <text x="18" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#2a3d88" transform="rotate(90 18 18)">88</text>
+                </svg>
+              </td>
               <td class="px-3 py-3.5">
                 <p class="text-sm font-bold text-slate-900">5340-01-234-8823</p>
                 <p class="text-xs text-slate-400">Bracket, Mounting — Steel</p>
@@ -289,9 +429,16 @@
               <td class="px-3 py-3.5"><span class="text-sm font-bold text-slate-800">2</span> <span class="text-xs text-slate-400">sources</span></td>
               <td class="px-3 py-3.5"><span class="text-xs font-bold text-orange-500 px-2 py-0.5 rounded-md bg-orange-50">Jun 11</span></td>
               <td class="px-3 py-3.5 text-sm font-bold text-slate-800">500</td>
+              <td class="pr-4"><span class="row-arrow">→</span></td>
             </tr>
             <tr class="opp-row">
-              <td class="px-5 py-3.5"><div class="score-pill score-high">82</div></td>
+              <td class="px-5 py-3.5">
+                <svg width="38" height="38" viewBox="0 0 36 36" class="score-ring">
+                  <circle class="track" cx="18" cy="18" r="15.9"/>
+                  <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#2a3d88" stroke-dashoffset="100" data-score="82"/>
+                  <text x="18" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#2a3d88" transform="rotate(90 18 18)">82</text>
+                </svg>
+              </td>
               <td class="px-3 py-3.5">
                 <p class="text-sm font-bold text-slate-900">2510-01-445-9932</p>
                 <p class="text-xs text-slate-400">Valve, Engine Coolant</p>
@@ -299,9 +446,16 @@
               <td class="px-3 py-3.5"><span class="text-sm font-bold text-slate-800">2</span> <span class="text-xs text-slate-400">sources</span></td>
               <td class="px-3 py-3.5"><span class="text-xs font-bold text-slate-500 px-2 py-0.5 rounded-md bg-slate-50">Jun 14</span></td>
               <td class="px-3 py-3.5 text-sm font-bold text-slate-800">250</td>
+              <td class="pr-4"><span class="row-arrow">→</span></td>
             </tr>
             <tr class="opp-row">
-              <td class="px-5 py-3.5"><div class="score-pill score-med">74</div></td>
+              <td class="px-5 py-3.5">
+                <svg width="38" height="38" viewBox="0 0 36 36" class="score-ring">
+                  <circle class="track" cx="18" cy="18" r="15.9"/>
+                  <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#d97706" stroke-dashoffset="100" data-score="74"/>
+                  <text x="18" y="22" text-anchor="middle" font-size="11" font-weight="900" fill="#b45309" transform="rotate(90 18 18)">74</text>
+                </svg>
+              </td>
               <td class="px-3 py-3.5">
                 <p class="text-sm font-bold text-slate-900">5305-01-112-3344</p>
                 <p class="text-xs text-slate-400">Screw, Machine — Hex Head</p>
@@ -309,6 +463,7 @@
               <td class="px-3 py-3.5"><span class="text-sm font-bold text-slate-800">4</span> <span class="text-xs text-slate-400">sources</span></td>
               <td class="px-3 py-3.5"><span class="text-xs font-bold text-slate-500 px-2 py-0.5 rounded-md bg-slate-50">Jun 17</span></td>
               <td class="px-3 py-3.5 text-sm font-bold text-slate-800">1,200</td>
+              <td class="pr-4"><span class="row-arrow">→</span></td>
             </tr>
           </tbody>
         </table>
@@ -321,27 +476,40 @@
           <h2 class="font-black text-slate-900 text-sm">Recent Alerts</h2>
           <span class="alert-badge">3 new</span>
         </div>
-        <div class="space-y-4">
-          <div class="flex items-start gap-2.5">
+        <div>
+          <div class="alert-item flex items-start gap-2.5">
             <div class="w-2 h-2 rounded-full mt-1 flex-shrink-0" style="background:var(--primary);box-shadow:0 0 8px rgba(42,61,136,0.4)"></div>
             <div>
               <p class="text-xs font-bold text-slate-800">New Score 89 — 2510-01-445-9932</p>
               <p class="text-xs text-slate-400 mt-0.5">2 minutes ago</p>
             </div>
           </div>
-          <div class="flex items-start gap-2.5">
+          <div class="alert-item flex items-start gap-2.5">
             <div class="w-2 h-2 rounded-full mt-1 flex-shrink-0" style="background:#f59e0b;box-shadow:0 0 8px rgba(245,158,11,0.4)"></div>
             <div>
               <p class="text-xs font-bold text-slate-800">Quick Win expiring in 2 days</p>
               <p class="text-xs text-slate-400 mt-0.5">1 hour ago</p>
             </div>
           </div>
-          <div class="flex items-start gap-2.5">
+          <div class="alert-item flex items-start gap-2.5">
             <div class="w-2 h-2 rounded-full mt-1 flex-shrink-0 bg-slate-300"></div>
             <div>
               <p class="text-xs font-bold text-slate-800">Daily digest delivered</p>
               <p class="text-xs text-slate-400 mt-0.5">Today · 7:00 AM</p>
             </div>
+          </div>
+        </div>
+
+        <!-- Mini pipeline donut -->
+        <div class="mt-5 pt-4 flex items-center gap-4" style="border-top:1px solid rgba(33,50,95,0.06)">
+          <svg width="64" height="64" viewBox="0 0 36 36" class="score-ring flex-shrink-0">
+            <circle class="track" cx="18" cy="18" r="15.9" stroke-width="4"/>
+            <circle class="fill ring-anim" cx="18" cy="18" r="15.9" stroke="#2a3d88" stroke-width="4" stroke-dashoffset="100" data-score="58"/>
+            <text x="18" y="21" text-anchor="middle" font-size="9" font-weight="900" fill="#2a3d88" transform="rotate(90 18 18)">58%</text>
+          </svg>
+          <div>
+            <p class="text-xs font-black text-slate-800">Pipeline health</p>
+            <p class="text-xs text-slate-400 mt-0.5 leading-snug">7 of 12 bids progressing on schedule</p>
           </div>
         </div>
       </div>
@@ -367,6 +535,14 @@ counter('kpiHero', 347, 300);
 counter('kpi2', 23, 450);
 counter('kpi3', 7, 600);
 counter('kpi4', 12, 750);
+
+// Animate score rings
+setTimeout(() => {
+  document.querySelectorAll('.ring-anim').forEach(ring => {
+    const score = parseInt(ring.dataset.score, 10);
+    ring.style.strokeDashoffset = 100 - score;
+  });
+}, 800);
 
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
