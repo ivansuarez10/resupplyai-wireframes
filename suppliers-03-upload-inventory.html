@@ -321,21 +321,36 @@
 
           <p class="text-sm font-black uppercase tracking-widest mb-2" style="color:var(--primary)">You're live 🎉</p>
           <h1 class="text-3xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">Your inventory is working for you.</h1>
-          <p class="text-slate-500 mb-7 leading-relaxed"><span class="font-black text-slate-700" id="impCount">0</span> items are now matched against the DLA in real time. And we didn't waste a second —</p>
+          <p class="text-slate-500 mb-7 leading-relaxed"><span class="font-black text-slate-700" id="impCount">0</span> items are now matched against the DLA in real time, 24/7.</p>
 
-          <!-- Teaser stats -->
-          <div class="grid grid-cols-3 gap-3 mb-8">
-            <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.1)">
-              <p class="text-3xl font-black" style="color:var(--primary)" id="tMatch">0</p>
-              <p class="text-xs font-bold text-slate-500 mt-1">matches found<br>today</p>
+          <!-- STATE A: has matches -->
+          <div id="hasMatches">
+            <div class="grid grid-cols-3 gap-3 mb-8">
+              <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.1)">
+                <p class="text-3xl font-black" style="color:var(--primary)" id="tMatch">0</p>
+                <p class="text-xs font-bold text-slate-500 mt-1">matches found<br>today</p>
+              </div>
+              <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.05));border:1px solid rgba(42,61,136,0.18)">
+                <p class="text-3xl font-black" style="color:var(--primary)" id="tHot">0</p>
+                <p class="text-xs font-bold text-slate-500 mt-1">high-value<br>matches</p>
+              </div>
+              <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.1)">
+                <p class="text-3xl font-black" style="color:var(--primary)" id="tVal">$0</p>
+                <p class="text-xs font-bold text-slate-500 mt-1">potential<br>sales value</p>
+              </div>
             </div>
-            <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.05));border:1px solid rgba(42,61,136,0.18)">
-              <p class="text-3xl font-black" style="color:var(--primary)" id="tHot">0</p>
-              <p class="text-xs font-bold text-slate-500 mt-1">🔥 high-value<br>matches</p>
-            </div>
-            <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.1)">
-              <p class="text-3xl font-black" style="color:var(--primary)" id="tVal">$0</p>
-              <p class="text-xs font-bold text-slate-500 mt-1">potential<br>sales value</p>
+          </div>
+
+          <!-- STATE B: no matches yet (positive, never a sad zero) -->
+          <div id="noMatches" style="display:none">
+            <div class="rounded-2xl p-6 mb-8 flex items-start gap-4 text-left" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </div>
+              <div>
+                <p class="font-black text-slate-900 mb-1">We're now watching the DLA for you — around the clock.</p>
+                <p class="text-sm text-slate-500 leading-relaxed">No matches in today's solicitations yet, but the DLA posts thousands of new requests daily. The moment one fits your stock, you'll get an instant alert and it'll appear on your dashboard.</p>
+              </div>
             </div>
           </div>
 
@@ -391,15 +406,28 @@ function confettiBurst(){
     setTimeout(()=>c.remove(),4000);
   }
 }
+// Demo: number of matches found today. Set to 0 to preview the no-match state.
+const matchesToday = 47, hotToday = 3, valToday = 86400;
+
 function finish(){
   document.getElementById('stepB').style.display = 'none';
   document.getElementById('stepC').style.display = 'block';
   window.scrollTo({top:0, behavior:'smooth'});
-  setTimeout(confettiBurst, 250);
   countTo('impCount',1284,'');
-  setTimeout(()=>countTo('tMatch',47,''),300);
-  setTimeout(()=>countTo('tHot',3,''),450);
-  setTimeout(()=>countTo('tVal',86400,'$'),600);
+
+  if(matchesToday > 0){
+    document.getElementById('hasMatches').style.display = 'block';
+    document.getElementById('noMatches').style.display = 'none';
+    setTimeout(confettiBurst, 250);
+    setTimeout(()=>countTo('tMatch',matchesToday,''),300);
+    setTimeout(()=>countTo('tHot',hotToday,''),450);
+    setTimeout(()=>countTo('tVal',valToday,'$'),600);
+  } else {
+    document.getElementById('hasMatches').style.display = 'none';
+    document.getElementById('noMatches').style.display = 'block';
+    // softer celebration — still a win, no confetti overkill on a zero
+    setTimeout(confettiBurst, 250);
+  }
 }
 function requestInt(name, e){
   e.stopPropagation();
