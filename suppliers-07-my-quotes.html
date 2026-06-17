@@ -23,6 +23,7 @@
   .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
 
   /* Status badges (monochrome navy intensity + one action accent) */
+  .st .dot{ width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;flex-shrink:0; }
   .st { font-size:10px; font-weight:900; padding:3px 10px; border-radius:9999px; letter-spacing:.03em; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; }
   .st-pending  { background:#f1f5f9; color:#64748b; }
   .st-assigned { background:rgba(42,61,136,0.1); color:var(--primary); }
@@ -61,12 +62,13 @@
     .hamburger { display:flex; }
     .grid.grid-cols-5 { grid-template-columns: repeat(2,1fr) !important; }
   }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
 </style>
 </head>
 <body class="flex">
 
 <div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
-<div class="sb-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="sb-overlay" id="overlay" aria-label="Close menu" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -104,7 +106,7 @@
 
   <div class="px-6 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <button class="hamburger w-9 h-9 rounded-xl items-center justify-center text-slate-600 flex-shrink-0" style="background:rgba(42,61,136,0.06)" onclick="openSidebar()">
+      <button class="hamburger w-9 h-9 rounded-xl items-center justify-center text-slate-600 flex-shrink-0" style="background:rgba(42,61,136,0.06)" aria-label="Open menu" onclick="openSidebar()">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
@@ -179,7 +181,7 @@
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">120</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$1,840</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$220,800</td>
-            <td class="px-3 py-3.5"><span class="st st-trace">⬤ Trace requested</span></td>
+            <td class="px-3 py-3.5"><span class="st st-trace"><span class="dot"></span> Trace requested</span></td>
             <td class="px-5 py-3.5 text-right"><button class="btn-primary text-xs font-black px-4 py-2 rounded-lg">Upload trace</button></td>
           </tr>
           <tr class="q-row trace" data-status="trace">
@@ -188,7 +190,7 @@
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">30</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$3,560</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$106,800</td>
-            <td class="px-3 py-3.5"><span class="st st-trace">⬤ Trace requested</span></td>
+            <td class="px-3 py-3.5"><span class="st st-trace"><span class="dot"></span> Trace requested</span></td>
             <td class="px-5 py-3.5 text-right"><button class="btn-primary text-xs font-black px-4 py-2 rounded-lg">Upload trace</button></td>
           </tr>
           <!-- WON -->
@@ -208,7 +210,7 @@
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">45</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$4,210</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$189,450</td>
-            <td class="px-3 py-3.5"><span class="st st-assigned">⬤ Assigned to buyer</span></td>
+            <td class="px-3 py-3.5"><span class="st st-assigned"><span class="dot"></span> Assigned to buyer</span></td>
             <td class="px-5 py-3.5 text-right"><span class="text-xs text-slate-400">In the running</span></td>
           </tr>
           <tr class="q-row" data-status="assigned">
@@ -217,7 +219,7 @@
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">80</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$210</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$16,800</td>
-            <td class="px-3 py-3.5"><span class="st st-assigned">⬤ Assigned to buyer</span></td>
+            <td class="px-3 py-3.5"><span class="st st-assigned"><span class="dot"></span> Assigned to buyer</span></td>
             <td class="px-5 py-3.5 text-right"><span class="text-xs text-slate-400">In the running</span></td>
           </tr>
           <!-- PENDING -->
@@ -227,7 +229,7 @@
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">1,200</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$14</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$16,800</td>
-            <td class="px-3 py-3.5"><span class="st st-pending">⬤ Pending assignment</span></td>
+            <td class="px-3 py-3.5"><span class="st st-pending"><span class="dot"></span> Pending assignment</span></td>
             <td class="px-5 py-3.5 text-right"><span class="text-xs text-slate-400">Awaiting</span></td>
           </tr>
           <tr class="q-row" data-status="pending">
@@ -236,7 +238,7 @@
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">500</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$92</td>
             <td class="px-3 py-3.5 text-sm font-bold text-slate-800">$46,000</td>
-            <td class="px-3 py-3.5"><span class="st st-pending">⬤ Pending assignment</span></td>
+            <td class="px-3 py-3.5"><span class="st st-pending"><span class="dot"></span> Pending assignment</span></td>
             <td class="px-5 py-3.5 text-right"><span class="text-xs text-slate-400">Awaiting</span></td>
           </tr>
           <!-- CLOSED -->

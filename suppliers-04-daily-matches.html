@@ -91,12 +91,13 @@
     .q-item{flex-wrap:wrap; gap:10px}
     .cartbar-fixed { left:16px !important; right:16px !important; transform:none !important; }
   }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
 </style>
 </head>
 <body class="flex">
 
 <div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
-<div class="sb-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="sb-overlay" id="overlay" aria-label="Close menu" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -135,7 +136,7 @@
   <!-- Topbar -->
   <div class="px-6 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <button class="hamburger w-9 h-9 rounded-xl items-center justify-center text-slate-600 flex-shrink-0" style="background:rgba(42,61,136,0.06)" onclick="openSidebar()">
+      <button class="hamburger w-9 h-9 rounded-xl items-center justify-center text-slate-600 flex-shrink-0" style="background:rgba(42,61,136,0.06)" aria-label="Open menu" onclick="openSidebar()">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
@@ -221,7 +222,7 @@
         <!-- HOT 3 -->
         <div class="q-item hot item-enter" data-val="3560" data-hot="1">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:#d97706">22 partial</span></div>
+            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:#64748b">22 in stock · short 8</span></div>
             <p class="text-sm font-black text-slate-900">2815-01-112-9087 · Engine Cylinder Head</p>
             <p class="text-xs text-slate-400">P/N CH-7781 · Caterpillar</p>
           </div>

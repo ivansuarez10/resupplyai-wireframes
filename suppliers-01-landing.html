@@ -72,6 +72,7 @@
 
   .float-anim { animation: floaty 6s ease-in-out infinite; }
   @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -227,8 +228,8 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <div>
-          <h3 class="text-lg font-black text-slate-900 mb-2">AI-suggested pricing</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">We tell you the price to quote so you stay competitive and win — based on market history and live demand. It learns and gets sharper over time.</p>
+          <h3 class="text-lg font-black text-slate-900 mb-2">Quote in two clicks</h3>
+          <p class="text-sm text-slate-500 leading-relaxed">Confirm stock, set your price, attach docs — done. No more digging through hundreds of emails to find what matches your stock.</p>
         </div>
       </div>
       <div class="float-card hoverable p-7 reveal flex gap-4" style="transition-delay:.15s">
