@@ -150,7 +150,7 @@
         <div class="flex items-center flex-wrap gap-x-6 gap-y-3">
           <span class="text-sm font-bold text-slate-500">Or connect a tool:</span>
 
-          <button onclick="goMap('Google Sheet')" class="connector">
+          <button onclick="goSheet()" class="connector">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Google Sheet
             <span class="ml-1 text-xs font-black" style="color:var(--primary)">Connect</span>
@@ -178,6 +178,36 @@
       </div>
     </div>
 
+    <!-- ===== STEP SHEET: connect google sheet ===== -->
+    <div id="stepSheet" class="page-enter" style="display:none">
+      <button onclick="backToA()" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mb-5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to methods
+      </button>
+
+      <div class="float-card p-8 max-w-xl mx-auto">
+        <div class="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style="background:linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10))">
+          <svg class="w-6 h-6" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h1 class="text-2xl font-black text-slate-900 mb-1">Connect your Google Sheet</h1>
+        <p class="text-sm text-slate-500 mb-6">Paste the link to the sheet where you keep your stock. We'll read its columns and re-sync it <span class="font-bold text-slate-700">automatically every night</span> — you never have to re-upload.</p>
+
+        <label class="text-sm font-bold text-slate-700 mb-1.5 block">Google Sheet link</label>
+        <input id="sheetUrl" class="map-select mb-2" style="padding:11px 14px;font-weight:400" placeholder="https://docs.google.com/spreadsheets/d/…">
+        <p class="text-xs text-slate-400 mb-5">Make sure sharing is set to "Anyone with the link can view", or authorize access below.</p>
+
+        <div class="rounded-xl p-3 mb-5 flex items-start gap-2.5" style="background:rgba(42,61,136,0.04);border:1px solid rgba(42,61,136,0.1)">
+          <svg class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p class="text-xs text-slate-600 leading-relaxed">We only read the columns you map — anything else in your sheet (costs, notes, internal data) is ignored and never stored.</p>
+        </div>
+
+        <button onclick="goMap('Google Sheet')" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          Connect & read columns →
+        </button>
+      </div>
+    </div>
+
     <!-- ===== STEP B: upload + map ===== -->
     <div id="stepB" class="page-enter" style="display:none">
       <button onclick="backToA()" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mb-5">
@@ -187,7 +217,7 @@
 
       <div class="text-center mb-6">
         <h1 class="text-2xl font-black text-slate-900 mb-1">Map your columns</h1>
-        <p class="text-slate-500 text-sm">Source: <span id="srcName" class="font-bold" style="color:var(--primary)">Excel / CSV file</span> · <span class="text-slate-700 font-bold">inventory_hermes.xlsx</span> · 1,284 rows detected</p>
+        <p class="text-slate-500 text-sm">Source: <span id="srcName" class="font-bold" style="color:var(--primary)">Excel / CSV file</span> · <span id="srcMeta"><span class="text-slate-700 font-bold">inventory_hermes.xlsx</span> · 1,284 rows detected</span></p>
       </div>
 
       <div class="grid lg:grid-cols-5 gap-5">
@@ -286,14 +316,28 @@
 </div>
 
 <script>
+function goSheet(){
+  document.getElementById('stepA').style.display = 'none';
+  document.getElementById('stepSheet').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 function goMap(name){
   document.getElementById('srcName').textContent = name;
+  // Adjust the source descriptor in the mapping header
+  const srcMeta = document.getElementById('srcMeta');
+  if(srcMeta){
+    srcMeta.innerHTML = name === 'Google Sheet'
+      ? 'Stock Sheet — Hermes · <span class="text-slate-700 font-bold">1,284 rows · auto-syncs nightly</span>'
+      : '<span class="text-slate-700 font-bold">inventory_hermes.xlsx</span> · 1,284 rows detected';
+  }
   document.getElementById('stepA').style.display = 'none';
+  document.getElementById('stepSheet').style.display = 'none';
   document.getElementById('stepB').style.display = 'block';
   window.scrollTo({top:0, behavior:'smooth'});
 }
 function backToA(){
   document.getElementById('stepB').style.display = 'none';
+  document.getElementById('stepSheet').style.display = 'none';
   document.getElementById('stepA').style.display = 'block';
   window.scrollTo({top:0, behavior:'smooth'});
 }
