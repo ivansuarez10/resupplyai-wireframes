@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Add Your Inventory</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height: 100vh; }
+
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; animation: orbFloat 16s ease-in-out infinite; }
+  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.12)} }
+
+  .float-card { background:#fff; border-radius:22px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
+
+  .method-card { background:#fff; border:1.5px solid rgba(33,50,95,0.1); border-radius:18px; padding:22px; cursor:pointer; transition: all .2s cubic-bezier(.16,1,.3,1); position:relative; }
+  .method-card:hover { border-color: var(--primary); box-shadow:0 16px 40px rgba(33,50,95,0.12); transform: translateY(-3px); }
+  .method-card.selected { border-color: var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.12), 0 16px 40px rgba(33,50,95,0.12); }
+  .method-card.soon { cursor: default; opacity: 0.7; }
+  .method-card.soon:hover { border-color: rgba(33,50,95,0.1); box-shadow:none; transform:none; }
+
+  .method-ico { width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10)); color:var(--primary); margin-bottom:14px; }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; box-shadow: 0 12px 28px rgba(33,50,95,0.3); transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(33,50,95,0.4); }
+  .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition: all .18s; }
+  .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+  .req-chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; padding:5px 11px; border-radius:9999px; background:rgba(42,61,136,0.08); color:var(--primary); }
+  .opt-chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; padding:5px 11px; border-radius:9999px; background:#f1f5f9; color:#64748b; }
+
+  .soon-badge { position:absolute; top:14px; right:14px; font-size:9px; font-weight:900; padding:2px 8px; border-radius:9999px; background:#f1f5f9; color:#94a3b8; letter-spacing:.04em; }
+
+  .dropzone { border:2px dashed rgba(42,61,136,0.25); border-radius:18px; padding:44px; text-align:center; transition: all .2s; cursor:pointer; background:rgba(42,61,136,0.02); }
+  .dropzone:hover { border-color: var(--primary); background:rgba(42,61,136,0.05); }
+
+  .page-enter { animation: pageIn .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes pageIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Mapping select */
+  .map-select { border:1px solid rgba(33,50,95,0.12); border-radius:9px; padding:7px 10px; font-size:13px; font-weight:700; color:var(--navy); background:#fff; outline:none; width:100%; }
+  .map-select:focus { border-color: var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
+  .map-row { display:grid; grid-template-columns: 1fr 24px 1fr; align-items:center; gap:10px; padding:10px 0; border-top:1px solid rgba(33,50,95,0.05); }
+
+  .step-pill { display:flex; align-items:center; gap:8px; }
+  .step-dot { width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;transition:all .3s; }
+  .step-dot.done { background:var(--primary); color:#fff; }
+  .step-dot.active { background:var(--primary); color:#fff; box-shadow:0 0 0 4px rgba(42,61,136,0.15); }
+  .step-dot.todo { background:#e2e8f0; color:#94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-140px;right:-100px"></div>
+<div class="bg-orb" style="width:360px;height:360px;background:#dbe4fb;bottom:-100px;left:-100px;animation-delay:-8s"></div>
+
+<div class="relative" style="z-index:1">
+
+  <!-- Top bar -->
+  <div class="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
+    <div class="flex items-center gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+    </div>
+    <a href="suppliers-04-daily-matches.html" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">Skip for now →</a>
+  </div>
+
+  <!-- Steps -->
+  <div class="max-w-5xl mx-auto px-6 mb-6">
+    <div class="flex items-center gap-3">
+      <div class="step-pill"><div class="step-dot done">✓</div><span class="text-xs font-bold text-slate-700 hidden sm:inline">Account</span></div>
+      <div class="flex-1 h-0.5 rounded" style="background:var(--primary)"></div>
+      <div class="step-pill"><div class="step-dot active">2</div><span class="text-xs font-bold text-slate-700 hidden sm:inline">Add inventory</span></div>
+      <div class="flex-1 h-0.5 rounded bg-slate-200"></div>
+      <div class="step-pill"><div class="step-dot todo">3</div><span class="text-xs font-bold text-slate-400 hidden sm:inline">See matches</span></div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6 pb-16">
+
+    <!-- ===== STEP A: choose method ===== -->
+    <div id="stepA" class="page-enter">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-black text-slate-900 mb-2">Add your inventory</h1>
+        <p class="text-slate-500">Do it once — we keep it matched to DLA solicitations every day. Choose how you'd like to bring your stock in.</p>
+      </div>
+
+      <!-- Required fields banner -->
+      <div class="float-card p-6 mb-6">
+        <div class="flex items-start gap-3 mb-4">
+          <div class="method-ico" style="margin-bottom:0;width:38px;height:38px;border-radius:11px;flex-shrink:0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div>
+            <h3 class="font-black text-slate-900 text-sm">Before you upload — your file must include these</h3>
+            <p class="text-xs text-slate-500 mt-0.5">No matter what tool you use (Excel, SAP, QuickBooks…), each item needs these fields. We'll help you map your columns.</p>
+          </div>
+        </div>
+        <div class="mb-3">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Required</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="req-chip">✓ Description</span>
+            <span class="req-chip">✓ Part Number (P/N)</span>
+            <span class="req-chip">✓ NSN</span>
+            <span class="req-chip">✓ Quantity in stock</span>
+            <span class="req-chip">✓ Lead time</span>
+            <span class="req-chip">✓ Condition</span>
+            <span class="req-chip">✓ Unit of measure</span>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Optional — add now or per match later</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="opt-chip">OEM / Manufacturer</span>
+            <span class="opt-chip">CoC</span>
+            <span class="opt-chip">Certs</span>
+            <span class="opt-chip">Shelf life</span>
+            <span class="opt-chip">Photos</span>
+            <span class="opt-chip">Gov. contract #</span>
+          </div>
+        </div>
+        <a href="#" onclick="return false" class="inline-flex items-center gap-1.5 text-xs font-bold mt-4" style="color:var(--primary)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download our Excel/CSV template
+        </a>
+      </div>
+
+      <!-- Method cards -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="method-card" onclick="goMap('Excel / CSV file')">
+          <div class="method-ico">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 13l2 2 4-4"/></svg>
+          </div>
+          <h3 class="font-black text-slate-900 mb-1">Upload Excel / CSV</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">The easiest way. Export from any system and drop the file. We map your columns.</p>
+          <span class="inline-block text-xs font-bold mt-3" style="color:var(--primary)">Recommended →</span>
+        </div>
+
+        <div class="method-card" onclick="goMap('Google Sheet')">
+          <div class="method-ico">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <h3 class="font-black text-slate-900 mb-1">Connect Google Sheet</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Link a Sheet or Drive file you keep updated. We re-sync it automatically every night.</p>
+          <span class="inline-block text-xs font-bold mt-3" style="color:var(--primary)">Connect →</span>
+        </div>
+
+        <div class="method-card soon">
+          <span class="soon-badge">COMING SOON</span>
+          <div class="method-ico">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          </div>
+          <h3 class="font-black text-slate-900 mb-1">SAP</h3>
+          <p class="text-xs text-slate-500 leading-relaxed mb-3">Direct sync with your SAP inventory.</p>
+          <button onclick="requestInt('SAP', event)" class="btn-ghost text-xs font-bold px-3 py-1.5 rounded-lg">Request integration</button>
+        </div>
+
+        <div class="method-card soon">
+          <span class="soon-badge">COMING SOON</span>
+          <div class="method-ico">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m3 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H10a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <h3 class="font-black text-slate-900 mb-1">QuickBooks</h3>
+          <p class="text-xs text-slate-500 leading-relaxed mb-3">Pull stock straight from QuickBooks.</p>
+          <button onclick="requestInt('QuickBooks', event)" class="btn-ghost text-xs font-bold px-3 py-1.5 rounded-lg">Request integration</button>
+        </div>
+
+        <div class="method-card soon">
+          <span class="soon-badge">COMING SOON</span>
+          <div class="method-ico">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          </div>
+          <h3 class="font-black text-slate-900 mb-1">NetSuite / Fishbowl</h3>
+          <p class="text-xs text-slate-500 leading-relaxed mb-3">Other inventory ERP systems.</p>
+          <button onclick="requestInt('NetSuite/Fishbowl', event)" class="btn-ghost text-xs font-bold px-3 py-1.5 rounded-lg">Request integration</button>
+        </div>
+
+        <div class="method-card" onclick="alert('Our team will reach out to set up a custom import.')">
+          <div class="method-ico">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3v3l2 2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 4l-2 2"/></svg>
+          </div>
+          <h3 class="font-black text-slate-900 mb-1">Need help?</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">Got a different system or a messy file? Our team will set up your import for you.</p>
+          <span class="inline-block text-xs font-bold mt-3" style="color:var(--primary)">Talk to us →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STEP B: upload + map ===== -->
+    <div id="stepB" class="page-enter" style="display:none">
+      <button onclick="backToA()" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mb-5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to methods
+      </button>
+
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-black text-slate-900 mb-1">Map your columns</h1>
+        <p class="text-slate-500 text-sm">Source: <span id="srcName" class="font-bold" style="color:var(--primary)">Excel / CSV file</span> · <span class="text-slate-700 font-bold">inventory_hermes.xlsx</span> · 1,284 rows detected</p>
+      </div>
+
+      <div class="grid lg:grid-cols-5 gap-5">
+        <!-- mapping -->
+        <div class="lg:col-span-3 float-card p-6">
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Match your columns to ours</p>
+          <p class="text-xs text-slate-500 mb-3">We auto-detected most. Confirm the required ones.</p>
+
+          <div class="grid grid-cols-[1fr_24px_1fr] gap-2.5 pb-2 mb-1">
+            <p class="text-xs font-black text-slate-400">YOUR COLUMN</p><span></span><p class="text-xs font-black text-slate-400">RESUPPLYAI FIELD</p>
+          </div>
+
+          <div class="map-row" style="border-top:none">
+            <select class="map-select"><option>Item Description</option><option>Desc</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <div class="flex items-center gap-2"><span class="req-chip">Description ✓</span></div>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>Part No</option><option>PN</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="req-chip">Part Number ✓</span>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>NSN</option><option>Nat. Stock Num</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="req-chip">NSN ✓</span>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>Qty Available</option><option>Stock</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="req-chip">Quantity ✓</span>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>Lead Days</option><option>Lead time</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="req-chip">Lead time ✓</span>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>Cond.</option><option>Condition</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="req-chip">Condition ✓</span>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>UoM</option><option>Unit</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="req-chip">Unit of measure ✓</span>
+          </div>
+          <div class="map-row">
+            <select class="map-select"><option>— not in my file —</option><option>OEM</option><option>Manufacturer</option></select>
+            <span class="text-center text-slate-300">→</span>
+            <span class="opt-chip">OEM (optional)</span>
+          </div>
+        </div>
+
+        <!-- preview + confirm -->
+        <div class="lg:col-span-2 space-y-5">
+          <div class="float-card p-5">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Preview · first row</p>
+            <div class="space-y-2">
+              <div class="flex justify-between text-xs"><span class="text-slate-400">Description</span><span class="font-bold text-slate-800">Brake Drum Assy</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">P/N</span><span class="font-bold text-slate-800">BD-44871</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">NSN</span><span class="font-bold text-slate-800">2530-01-687-4521</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">Qty</span><span class="font-bold text-slate-800">340</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">Lead time</span><span class="font-bold text-slate-800">14 days</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">Condition</span><span class="font-bold text-slate-800">New</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">UoM</span><span class="font-bold text-slate-800">EA</span></div>
+            </div>
+          </div>
+
+          <div class="float-card p-5" style="background:linear-gradient(135deg, rgba(42,61,136,0.05), rgba(94,126,232,0.03))">
+            <div class="flex items-center gap-2 mb-1">
+              <svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <p class="text-sm font-black text-slate-900">All required fields mapped</p>
+            </div>
+            <p class="text-xs text-slate-500">1,284 items ready to import. We'll start matching them against today's DLA solicitations immediately.</p>
+          </div>
+
+          <button onclick="finish()" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm">Import 1,284 items →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STEP C: importing ===== -->
+    <div id="stepC" class="page-enter" style="display:none">
+      <div class="float-card p-12 text-center max-w-lg mx-auto mt-6">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h1 class="text-2xl font-black text-slate-900 mb-2">Inventory imported!</h1>
+        <p class="text-slate-500 mb-6">1,284 items are now live. We're cross-referencing them against today's DLA solicitations — your first matches are ready.</p>
+        <a href="suppliers-04-daily-matches.html" class="btn-primary inline-block font-black px-8 py-3.5 rounded-xl text-sm">See My Matches →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function goMap(name){
+  document.getElementById('srcName').textContent = name;
+  document.getElementById('stepA').style.display = 'none';
+  document.getElementById('stepB').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function backToA(){
+  document.getElementById('stepB').style.display = 'none';
+  document.getElementById('stepA').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function finish(){
+  document.getElementById('stepB').style.display = 'none';
+  document.getElementById('stepC').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function requestInt(name, e){
+  e.stopPropagation();
+  const btn = e.target;
+  btn.textContent = '✓ Requested';
+  btn.style.background = 'rgba(42,61,136,0.1)';
+  btn.style.color = '#2a3d88';
+  btn.style.borderColor = 'transparent';
+}
+</script>
+</body>
+</html>
