@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI — Quote Assignment Console (Internal)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+
+  .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
+  .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
+  .nav-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .nav-item.active { background:rgba(42,61,136,0.1); color:var(--primary); }
+  .nav-item.active::before { content:''; position:absolute; left:-10px; top:20%; bottom:20%; width:3px; border-radius:3px; background:var(--primary); }
+  .nav-item svg { width:15px; height:15px; flex-shrink:0; }
+
+  .float-card { background:#fff; border-radius:18px; box-shadow:0 16px 44px rgba(33,50,95,0.08), 0 4px 16px rgba(33,50,95,0.04); border:1px solid rgba(255,255,255,0.9); }
+
+  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
+  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
+  .hero-gradient { background-color:var(--primary); background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%); animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(33,50,95,0.3); }
+  .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
+  .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+
+  table.ops { width:100%; min-width:1180px; border-collapse:collapse; }
+  table.ops th { background:#fafbff; font-size:10px; font-weight:900; color:#64748b; text-transform:uppercase; letter-spacing:.03em; padding:9px 8px; text-align:left; white-space:nowrap; position:sticky; top:0; z-index:1; }
+  table.ops td { padding:9px 8px; font-size:12px; border-top:1px solid rgba(33,50,95,0.06); vertical-align:middle; }
+  .ops-row { cursor:pointer; transition:background .12s; }
+  .ops-row:hover { background:rgba(42,61,136,0.03); }
+  .ops-row.inbatch { background:rgba(42,61,136,0.06); }
+  .ops-row.ineligible { opacity:.4; }
+
+  .mdbbs-input { width:84px; border:1px solid rgba(42,61,136,0.25); border-radius:7px; padding:4px 7px; font-size:12px; font-weight:800; color:var(--navy); outline:none; text-align:right; }
+  .mdbbs-input:focus { border-color:var(--primary); box-shadow:0 0 0 2px rgba(42,61,136,0.12); }
+
+  .roi-pill { font-size:11px; font-weight:900; padding:3px 8px; border-radius:8px; }
+  /* monochrome navy intensity for margin tiers */
+  .roi-3 { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; }
+  .roi-2 { background:rgba(42,61,136,0.14); color:var(--primary); }
+  .roi-1 { background:rgba(42,61,136,0.07); color:#64748b; }
+
+  .note-chip { display:inline-block; font-size:9px; font-weight:900; padding:2px 6px; border-radius:6px; background:rgba(42,61,136,0.1); color:var(--primary); margin:1px; }
+
+  .add-btn { width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .15s; border:1px solid rgba(42,61,136,0.2); color:var(--primary); background:#fff; }
+  .add-btn:hover { background:rgba(42,61,136,0.08); }
+  .add-btn.added { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; border-color:transparent; }
+  .add-btn.disabled { opacity:.3; cursor:not-allowed; }
+
+  .client-select { background:#fff; border:1px solid rgba(33,50,95,0.14); border-radius:11px; padding:8px 12px; font-size:14px; font-weight:800; color:var(--navy); outline:none; cursor:pointer; }
+  .client-select:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
+
+  .crit-chip { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:9999px; background:rgba(42,61,136,0.08); color:var(--primary); }
+
+  /* Drawer */
+  .drawer-bg { position:fixed; inset:0; z-index:60; background:rgba(15,23,42,0.4); backdrop-filter:blur(3px); display:none; }
+  .drawer-bg.show { display:block; }
+  .drawer { position:fixed; top:0; right:0; height:100vh; width:480px; max-width:92vw; background:#fff; z-index:61; box-shadow:-20px 0 60px rgba(33,50,95,0.25); transform:translateX(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); overflow-y:auto; }
+  .drawer.show { transform:translateX(0); }
+  .label { display:block; font-size:11px; font-weight:800; color:#475569; margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em; }
+  .field { width:100%; border:1px solid rgba(33,50,95,0.14); border-radius:10px; padding:8px 11px; font-size:13px; font-weight:700; color:var(--navy); outline:none; }
+  .field:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
+  .dla-line { display:flex; justify-content:space-between; padding:7px 0; border-top:1px solid rgba(33,50,95,0.06); font-size:13px; }
+
+  /* batch tray */
+  .tray { position:fixed; bottom:18px; left:230px; right:18px; z-index:30; }
+  .prog { height:8px; border-radius:9999px; background:rgba(255,255,255,0.2); overflow:hidden; }
+  .prog-fill { height:100%; background:#fff; border-radius:9999px; transition:width .4s cubic-bezier(.16,1,.3,1); }
+
+  .confetti { position:fixed; width:9px; height:9px; border-radius:2px; pointer-events:none; z-index:99; animation: cf linear forwards; }
+  @keyframes cf { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+  @media (max-width:1023px){ .sidebar{display:none} .tray{left:18px} }
+</style>
+</head>
+<body class="flex">
+
+<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="px-5 mb-6 flex items-center gap-2">
+    <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:var(--navy);color:#fff">OPS</span>
+  </div>
+  <nav class="flex-1 space-y-0.5">
+    <div class="nav-item active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+      Assignment Queue
+    </div>
+    <div class="nav-item" onclick="alert('Clients management — next screen')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4z"/></svg>
+      Clients
+    </div>
+    <div class="nav-item" onclick="alert('Suppliers directory — next screen')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Suppliers
+    </div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Awards
+    </div>
+  </nav>
+  <div class="px-4 py-3 mx-2 rounded-xl" style="background:rgba(42,61,136,0.06);border:1px solid rgba(42,61,136,0.1)">
+    <p class="text-xs font-bold text-slate-500">Internal console · restricted</p>
+    <p class="text-xs text-slate-400 mt-0.5">Ivan S. · admin</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="flex-1 flex flex-col" style="position:relative;z-index:1">
+
+  <!-- Topbar -->
+  <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-lg font-black text-slate-900 leading-tight">Quote Assignment Console</h1>
+      <p class="text-xs text-slate-400 mt-0.5">169 active quotes from suppliers · sorted by DLA deadline</p>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-400">Operating as</span>
+        <select class="client-select" id="clientSel" onchange="changeClient()">
+          <option value="A">Acme Defense Supply · CAGE 50401</option>
+          <option value="B">Veteran Parts LLC · CAGE 7K2L9</option>
+          <option value="C">HUBZone Logistics · CAGE 3RT88</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client criteria bar -->
+  <div class="px-6 mb-3">
+    <div class="float-card px-5 py-3 flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2 flex-wrap" id="critBar"></div>
+      <label class="flex items-center gap-2 text-xs font-bold text-slate-500 cursor-pointer">
+        <input type="checkbox" id="eligOnly" checked onchange="render()" style="accent-color:#2a3d88">
+        Show only eligible for this client
+      </label>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="px-6 mb-3 grid grid-cols-4 gap-3">
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Available</p><p class="text-xl font-black text-slate-900" id="kAvail">0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Eligible</p><p class="text-xl font-black" style="color:var(--primary)" id="kElig">0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">In batch</p><p class="text-xl font-black text-slate-900" id="kBatch">0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Batch profit</p><p class="text-xl font-black text-slate-900" id="kProfit">$0</p></div>
+  </div>
+
+  <!-- Table -->
+  <div class="px-6 pb-40">
+    <div class="float-card overflow-hidden">
+      <div style="overflow-x:auto; max-height:none">
+      <table class="ops">
+        <thead>
+          <tr>
+            <th>Solicitation / Supplier</th>
+            <th>Due</th>
+            <th>PN / NSN / Mfr</th>
+            <th>Type</th>
+            <th>DQty</th>
+            <th>SQty</th>
+            <th>LT</th>
+            <th>Cond</th>
+            <th>DIBBS</th>
+            <th>MDBBS</th>
+            <th>SUP-P</th>
+            <th>Notes</th>
+            <th>Profit / Cost</th>
+            <th>ROI</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="opsBody"></tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch tray -->
+  <div class="tray">
+    <div class="hero-gradient rounded-2xl px-5 py-3.5" style="box-shadow:0 20px 50px rgba(33,50,95,0.3)">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-5 flex-wrap">
+          <div>
+            <p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Batch for <span id="trayClient">Acme Defense Supply</span></p>
+            <p class="text-white font-black text-base"><span id="trayCount">0</span> quotes · profit <span id="trayProfit">$0</span></p>
+          </div>
+          <div style="min-width:200px">
+            <div class="flex justify-between text-xs mb-1" style="color:rgba(255,255,255,0.75)"><span>Batch cost</span><span><span id="trayCost">$0</span> / <span id="trayBudget">$10,000</span></span></div>
+            <div class="prog"><div class="prog-fill" id="trayProg" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn-ghost text-xs font-bold px-4 py-2.5 rounded-xl" onclick="clearBatch()">Clear</button>
+          <button class="bg-white font-black text-sm px-5 py-2.5 rounded-xl" style="color:var(--navy)" onclick="sendBatch()">Send batch email (.txt) →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAST-REVIEW DRAWER -->
+<div class="drawer-bg" id="drawerBg" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="hero-gradient p-5">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">QUOTE REVIEW</span>
+      <button onclick="closeDrawer()" aria-label="Close" class="w-8 h-8 rounded-lg flex items-center justify-center text-white" style="background:rgba(255,255,255,0.15)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <h2 class="text-white font-black text-lg leading-tight" id="dName">SHAFT TURBINE AIRC</h2>
+    <p class="text-sm" style="color:rgba(255,255,255,0.7)" id="dSolic">RFQ ILSCUSZ260616023907</p>
+    <button onclick="alert('Supplier profile — certs, photos, history (next screen)')" class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg" style="background:rgba(255,255,255,0.14);color:#fff">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      View supplier profile: <span id="dSupplier">Pacific Turbine</span>
+    </button>
+  </div>
+
+  <div class="p-5 space-y-4">
+    <!-- read-only DLA data -->
+    <div>
+      <p class="text-xs font-black text-slate-400 uppercase tracking-wider mb-1">DLA solicitation (scraped)</p>
+      <div class="dla-line" style="border-top:none"><span class="text-slate-400">NSN</span><span class="font-bold text-slate-800" id="dNsn">2840-00-837-2071</span></div>
+      <div class="dla-line"><span class="text-slate-400">Part No</span><span class="font-bold text-slate-800" id="dPn">3011095</span></div>
+      <div class="dla-line"><span class="text-slate-400">Approved mfr</span><span class="font-bold text-slate-800">Canadian Commercial Corp · 98247</span></div>
+      <div class="dla-line"><span class="text-slate-400">DLA qty</span><span class="font-bold text-slate-800">6 EA</span></div>
+      <div class="dla-line"><span class="text-slate-400">Quote due</span><span class="font-bold text-slate-800">06/18/26</span></div>
+      <div class="dla-line"><span class="text-slate-400">Last DLA price (DIBBS)</span><span class="font-bold text-slate-800">$16,688.94</span></div>
+    </div>
+
+    <!-- editable -->
+    <div>
+      <p class="text-xs font-black text-slate-400 uppercase tracking-wider mb-2">Editable before assigning</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="label">Delivery days</label><input class="field" value="88"></div>
+        <div><label class="label">Quantity</label><input class="field" value="6"></div>
+        <div><label class="label">Supplier price (SUP-P)</label><input class="field" value="$150.00"></div>
+        <div><label class="label">Our offer (MDBBS)</label><input class="field" value="$13,351.15"></div>
+        <div><label class="label">Condition</label>
+          <select class="field"><option>OH</option><option>NE</option><option>NS</option></select>
+        </div>
+        <div><label class="label">Manufacturer</label><input class="field" value="Canadian Commercial"></div>
+      </div>
+      <div class="mt-3"><label class="label">Internal note</label><textarea class="field" rows="2" placeholder="SEA:N · INS:Y · any manual note"></textarea></div>
+    </div>
+
+    <div class="rounded-xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
+      <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">Gross profit</span><span class="text-xl font-black" style="color:var(--primary)">$79,206.90</span></div>
+      <p class="text-xs text-slate-400 mt-0.5">Cost $900.00 · ROI 8,801%</p>
+    </div>
+
+    <div class="flex gap-2">
+      <button class="btn-ghost flex-1 font-bold py-3 rounded-xl text-sm" onclick="closeDrawer()">Cancel</button>
+      <button class="btn-primary flex-1 font-black py-3 rounded-xl text-sm" onclick="closeDrawer()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- Client profiles (would be editable in Clients screen) ----
+const CLIENTS = {
+  A: { name:'Acme Defense Supply', cage:'50401', budget:10000, setAside:'none', inspection:'origin' },
+  B: { name:'Veteran Parts LLC',   cage:'7K2L9', budget:6000,  setAside:'SDVOSB', inspection:'destination' },
+  C: { name:'HUBZone Logistics',   cage:'3RT88', budget:15000, setAside:'HUBZONE', inspection:'origin' },
+};
+let activeClient = 'A';
+
+// ---- Quotes from suppliers (cost = sup-p × dqty; mdbbs auto = max(dibbs, supp*1.4)) ----
+const QUOTES = [
+  { solic:'SPE4A526Q0573', supplier:'Pacific Turbine', email:'sales@pacificturbineusa.com', due:'06/18/26', pn:'3011095', nsn:'2840-00-837-2071', mfr:'Canadian Commercial', type:'EA', dqty:6, lt:88, cond:'OH', dibbs:16688.94, supp:150.00, notes:['INS:O'], setAside:'none', inspection:'origin' },
+  { solic:'SPE4A526Q0576', supplier:'Meritt Aviation', email:'bryan@merittaviation.com', due:'06/19/26', pn:'3022312', nsn:'2840-00-544-2472', mfr:'Canadian Commercial', type:'EA', dqty:2, lt:402, cond:'OH', dibbs:97772.06, supp:2500.00, notes:['INS:O'], setAside:'none', inspection:'origin' },
+  { solic:'SPE7M026T9419', supplier:'DigiKey', email:'orders@digikey.com', due:'06/26/26', pn:'7-1393246-5', nsn:'5925-01-727-7515', mfr:'No approved source', type:'EA', dqty:1, lt:5, cond:'NE', dibbs:1095.00, supp:69.52, notes:[], setAside:'none', inspection:'destination' },
+  { solic:'SPE4A526Q0571', supplier:'Pacific Turbine', email:'sales@pacificturbineusa.com', due:'06/18/26', pn:'3015676', nsn:'2995-00-483-8668', mfr:'Canadian Commercial', type:'EA', dqty:7, lt:81, cond:'OH', dibbs:12477.55, supp:1000.00, notes:['INS:O'], setAside:'none', inspection:'origin' },
+  { solic:'SPE4A726T488B', supplier:'Air Commercial Jet', email:'cs@aircommercialjet.com', due:'06/22/26', pn:'40290-9', nsn:'1560-00-732-2759', mfr:'Arrowhead Products', type:'EA', dqty:5, lt:169, cond:'NE', dibbs:2148.00, supp:186.62, notes:['SDVOSB'], setAside:'SDVOSB', inspection:'destination' },
+  { solic:'SPE7L326T064C', supplier:'Navy Sales', email:'navysales@dibbs.online', due:'06/22/26', pn:'721J8MT160AT', nsn:'5330-00-505-1693', mfr:'Greene Tweed', type:'EA', dqty:64, lt:60, cond:'NE', dibbs:199.00, supp:47.88, notes:['HUBZONE'], setAside:'HUBZONE', inspection:'origin' },
+  { solic:'SPE4A626T95R5', supplier:'Sky Parts Intl', email:'quotes@skyparts.com', due:'06/24/26', pn:'SK-2290', nsn:'1620-00-114-2230', mfr:'Sikorsky Aircraft', type:'EA', dqty:3, lt:120, cond:'NS', dibbs:8800.00, supp:640.00, notes:['INS:O'], setAside:'none', inspection:'origin' },
+  { solic:'SPE5A126Q1180', supplier:'Hermes Technical', email:'sales@hermestech.com', due:'06/20/26', pn:'BRK-118', nsn:'5340-01-234-8823', mfr:'Steel Fab Inc', type:'EA', dqty:500, lt:30, cond:'NE', dibbs:140.00, supp:92.00, notes:['WOSB'], setAside:'WOSB', inspection:'origin' },
+  { solic:'SPE4A526Q0573', supplier:'Aeroparts Brazil', email:'quotes@aeroparts.br', due:'06/18/26', pn:'3011095', nsn:'2840-00-837-2071', mfr:'Canadian Commercial', type:'EA', dqty:6, lt:75, cond:'OH', dibbs:16688.94, supp:240.00, notes:['INS:O'], setAside:'none', inspection:'origin' },
+];
+
+function money(n){ return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}); }
+function moneyShort(n){ return '$'+Math.round(n).toLocaleString(); }
+function autoMdbbs(q){ return Math.max(q.dibbs, q.supp*1.4); }
+
+let batch = [];   // array of quote indexes
+
+function eligible(q){
+  const c = CLIENTS[activeClient];
+  // set-aside: client must satisfy the quote's required set-aside (none always ok)
+  if(q.setAside !== 'none' && q.setAside !== c.setAside) return false;
+  // inspection origin requirement
+  if(q.inspection === 'origin' && c.inspection !== 'origin') return false;
+  return true;
+}
+
+function dupInBatch(pn){ return batch.some(i => QUOTES[i].pn === pn); }
+
+function render(){
+  const c = CLIENTS[activeClient];
+  // criteria bar
+  document.getElementById('critBar').innerHTML =
+    `<span class="text-xs font-bold text-slate-400 mr-1">${c.name} requires:</span>`+
+    `<span class="crit-chip">Set-aside: ${c.setAside==='none'?'Any':c.setAside}</span>`+
+    `<span class="crit-chip">Daily budget: ${moneyShort(c.budget)}</span>`+
+    `<span class="crit-chip">Inspection: ${c.inspection}</span>`+
+    `<span class="crit-chip">CAGE ${c.cage}</span>`;
+
+  const eligOnly = document.getElementById('eligOnly').checked;
+  const body = document.getElementById('opsBody');
+  body.innerHTML = '';
+  let eligCount = 0;
+
+  QUOTES.forEach((q, i) => {
+    const elig = eligible(q);
+    if(elig) eligCount++;
+    if(eligOnly && !elig) return;
+
+    const mdbbs = autoMdbbs(q);
+    const cost = q.supp * q.dqty;
+    const revenue = mdbbs * q.dqty;
+    const profit = revenue - cost;
+    const roi = cost>0 ? Math.round(profit/cost*100) : 0;
+    const roiCls = roi>=1000?'roi-3':roi>=300?'roi-2':'roi-1';
+    const inBatch = batch.includes(i);
+    const dup = !inBatch && dupInBatch(q.pn);
+    const canAdd = elig && !dup;
+
+    const tr = document.createElement('tr');
+    tr.className = 'ops-row' + (inBatch?' inbatch':'') + (!elig?' ineligible':'');
+    tr.onclick = (e)=>{ if(!e.target.closest('.add-btn') && !e.target.closest('.mdbbs-input')) openDrawer(q); };
+    tr.innerHTML = `
+      <td><p class="font-bold text-slate-900">${q.solic}</p><p class="text-slate-400" style="font-size:11px">${q.supplier}</p></td>
+      <td class="font-bold ${urgent(q.due)?'':'text-slate-500'}" style="${urgent(q.due)?'color:var(--navy)':''}">${q.due}</td>
+      <td><p class="font-bold text-slate-800">${q.pn}</p><p class="text-slate-400" style="font-size:10px">${q.nsn}</p><p class="text-slate-400" style="font-size:10px">${q.mfr}</p></td>
+      <td class="text-slate-600">${q.type}</td>
+      <td class="font-bold text-slate-800">${q.dqty}</td>
+      <td class="font-bold text-slate-800">${q.dqty}</td>
+      <td class="text-slate-600">${q.lt}d</td>
+      <td class="text-slate-600">${q.cond}</td>
+      <td class="text-slate-500">${money(q.dibbs)}</td>
+      <td><input class="mdbbs-input" value="${mdbbs.toFixed(2)}" onchange="editMdbbs(${i}, this.value)"></td>
+      <td class="font-bold text-slate-800">${money(q.supp)}</td>
+      <td>${q.notes.map(n=>`<span class="note-chip">${n}</span>`).join('') || '<span class="text-slate-300">—</span>'}</td>
+      <td><p class="font-black text-slate-900">${moneyShort(profit)}</p><p class="text-slate-400" style="font-size:10px">${moneyShort(cost)}</p></td>
+      <td><span class="roi-pill ${roiCls}">${roi.toLocaleString()}%</span></td>
+      <td><div class="add-btn ${inBatch?'added':''} ${canAdd||inBatch?'':'disabled'}" title="${dup?'Same P/N already in batch':(!elig?'Not eligible for this client':'Add to batch')}" onclick="toggleBatch(${i})">${inBatch?'&#10003;':'+'}</div></td>`;
+    body.appendChild(tr);
+  });
+
+  document.getElementById('kAvail').textContent = QUOTES.length;
+  document.getElementById('kElig').textContent = eligCount;
+  document.getElementById('kBatch').textContent = batch.length;
+  updateTray();
+}
+
+function urgent(due){
+  // crude: treat 06/18–06/20 as urgent for demo
+  return ['06/18/26','06/19/26','06/20/26'].includes(due);
+}
+
+let mdbbsOverride = {};
+function editMdbbs(i, val){
+  const n = parseFloat(String(val).replace(/[^0-9.]/g,''));
+  if(!isNaN(n)) { QUOTES[i].dibbs = QUOTES[i].dibbs; mdbbsOverride[i]=n; }
+  // recompute by temporarily setting dibbs floor
+  QUOTES[i]._mdbbs = n;
+  render();
+}
+
+function toggleBatch(i){
+  const q = QUOTES[i];
+  if(batch.includes(i)){ batch = batch.filter(x=>x!==i); render(); return; }
+  if(!eligible(q)) return;
+  if(dupInBatch(q.pn)){ return; }
+  batch.push(i);
+  render();
+}
+
+function updateTray(){
+  const c = CLIENTS[activeClient];
+  let cost=0, profit=0;
+  batch.forEach(i=>{
+    const q=QUOTES[i]; const mdbbs=autoMdbbs(q);
+    cost += q.supp*q.dqty;
+    profit += (mdbbs*q.dqty) - (q.supp*q.dqty);
+  });
+  document.getElementById('trayClient').textContent = c.name;
+  document.getElementById('trayCount').textContent = batch.length;
+  document.getElementById('trayProfit').textContent = moneyShort(profit);
+  document.getElementById('trayCost').textContent = moneyShort(cost);
+  document.getElementById('trayBudget').textContent = moneyShort(c.budget);
+  const pct = Math.min(cost/c.budget*100, 100);
+  document.getElementById('trayProg').style.width = pct+'%';
+  document.getElementById('kProfit').textContent = moneyShort(profit);
+}
+
+function changeClient(){
+  activeClient = document.getElementById('clientSel').value;
+  batch = [];  // reset batch when switching client
+  render();
+}
+function clearBatch(){ batch=[]; render(); }
+
+function sendBatch(){
+  if(batch.length===0){ alert('Add quotes to the batch first.'); return; }
+  const c = CLIENTS[activeClient];
+  confettiBurst();
+  setTimeout(()=>{
+    alert(`Batch .txt sent to ${c.name} (CAGE ${c.cage}) with ${batch.length} solicitations.\nThey'll upload it to DIBBS.`);
+    batch=[]; render();
+  }, 300);
+}
+
+// drawer
+function openDrawer(q){
+  document.getElementById('dName').textContent = q.mfr;
+  document.getElementById('dSolic').textContent = 'RFQ ' + q.solic;
+  document.getElementById('dSupplier').textContent = q.supplier;
+  document.getElementById('dNsn').textContent = q.nsn;
+  document.getElementById('dPn').textContent = q.pn;
+  document.getElementById('drawer').classList.add('show');
+  document.getElementById('drawerBg').classList.add('show');
+}
+function closeDrawer(){ document.getElementById('drawer').classList.remove('show'); document.getElementById('drawerBg').classList.remove('show'); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
+
+function confettiBurst(){
+  const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
+  for(let i=0;i<45;i++){ const c=document.createElement('div'); c.className='confetti'; const s=6+Math.random()*7; c.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.8+Math.random()*1.5}s`; document.body.appendChild(c); setTimeout(()=>c.remove(),3600); }
+}
+
+// override autoMdbbs to respect manual edits
+const _autoMdbbs = autoMdbbs;
+autoMdbbs = function(q){ const i=QUOTES.indexOf(q); if(QUOTES[i] && QUOTES[i]._mdbbs) return QUOTES[i]._mdbbs; return _autoMdbbs(q); };
+
+render();
+</script>
+</body>
+</html>
