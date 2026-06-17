@@ -96,7 +96,7 @@
       <p class="text-xs text-slate-400 mt-0.5">1,284 items · <span class="src-chip" style="padding:2px 8px;font-size:11px">Synced from Google Sheet · 4h ago</span></p>
     </div>
     <div class="flex items-center gap-3">
-      <button class="btn-ghost text-sm font-bold px-4 py-2 rounded-xl" onclick="location.href='suppliers-03-upload-inventory.html'">Re-import / sync</button>
+      <button class="btn-ghost text-sm font-bold px-4 py-2 rounded-xl" onclick="openReimport()">Re-import / sync</button>
       <button class="btn-primary text-sm font-black px-4 py-2 rounded-xl" onclick="openAdd()">+ Add item</button>
       <div class="avatar">HT</div>
     </div>
@@ -176,6 +176,65 @@
     </div>
   </div>
 </div>
+
+<!-- RE-IMPORT MODAL -->
+<div class="modal-bg" id="reimportBg">
+  <div class="modal p-7">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="text-xl font-black text-slate-900">Re-import inventory</h2>
+      <div class="icon-btn" onclick="closeReimport()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></div>
+    </div>
+    <p class="text-sm text-slate-500 mb-5">Upload a new Excel/CSV to refresh your stock. We'll update quantities and add new items automatically.</p>
+
+    <div id="reDrop" class="dropzone" style="border:2px dashed rgba(42,61,136,0.25); border-radius:16px; padding:34px; text-align:center; cursor:pointer; background:rgba(42,61,136,0.02); transition:all .2s" onclick="reSimulate()">
+      <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      </div>
+      <p class="text-sm font-black text-slate-900 mb-1">Drag your Excel or CSV here</p>
+      <p class="text-xs text-slate-500">or <span class="font-bold" style="color:var(--primary)">browse files</span> · .xlsx · .csv</p>
+    </div>
+
+    <!-- progress / result (hidden until upload) -->
+    <div id="reResult" style="display:none" class="mt-4">
+      <div class="rounded-xl p-4 flex items-center gap-3" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div>
+          <p class="text-sm font-black text-slate-900">inventory_june.xlsx · 1,302 rows</p>
+          <p class="text-xs text-slate-500">38 new items · 1,264 updated · ready to apply</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mt-6">
+      <button class="btn-ghost flex-1 font-bold py-3 rounded-xl text-sm" onclick="closeReimport()">Cancel</button>
+      <button id="reApply" class="btn-primary flex-1 font-black py-3 rounded-xl text-sm" style="opacity:.5;pointer-events:none" onclick="reApply()">Apply update</button>
+    </div>
+    <p class="text-xs text-slate-400 text-center mt-3">Prefer auto-sync? <a href="suppliers-03-upload-inventory.html" class="font-bold" style="color:var(--primary)">Connect a Google Sheet instead →</a></p>
+  </div>
+</div>
+
+<script>
+function openReimport(){ document.getElementById('reimportBg').classList.add('show'); }
+function closeReimport(){
+  document.getElementById('reimportBg').classList.remove('show');
+  // reset
+  document.getElementById('reResult').style.display='none';
+  document.getElementById('reDrop').style.display='block';
+  const ap=document.getElementById('reApply'); ap.style.opacity='.5'; ap.style.pointerEvents='none';
+}
+function reSimulate(){
+  // simulate a file chosen
+  document.getElementById('reResult').style.display='block';
+  const ap=document.getElementById('reApply'); ap.style.opacity='1'; ap.style.pointerEvents='auto';
+}
+function reApply(){
+  const ap=document.getElementById('reApply'); ap.textContent='Updating…'; ap.style.opacity='.8';
+  setTimeout(()=>{ closeReimport(); ap.textContent='Apply update'; }, 900);
+}
+document.getElementById('reimportBg').addEventListener('click', e=>{ if(e.target.id==='reimportBg') closeReimport(); });
+</script>
 
 <script>
 let inventory = [
