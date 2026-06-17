@@ -130,9 +130,27 @@
               <p class="hint">DLA needs 120 · you have enough ✓</p>
             </div>
             <div>
-              <label class="label">Your price / unit</label>
-              <input class="field" value="$1,840">
-              <p class="hint">The price you'll sell this unit at</p>
+              <label class="label">Your price</label>
+              <div class="flex gap-3">
+                <input class="field" style="flex:1.4" placeholder="0.00" value="1,840.00">
+                <span class="field flex items-center justify-center" style="width:auto;color:#94a3b8;flex:0 0 56px">USD</span>
+              </div>
+              <p class="hint">The price you'll sell at</p>
+            </div>
+            <div>
+              <label class="label">Per unit (unit of measure)</label>
+              <select class="field">
+                <option>Each (EA)</option>
+                <option>Package (PG)</option>
+                <option>Box (BX)</option>
+                <option>Yard (YD)</option>
+                <option>Foot (FT)</option>
+                <option>Pound (LB)</option>
+                <option>Gallon (GL)</option>
+                <option>Set (SE)</option>
+                <option>Roll (RO)</option>
+              </select>
+              <p class="hint">DLA requests this item in <span class="font-bold" style="color:var(--primary)">EA</span></p>
             </div>
             <div>
               <label class="label">Lead time</label>
