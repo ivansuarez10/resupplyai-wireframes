@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Daily Matches</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
+
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; animation: orbFloat 16s ease-in-out infinite; }
+  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.1)} }
+
+  /* Sidebar */
+  .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
+  .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
+  .nav-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .nav-item.active { background:rgba(42,61,136,0.1); color:var(--primary); }
+  .nav-item.active::before { content:''; position:absolute; left:-10px; top:20%; bottom:20%; width:3px; border-radius:3px; background:var(--primary); }
+  .nav-item svg { width:15px; height:15px; flex-shrink:0; }
+
+  .float-card { background:#fff; border-radius:20px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
+
+  /* Animated gradient hero */
+  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
+  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
+  @property --gs1 { syntax:'<percentage>'; inherits:false; initial-value:55%; }
+  @property --gs2 { syntax:'<percentage>'; inherits:false; initial-value:55%; }
+  .hero-gradient { background-color:var(--primary);
+    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent var(--gs1)), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent var(--gs2));
+    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite, size1 5s ease-in-out infinite, size2 5.8s ease-in-out infinite; }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  @keyframes size1 { 0%,100%{--gs1:45%} 50%{--gs1:75%} }
+  @keyframes size2 { 0%,100%{--gs2:45%} 50%{--gs2:80%} }
+  @media (prefers-reduced-motion: reduce){ .hero-gradient,.bg-orb{animation:none} }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(33,50,95,0.3); }
+  .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
+  .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+
+  /* Match row */
+  .match-row { border-top:1px solid rgba(33,50,95,0.05); transition: background .15s; }
+  .match-row:hover { background: rgba(42,61,136,0.025); }
+  .hot-row { background: linear-gradient(135deg, rgba(42,61,136,0.05), rgba(94,126,232,0.03)); }
+
+  .badge-hot { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; font-size:9px; font-weight:900; padding:2px 8px; border-radius:9999px; letter-spacing:.04em; }
+  .badge-val { background: rgba(42,61,136,0.1); color:var(--primary); font-size:9px; font-weight:900; padding:2px 8px; border-radius:9999px; letter-spacing:.03em; }
+
+  .sort-tab { font-size:12px; font-weight:800; padding:7px 14px; border-radius:10px; cursor:pointer; transition:all .15s; color:#64748b; }
+  .sort-tab.active { background:#fff; color:var(--primary); box-shadow:0 2px 10px rgba(33,50,95,0.08); }
+
+  .qbtn { font-size:12px; font-weight:800; padding:7px 14px; border-radius:10px; cursor:pointer; transition:all .18s; }
+  .qbtn-quote { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; }
+  .qbtn-quote:hover { transform: translateY(-1px); box-shadow:0 6px 16px rgba(33,50,95,0.3); }
+  .qbtn-skip { background:#f1f5f9; color:#64748b; }
+  .qbtn-skip:hover { background:#e2e8f0; }
+  .qbtn-no { background:#fff; border:1px solid rgba(33,50,95,0.12); color:#94a3b8; }
+
+  .row-quoted { opacity:0.55; }
+  .quoted-tag { font-size:11px; font-weight:900; color:#16a34a; }
+
+  .price-input { width:90px; border:1px solid rgba(33,50,95,0.15); border-radius:9px; padding:6px 9px; font-size:13px; font-weight:800; color:var(--navy); outline:none; text-align:right; }
+  .price-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
+
+  .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+
+  .kpi-enter { animation: kIn .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes kIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+  @media (max-width:1023px){ .sidebar{display:none} }
+</style>
+</head>
+<body class="flex">
+
+<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="px-5 mb-7 flex items-center gap-2">
+    <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+  </div>
+  <nav class="flex-1 space-y-0.5">
+    <div class="nav-item active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      Daily Matches
+    </div>
+    <div class="nav-item" onclick="location.href='suppliers-05-my-quotes.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      My Quotes
+    </div>
+    <div class="nav-item" onclick="location.href='suppliers-06-my-inventory.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      My Inventory
+    </div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Settings
+    </div>
+  </nav>
+  <div style="margin:0 10px; border-radius:14px; padding:14px; background:linear-gradient(135deg, rgba(42,61,136,0.08), rgba(33,50,95,0.05)); border:1px solid rgba(42,61,136,0.1)">
+    <p style="font-size:12px;font-weight:900;color:var(--navy);margin-bottom:2px">Sold via ResupplyAI</p>
+    <p style="font-size:22px;font-weight:900;color:var(--primary);line-height:1.1">$128,400</p>
+    <p style="font-size:11px;color:#64748b;margin-top:2px">in the last 90 days</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="flex-1 flex flex-col" style="position:relative;z-index:1">
+
+  <!-- Topbar -->
+  <div class="px-6 py-4 flex items-center justify-between">
+    <div>
+      <h1 class="text-lg font-black text-slate-900 leading-tight">Good morning, Hermes Technical</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Tuesday, June 17, 2026 · matches refreshed 6:00 AM</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input class="bg-white rounded-xl pl-9 pr-4 py-2 text-sm outline-none" style="border:1px solid rgba(33,50,95,0.08);box-shadow:0 4px 16px rgba(33,50,95,0.05);width:220px" placeholder="Search NSN, P/N…">
+      </div>
+      <div class="avatar">HT</div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-6 pb-8 pt-2 space-y-5">
+
+    <!-- KPI row -->
+    <div class="grid grid-cols-4 gap-4">
+      <div class="float-card kpi-enter p-5">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Matches today</p>
+        <p class="text-3xl font-black text-slate-900" id="k1">0</p>
+        <p class="text-xs text-slate-400 mt-1">across your 1,284 items</p>
+      </div>
+      <div class="float-card kpi-enter p-5" style="animation-delay:.1s;border:1px solid rgba(42,61,136,0.18)">
+        <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--primary)">🔥 Hot matches</p>
+        <p class="text-3xl font-black" style="color:var(--primary)" id="k2">0</p>
+        <p class="text-xs text-slate-400 mt-1">high-value · quote first</p>
+      </div>
+      <div class="float-card kpi-enter p-5" style="animation-delay:.2s">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Quoted today</p>
+        <p class="text-3xl font-black text-slate-900" id="k3">0</p>
+        <p class="text-xs text-slate-400 mt-1">keep going →</p>
+      </div>
+      <div class="float-card kpi-enter p-5" style="animation-delay:.3s">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Potential value</p>
+        <p class="text-3xl font-black text-slate-900" id="k4">$0</p>
+        <p class="text-xs text-slate-400 mt-1">if all matches win</p>
+      </div>
+    </div>
+
+    <!-- Hot matches banner -->
+    <div class="hero-gradient rounded-2xl p-5 flex items-center justify-between flex-wrap gap-4" style="box-shadow:0 20px 50px rgba(33,50,95,0.28)">
+      <div class="flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background:rgba(255,255,255,0.15)">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <div>
+          <p class="text-white font-black text-base">3 High-Value matches today</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.75)">The DLA has historically paid top dollar for these — and you have them in stock.</p>
+        </div>
+      </div>
+      <button onclick="document.getElementById('hotSection').scrollIntoView({behavior:'smooth'})" class="bg-white font-black text-sm px-5 py-2.5 rounded-xl" style="color:var(--navy)">Quote them first →</button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-1 p-1 rounded-xl" style="background:rgba(33,50,95,0.05)">
+        <span class="text-xs font-bold text-slate-400 px-2">Sort:</span>
+        <span class="sort-tab active" onclick="setSort(this)">Urgency</span>
+        <span class="sort-tab" onclick="setSort(this)">Value</span>
+        <span class="sort-tab" onclick="setSort(this)">Volume</span>
+        <span class="sort-tab" onclick="setSort(this)">Best margin</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400" id="selCount">0 selected</span>
+        <button class="btn-ghost text-xs font-bold px-4 py-2 rounded-xl">Bulk quote selected</button>
+      </div>
+    </div>
+
+    <!-- Matches table -->
+    <div class="float-card overflow-hidden" id="hotSection">
+      <div class="px-5 py-3.5 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)">
+        <h2 class="font-black text-slate-900 text-sm">Today's Matches <span class="text-slate-400 font-bold">· 47</span></h2>
+        <p class="text-xs text-slate-400">Confirm stock & price → quote goes to ResupplyAI</p>
+      </div>
+
+      <div style="overflow-x:auto">
+      <table class="w-full" style="min-width:880px">
+        <thead>
+          <tr style="background:#fafbff">
+            <th class="w-10 px-4 py-2.5"><input type="checkbox" style="accent-color:#2a3d88"></th>
+            <th class="text-left px-2 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">NSN / Item</th>
+            <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">DLA needs</th>
+            <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Your stock</th>
+            <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Deadline</th>
+            <th class="text-left px-3 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Suggested</th>
+            <th class="text-right px-4 py-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">Quote</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- HOT 1 -->
+          <tr class="match-row hot-row">
+            <td class="px-4 py-3.5"><input type="checkbox" style="accent-color:#2a3d88"></td>
+            <td class="px-2 py-3.5">
+              <div class="flex items-center gap-2 mb-0.5"><span class="badge-hot">HIGH VALUE</span></div>
+              <p class="text-sm font-bold text-slate-900">2530-01-687-4521</p>
+              <p class="text-xs text-slate-400">Brake Drum Assembly · P/N BD-44871</p>
+            </td>
+            <td class="px-3 py-3.5"><p class="text-sm font-black text-slate-900">120</p><p class="text-xs text-slate-400">EA · Meritor</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-bold text-slate-800">340</p><p class="text-xs" style="color:#16a34a">in stock ✓</p></td>
+            <td class="px-3 py-3.5"><span class="text-xs font-black px-2 py-1 rounded-md" style="background:rgba(42,61,136,0.14);color:var(--navy)">Jun 19 · 2d</span></td>
+            <td class="px-3 py-3.5">
+              <input class="price-input" value="1,840">
+              <p class="text-xs text-slate-400 mt-1">AI suggested</p>
+            </td>
+            <td class="px-4 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+                <span class="qbtn qbtn-no" onclick="skip(this)">No stock</span>
+              </div>
+            </td>
+          </tr>
+          <!-- HOT 2 -->
+          <tr class="match-row hot-row">
+            <td class="px-4 py-3.5"><input type="checkbox" style="accent-color:#2a3d88"></td>
+            <td class="px-2 py-3.5">
+              <div class="flex items-center gap-2 mb-0.5"><span class="badge-hot">HIGH VALUE</span></div>
+              <p class="text-sm font-bold text-slate-900">1560-01-445-8821</p>
+              <p class="text-xs text-slate-400">Structural Panel · P/N SP-2245</p>
+            </td>
+            <td class="px-3 py-3.5"><p class="text-sm font-black text-slate-900">45</p><p class="text-xs text-slate-400">EA · Boeing</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-bold text-slate-800">60</p><p class="text-xs" style="color:#16a34a">in stock ✓</p></td>
+            <td class="px-3 py-3.5"><span class="text-xs font-black px-2 py-1 rounded-md" style="background:rgba(42,61,136,0.14);color:var(--navy)">Jun 20 · 3d</span></td>
+            <td class="px-3 py-3.5"><input class="price-input" value="4,210"><p class="text-xs text-slate-400 mt-1">AI suggested</p></td>
+            <td class="px-4 py-3.5 text-right"><div class="flex items-center justify-end gap-1.5"><span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span><span class="qbtn qbtn-no" onclick="skip(this)">No stock</span></div></td>
+          </tr>
+          <!-- HOT 3 -->
+          <tr class="match-row hot-row">
+            <td class="px-4 py-3.5"><input type="checkbox" style="accent-color:#2a3d88"></td>
+            <td class="px-2 py-3.5">
+              <div class="flex items-center gap-2 mb-0.5"><span class="badge-hot">HIGH VALUE</span></div>
+              <p class="text-sm font-bold text-slate-900">2815-01-112-9087</p>
+              <p class="text-xs text-slate-400">Engine Cylinder Head · P/N CH-7781</p>
+            </td>
+            <td class="px-3 py-3.5"><p class="text-sm font-black text-slate-900">30</p><p class="text-xs text-slate-400">EA · Caterpillar</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-bold text-slate-800">22</p><p class="text-xs" style="color:#d97706">partial</p></td>
+            <td class="px-3 py-3.5"><span class="text-xs font-black px-2 py-1 rounded-md" style="background:rgba(42,61,136,0.14);color:var(--navy)">Jun 24 · 7d</span></td>
+            <td class="px-3 py-3.5"><input class="price-input" value="3,560"><p class="text-xs text-slate-400 mt-1">AI suggested</p></td>
+            <td class="px-4 py-3.5 text-right"><div class="flex items-center justify-end gap-1.5"><span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span><span class="qbtn qbtn-no" onclick="skip(this)">No stock</span></div></td>
+          </tr>
+          <!-- NORMAL rows -->
+          <tr class="match-row">
+            <td class="px-4 py-3.5"><input type="checkbox" style="accent-color:#2a3d88"></td>
+            <td class="px-2 py-3.5"><p class="text-sm font-bold text-slate-900">5340-01-234-8823</p><p class="text-xs text-slate-400">Bracket, Mounting · P/N BRK-118</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-black text-slate-900">500</p><p class="text-xs text-slate-400">EA</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-bold text-slate-800">1,200</p><p class="text-xs" style="color:#16a34a">in stock ✓</p></td>
+            <td class="px-3 py-3.5"><span class="text-xs font-bold px-2 py-1 rounded-md text-slate-500" style="background:#f1f5f9">Jun 27 · 10d</span></td>
+            <td class="px-3 py-3.5"><input class="price-input" value="92"></td>
+            <td class="px-4 py-3.5 text-right"><div class="flex items-center justify-end gap-1.5"><span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span><span class="qbtn qbtn-no" onclick="skip(this)">No stock</span></div></td>
+          </tr>
+          <tr class="match-row">
+            <td class="px-4 py-3.5"><input type="checkbox" style="accent-color:#2a3d88"></td>
+            <td class="px-2 py-3.5"><p class="text-sm font-bold text-slate-900">5305-01-112-3344</p><p class="text-xs text-slate-400">Screw, Machine · P/N SCM-04</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-black text-slate-900">1,200</p><p class="text-xs text-slate-400">EA</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-bold text-slate-800">8,500</p><p class="text-xs" style="color:#16a34a">in stock ✓</p></td>
+            <td class="px-3 py-3.5"><span class="text-xs font-bold px-2 py-1 rounded-md text-slate-500" style="background:#f1f5f9">Jun 28 · 11d</span></td>
+            <td class="px-3 py-3.5"><input class="price-input" value="14"></td>
+            <td class="px-4 py-3.5 text-right"><div class="flex items-center justify-end gap-1.5"><span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span><span class="qbtn qbtn-no" onclick="skip(this)">No stock</span></div></td>
+          </tr>
+          <tr class="match-row">
+            <td class="px-4 py-3.5"><input type="checkbox" style="accent-color:#2a3d88"></td>
+            <td class="px-2 py-3.5"><p class="text-sm font-bold text-slate-900">4730-01-556-1243</p><p class="text-xs text-slate-400">Hose Assembly · P/N HA-9920</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-black text-slate-900">80</p><p class="text-xs text-slate-400">EA</p></td>
+            <td class="px-3 py-3.5"><p class="text-sm font-bold text-slate-800">150</p><p class="text-xs" style="color:#16a34a">in stock ✓</p></td>
+            <td class="px-3 py-3.5"><span class="text-xs font-bold px-2 py-1 rounded-md text-slate-500" style="background:#f1f5f9">Jul 1 · 14d</span></td>
+            <td class="px-3 py-3.5"><input class="price-input" value="210"></td>
+            <td class="px-4 py-3.5 text-right"><div class="flex items-center justify-end gap-1.5"><span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span><span class="qbtn qbtn-no" onclick="skip(this)">No stock</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="px-5 py-3 text-center" style="border-top:1px solid rgba(33,50,95,0.06)">
+        <button class="text-sm font-bold transition-opacity hover:opacity-75" style="color:var(--primary)">Load 41 more matches ↓</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function counter(id, target, prefix){
+  const el=document.getElementById(id); const dur=1300,start=performance.now();
+  function tick(now){const p=Math.min((now-start)/dur,1);const v=Math.round((1-Math.pow(1-p,3))*target);el.textContent=(prefix||'')+v.toLocaleString();if(p<1)requestAnimationFrame(tick);}
+  requestAnimationFrame(tick);
+}
+counter('k1',47,''); counter('k2',3,''); counter('k3',0,''); counter('k4',86400,'$');
+
+let quoted = 0;
+function quote(btn){
+  const row = btn.closest('tr');
+  row.classList.add('row-quoted');
+  const cell = btn.closest('td');
+  cell.innerHTML = '<span class="quoted-tag">✓ Quoted</span>';
+  quoted++;
+  document.getElementById('k3').textContent = quoted;
+}
+function skip(btn){
+  const row = btn.closest('tr');
+  row.style.transition='opacity .3s'; row.style.opacity='0.3';
+  const cell = btn.closest('td');
+  cell.innerHTML = '<span class="text-xs font-bold text-slate-400">Skipped</span>';
+}
+function setSort(el){
+  document.querySelectorAll('.sort-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
