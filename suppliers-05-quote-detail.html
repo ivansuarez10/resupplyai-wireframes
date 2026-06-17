@@ -88,7 +88,7 @@
       <div class="lg:col-span-2">
         <div class="hero-gradient rounded-2xl p-6 sticky top-5" style="box-shadow:0 24px 60px rgba(33,50,95,0.28)">
           <div class="flex items-center gap-2 mb-4">
-            <span class="badge-hot">🔥 HIGH VALUE</span>
+            <span class="badge-hot">HIGH VALUE</span>
             <span class="text-xs font-bold" style="color:rgba(255,255,255,0.7)">DLA Solicitation</span>
           </div>
           <h2 class="text-white font-black text-lg leading-tight mb-1" id="itemName">Brake Drum Assembly</h2>
@@ -96,21 +96,20 @@
 
           <div class="rounded-xl p-3 mb-4" style="background:rgba(255,255,255,0.1)">
             <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity needed</span><span class="text-sm font-black text-white">120 EA</span></div>
-            <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Manufacturer</span><span class="text-sm font-bold text-white">Meritor</span></div>
             <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Required condition</span><span class="text-sm font-bold text-white">New</span></div>
             <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Delivery required</span><span class="text-sm font-bold text-white">≤ 30 days</span></div>
             <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Solicitation deadline</span><span class="text-sm font-black text-white">Jun 19 · 2 days</span></div>
-            <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Inspection point</span><span class="text-sm font-bold text-white">Destination</span></div>
           </div>
 
-          <!-- AI price guidance -->
-          <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.14)">
-            <div class="flex items-center gap-2 mb-1">
-              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              <p class="text-xs font-black text-white uppercase tracking-wide">AI suggested price</p>
+          <!-- Approved manufacturers -->
+          <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.12)">
+            <p class="text-xs font-black text-white uppercase tracking-wide mb-2.5">Approved manufacturers</p>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Meritor</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 0VGZ7</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Bendix</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 81348</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Webb Wheel Products</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 1NQR4</span></div>
             </div>
-            <p class="text-3xl font-black text-white leading-none mb-1">$1,840 <span class="text-sm font-bold" style="color:rgba(255,255,255,0.7)">/ unit</span></p>
-            <p class="text-xs" style="color:rgba(255,255,255,0.7)">Priced to stay competitive and win. Based on DLA purchase history + demand. You can adjust on the right.</p>
+            <p class="text-xs mt-3" style="color:rgba(255,255,255,0.65)">Your item must trace back to one of these approved sources.</p>
           </div>
         </div>
       </div>
@@ -124,16 +123,16 @@
             <h3 class="font-black text-slate-900">Confirm stock & price</h3>
             <span class="ai-badge">prefilled — please verify</span>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-4">
             <div>
               <label class="label">Quantity you can supply</label>
               <input class="field prefilled" value="340">
               <p class="hint">DLA needs 120 · you have enough ✓</p>
             </div>
             <div>
-              <label class="label">Your price / unit (to ResupplyAI)</label>
-              <input class="field prefilled" value="$1,840">
-              <p class="hint">AI suggested — adjust if needed</p>
+              <label class="label">Your price / unit</label>
+              <input class="field" value="$1,840">
+              <p class="hint">The price you'll sell this unit at</p>
             </div>
             <div>
               <label class="label">Lead time</label>
@@ -144,9 +143,20 @@
               <label class="label">Condition</label>
               <div class="seg">
                 <div class="seg-opt active" onclick="seg(this)">New</div>
-                <div class="seg-opt" onclick="seg(this)">Refurb</div>
-                <div class="seg-opt" onclick="seg(this)">Used</div>
+                <div class="seg-opt" onclick="seg(this)">New Surplus</div>
+                <div class="seg-opt" onclick="seg(this)">Overhaul</div>
               </div>
+            </div>
+            <div>
+              <label class="label">Manufacturer / OEM</label>
+              <select class="field" id="mfgSelect" onchange="checkAddOem(this)">
+                <option>Meritor</option>
+                <option>Bendix</option>
+                <option>Webb Wheel Products</option>
+                <option value="__add">+ Add another OEM…</option>
+              </select>
+              <input id="oemAdd" class="field mt-2" style="display:none" placeholder="Enter OEM name + CAGE code">
+              <p class="hint">Must be an approved source for this NSN</p>
             </div>
           </div>
         </div>
@@ -165,7 +175,7 @@
             </div>
             <div class="flex items-center justify-between py-1">
               <div>
-                <p class="text-sm font-bold text-slate-800">OEM / Traceability available</p>
+                <p class="text-sm font-bold text-slate-800">Traceability available</p>
                 <p class="text-xs text-slate-400">Documentation tracing back to manufacturer</p>
               </div>
               <div class="toggle on" onclick="this.classList.toggle('on')"></div>
@@ -229,6 +239,11 @@
 
 <script>
 function seg(el){ el.parentElement.querySelectorAll('.seg-opt').forEach(o=>o.classList.remove('active')); el.classList.add('active'); }
+function checkAddOem(sel){
+  const add = document.getElementById('oemAdd');
+  if(sel.value === '__add'){ add.style.display='block'; add.focus(); }
+  else { add.style.display='none'; }
+}
 
 // Show which NSN we came from (if passed)
 const nsn = sessionStorage.getItem('quoteNSN');
