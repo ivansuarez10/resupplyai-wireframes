@@ -182,7 +182,7 @@
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 19 · 2d</span></div>
           <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="1,840"></div>
           <div class="flex items-center gap-2">
-            <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+            <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
@@ -198,7 +198,7 @@
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 20 · 3d</span></div>
           <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="4,210"></div>
           <div class="flex items-center gap-2">
-            <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+            <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
@@ -214,7 +214,7 @@
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 24 · 7d</span></div>
           <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="3,560"></div>
           <div class="flex items-center gap-2">
-            <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+            <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
@@ -230,7 +230,7 @@
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jun 27 · 10d</span></div>
           <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="92"></div>
           <div class="flex items-center gap-2">
-            <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+            <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
@@ -245,7 +245,7 @@
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jun 28 · 11d</span></div>
           <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="14"></div>
           <div class="flex items-center gap-2">
-            <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+            <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
@@ -260,7 +260,7 @@
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jul 1 · 14d</span></div>
           <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="210"></div>
           <div class="flex items-center gap-2">
-            <span class="qbtn qbtn-quote" onclick="quote(this)">Quote</span>
+            <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
@@ -282,6 +282,22 @@
         <a href="suppliers-05-my-quotes.html" class="btn-ghost inline-block font-black px-7 py-3 rounded-xl text-sm">View My Quotes →</a>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Floating cart bar -->
+  <div id="cartBar" class="hero-gradient" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:30; border-radius:16px; padding:12px 16px 12px 20px; box-shadow:0 20px 50px rgba(33,50,95,0.4); width:calc(100% - 48px); max-width:560px;">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(255,255,255,0.16)">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-white font-black text-sm"><span id="cartCount">0</span> quotes ready to send</p>
+          <p class="text-xs" style="color:rgba(255,255,255,0.7)">Worth <span id="cartValue">$0</span> in potential sales</p>
+        </div>
+      </div>
+      <a href="suppliers-06-quote-cart.html" class="bg-white font-black text-sm px-5 py-2.5 rounded-xl whitespace-nowrap" style="color:var(--navy)">Review & Submit →</a>
     </div>
   </div>
 </div>
@@ -318,15 +334,12 @@ function removeItem(item){
   updateProgress();
 }
 
-function quote(btn){
+function openQuote(btn){
+  // Carry the item's NSN to the detail builder, then go there
   const item = btn.closest('.q-item');
-  const val = parseInt(item.dataset.val,10) || 0;
-  quoted++; quotedValue += val;
-  // flash quoted
-  const actions = btn.parentElement;
-  actions.innerHTML = '<span class="text-sm font-black" style="color:#16a34a">✓ Quoted</span>';
-  confettiMini(btn);
-  setTimeout(()=>removeItem(item), 400);
+  const nsn = item.querySelector('.font-black.text-slate-900').textContent.split(' · ')[0];
+  sessionStorage.setItem('quoteNSN', nsn.trim());
+  window.location.href = 'suppliers-05-quote-detail.html';
 }
 function skip(btn){
   const item = btn.closest('.q-item');
@@ -372,6 +385,21 @@ function confettiMini(el){
 }
 
 updateProgress();
+
+// Cart bar — reflects quotes added from the detail builder
+function refreshCart(){
+  const items = JSON.parse(localStorage.getItem('quoteCart') || '[]');
+  const bar = document.getElementById('cartBar');
+  if(items.length > 0){
+    bar.style.display = 'block';
+    document.getElementById('cartCount').textContent = items.length;
+    const total = items.reduce((s,i)=> s + (i.value||0), 0);
+    document.getElementById('cartValue').textContent = '$' + total.toLocaleString();
+  } else {
+    bar.style.display = 'none';
+  }
+}
+refreshCart();
 </script>
 </body>
 </html>

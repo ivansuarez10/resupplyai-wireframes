@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Review & Submit Quotes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .float-card { background:#fff; border-radius:18px; box-shadow:0 16px 44px rgba(33,50,95,0.08), 0 4px 16px rgba(33,50,95,0.04); border:1px solid rgba(255,255,255,0.9); }
+
+  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
+  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
+  .hero-gradient { background-color:var(--primary);
+    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%);
+    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
+  .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
+  .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+
+  .cart-item { display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:14px; background:#fff; border:1px solid rgba(33,50,95,0.07); margin-bottom:10px; transition:all .3s; }
+  .cart-item.removing { opacity:0; transform:translateX(30px); margin-bottom:-66px; }
+  .confetti { position:fixed; width:9px; height:9px; border-radius:2px; pointer-events:none; z-index:99; animation: cf linear forwards; }
+  @keyframes cf { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+  .page-enter { animation: pIn .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes pIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<div class="bg-orb" style="width:420px;height:420px;background:#c7d4f8;top:-140px;right:-100px"></div>
+
+<div class="relative max-w-3xl mx-auto px-6 pb-16" style="z-index:1">
+
+  <!-- Top -->
+  <div class="py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+    </div>
+    <a href="suppliers-04-daily-matches.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Keep quoting
+    </a>
+  </div>
+
+  <!-- ===== CART STATE ===== -->
+  <div id="cartState" class="page-enter">
+    <h1 class="text-2xl font-black text-slate-900 mb-1">Review your quotes</h1>
+    <p class="text-slate-500 text-sm mb-6">These go privately to ResupplyAI. We assign each to a buyer — if they win, they buy from you.</p>
+
+    <div id="cartList"></div>
+
+    <!-- Summary -->
+    <div class="hero-gradient rounded-2xl p-6 mt-5" style="box-shadow:0 24px 60px rgba(33,50,95,0.28)">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color:rgba(255,255,255,0.6)">Total potential sales</p>
+          <p class="text-3xl font-black text-white"><span id="grandTotal">$0</span></p>
+          <p class="text-sm mt-1" style="color:rgba(255,255,255,0.7)"><span id="qCount">0</span> quotes ready to submit</p>
+        </div>
+        <button onclick="submitAll()" class="bg-white font-black text-sm px-7 py-3.5 rounded-xl" style="color:var(--navy)">Submit all quotes →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EMPTY ===== -->
+  <div id="emptyState" class="float-card p-12 text-center mt-6 page-enter" style="display:none">
+    <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(42,61,136,0.08)">
+      <svg class="w-7 h-7" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    </div>
+    <h2 class="text-xl font-black text-slate-900 mb-2">Your quote cart is empty</h2>
+    <p class="text-slate-500 mb-6">Head back to your matches and quote the items you have in stock.</p>
+    <a href="suppliers-04-daily-matches.html" class="btn-primary inline-block font-black px-7 py-3 rounded-xl text-sm">Go to Daily Matches →</a>
+  </div>
+
+  <!-- ===== SUCCESS ===== -->
+  <div id="successState" class="float-card p-12 text-center mt-6" style="display:none">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy));box-shadow:0 20px 50px rgba(33,50,95,0.4)">
+      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-2">Quotes submitted! 🎉</h2>
+    <p class="text-slate-500 mb-6" id="successMsg">Your quotes are now with ResupplyAI. We'll match them to buyers and notify you the moment one is assigned or won.</p>
+    <a href="suppliers-07-my-quotes.html" class="btn-primary inline-block font-black px-7 py-3 rounded-xl text-sm">Track My Quotes →</a>
+  </div>
+
+</div>
+
+<script>
+function fmt(n){ return '$'+n.toLocaleString(); }
+
+function render(){
+  const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
+  if(cart.length === 0){
+    document.getElementById('cartState').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    return;
+  }
+  const list = document.getElementById('cartList');
+  list.innerHTML = '';
+  let total = 0;
+  cart.forEach((it, idx) => {
+    total += it.value;
+    const el = document.createElement('div');
+    el.className = 'cart-item';
+    el.innerHTML = `
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.06))">
+        <svg class="w-5 h-5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-black text-slate-900">${it.name}</p>
+        <p class="text-xs text-slate-400">NSN ${it.nsn} · ${it.qty} units × ${fmt(it.unit)}/ea</p>
+      </div>
+      <p class="text-sm font-black text-slate-800">${fmt(it.value)}</p>
+      <button onclick="removeItem(${idx})" class="text-slate-300 hover:text-red-400 transition-colors" title="Remove">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>`;
+    list.appendChild(el);
+  });
+  document.getElementById('grandTotal').textContent = fmt(total);
+  document.getElementById('qCount').textContent = cart.length;
+}
+
+function removeItem(idx){
+  const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
+  cart.splice(idx,1);
+  localStorage.setItem('quoteCart', JSON.stringify(cart));
+  render();
+}
+
+function submitAll(){
+  const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
+  const n = cart.length;
+  const total = cart.reduce((s,i)=>s+i.value,0);
+  localStorage.removeItem('quoteCart');
+  document.getElementById('cartState').style.display = 'none';
+  document.getElementById('successState').style.display = 'block';
+  document.getElementById('successMsg').textContent = `${n} quotes worth ${fmt(total)} are now with ResupplyAI. We'll match them to buyers and notify you the moment one is assigned or won.`;
+  confettiBurst();
+}
+
+function confettiBurst(){
+  const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
+  for(let i=0;i<55;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    const s=6+Math.random()*7;
+    c.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.8+Math.random()*1.6}s;animation-delay:${Math.random()*0.3}s`;
+    document.body.appendChild(c); setTimeout(()=>c.remove(),3800);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
