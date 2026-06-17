@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Join Free</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height: 100vh; }
+
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; animation: orbFloat 16s ease-in-out infinite; }
+  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.12)} }
+
+  @property --gx1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
+  @property --gy1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
+  @property --gx2 { syntax: '<percentage>'; inherits: false; initial-value: 90%; }
+  @property --gy2 { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
+  @property --gx3 { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
+  @property --gy3 { syntax: '<percentage>'; inherits: false; initial-value: 90%; }
+  @property --gs1 { syntax: '<percentage>'; inherits: false; initial-value: 55%; }
+  @property --gs2 { syntax: '<percentage>'; inherits: false; initial-value: 55%; }
+  @property --gs3 { syntax: '<percentage>'; inherits: false; initial-value: 60%; }
+  .hero-gradient {
+    background-color: var(--primary);
+    background-image:
+      radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent var(--gs1)),
+      radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent var(--gs2)),
+      radial-gradient(circle at var(--gx3) var(--gy3), #5e7ee8 0px, transparent var(--gs3));
+    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite, blob3 6s ease-in-out infinite,
+      size1 5s ease-in-out infinite, size2 5.8s ease-in-out infinite, size3 4.6s ease-in-out infinite;
+  }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 33%{--gx1:40%;--gy1:40%} 66%{--gx1:15%;--gy1:70%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  @keyframes blob3 { 0%,100%{--gx3:50%;--gy3:95%} 40%{--gx3:75%;--gy3:55%} 75%{--gx3:30%;--gy3:75%} }
+  @keyframes size1 { 0%,100%{--gs1:45%} 50%{--gs1:75%} }
+  @keyframes size2 { 0%,100%{--gs2:45%} 50%{--gs2:80%} }
+  @keyframes size3 { 0%,100%{--gs3:50%} 50%{--gs3:82%} }
+  @media (prefers-reduced-motion: reduce) { .hero-gradient, .bg-orb { animation: none; } }
+
+  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 320px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.12), transparent 70%); opacity:0; transition: opacity .3s; }
+  .hero-gradient:hover .hero-spot { opacity:1; }
+
+  .float-card { background:#fff; border-radius:24px; box-shadow:0 28px 70px rgba(33,50,95,0.12), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
+
+  .input { width:100%; border:1px solid rgba(33,50,95,0.12); border-radius:12px; padding:11px 14px; font-size:14px; color:#0f172a; transition: all .18s; outline:none; background:#fff; }
+  .input::placeholder { color:#94a3b8; }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(42,61,136,0.1); }
+  .label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; box-shadow: 0 12px 28px rgba(33,50,95,0.3); transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(33,50,95,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .page-enter { animation: pageIn .6s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes pageIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .left-enter { animation: leftIn .7s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes leftIn { from{opacity:0;transform:translateX(-24px)} to{opacity:1;transform:translateX(0)} }
+
+  /* CAGE pill check */
+  .cage-check { opacity:0; transform:scale(0.6); transition: all .3s cubic-bezier(.34,1.56,.64,1); }
+  .cage-check.show { opacity:1; transform:scale(1); }
+
+  .trust-item { display:flex; align-items:center; gap:10px; }
+  .trust-ico { width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+
+  @media (max-width: 880px) { .left-panel { display:none; } }
+</style>
+</head>
+<body class="flex items-stretch">
+
+<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-140px;right:-100px"></div>
+<div class="bg-orb" style="width:360px;height:360px;background:#dbe4fb;bottom:-100px;left:-100px;animation-delay:-8s"></div>
+
+<!-- LEFT: brand panel -->
+<div class="left-panel left-enter w-[44%] p-5 relative" style="z-index:1">
+  <div class="hero-gradient rounded-3xl h-full p-10 flex flex-col relative overflow-hidden" id="hero" style="box-shadow:0 40px 100px rgba(33,50,95,0.34)">
+    <div class="hero-spot"></div>
+    <div class="relative flex flex-col h-full" style="z-index:1">
+      <div class="flex items-center gap-2 mb-auto">
+        <img src="logo-white.png" alt="ResupplyAI" style="height:26px;width:auto;object-fit:contain">
+        <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">SUPPLIERS</span>
+      </div>
+
+      <div class="my-auto">
+        <h2 class="text-3xl font-black text-white leading-tight mb-4" style="letter-spacing:-0.02em">
+          Turn your warehouse<br>into daily DLA sales.
+        </h2>
+        <p class="text-base mb-8" style="color:rgba(255,255,255,0.75)">
+          Join free. Upload your inventory once. Get matched to thousands of solicitations every morning.
+        </p>
+
+        <div class="space-y-4">
+          <div class="trust-item">
+            <div class="trust-ico"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg></div>
+            <p class="text-sm text-white font-bold">No subscription, no listing fees</p>
+          </div>
+          <div class="trust-item">
+            <div class="trust-ico"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg></div>
+            <p class="text-sm text-white font-bold">AI tells you the price to win</p>
+          </div>
+          <div class="trust-item">
+            <div class="trust-ico"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg></div>
+            <p class="text-sm text-white font-bold">Your buyers & pricing stay private</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-auto pt-8">
+        <p class="text-xs" style="color:rgba(255,255,255,0.5)">Trusted by dealers already selling to the DLA.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: form -->
+<div class="flex-1 flex items-center justify-center p-5 relative" style="z-index:1">
+  <div class="w-full max-w-md page-enter">
+
+    <!-- mobile logo -->
+    <div class="md:hidden flex items-center gap-2 mb-6 justify-center">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:26px;width:auto;object-fit:contain">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+    </div>
+
+    <div class="float-card p-8">
+      <h1 class="text-2xl font-black text-slate-900 mb-1">Create your supplier account</h1>
+      <p class="text-sm text-slate-500 mb-6">Free forever. Takes 2 minutes.</p>
+
+      <form id="form" class="space-y-4" novalidate>
+        <div>
+          <label class="label">Company name</label>
+          <input class="input" placeholder="Hermes Technical LLC">
+        </div>
+
+        <div>
+          <label class="label">CAGE Code</label>
+          <div class="relative">
+            <input id="cage" class="input font-mono tracking-widest uppercase pr-10" placeholder="1ABC2" maxlength="5">
+            <svg id="cageCheck" class="cage-check absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" fill="none" stroke="#2a3d88" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <p class="text-xs text-slate-400 mt-1.5">Your 5-character CAGE code from SAM.gov — confirms you're a verified dealer.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="label">Full name</label>
+            <input class="input" placeholder="John Doe">
+          </div>
+          <div>
+            <label class="label">Work email</label>
+            <input type="email" class="input" placeholder="you@company.com">
+          </div>
+        </div>
+
+        <div>
+          <label class="label">What do you stock? <span class="font-normal text-slate-400">(optional)</span></label>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer transition-all" onclick="tog(this)" style="border:1.5px solid rgba(33,50,95,0.12);color:#475569">Vehicle Parts</span>
+            <span class="pill text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer transition-all" onclick="tog(this)" style="border:1.5px solid rgba(33,50,95,0.12);color:#475569">Hardware</span>
+            <span class="pill text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer transition-all" onclick="tog(this)" style="border:1.5px solid rgba(33,50,95,0.12);color:#475569">Aircraft</span>
+            <span class="pill text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer transition-all" onclick="tog(this)" style="border:1.5px solid rgba(33,50,95,0.12);color:#475569">Electronics</span>
+            <span class="pill text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer transition-all" onclick="tog(this)" style="border:1.5px solid rgba(33,50,95,0.12);color:#475569">Other</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="label">Password</label>
+          <input type="password" class="input" placeholder="Min. 8 characters">
+        </div>
+
+        <button type="submit" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm mt-2">Create Account & Upload Inventory →</button>
+      </form>
+
+      <p class="text-xs text-slate-400 text-center mt-4 leading-relaxed">
+        By joining you agree to our <a href="#" class="font-bold" style="color:var(--primary)">Supplier Terms</a>. We never share your buyer or pricing data.
+      </p>
+
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-1 h-px bg-slate-100"></div>
+        <span class="text-xs text-slate-400">already a supplier?</span>
+        <div class="flex-1 h-px bg-slate-100"></div>
+      </div>
+      <p class="text-center text-sm text-slate-500">
+        <a href="suppliers-04-daily-matches.html" class="font-bold" style="color:var(--primary)">Sign in to your dashboard →</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+function tog(el){
+  const on = el.dataset.on === '1';
+  el.dataset.on = on ? '0' : '1';
+  if(on){ el.style.background=''; el.style.borderColor='rgba(33,50,95,0.12)'; el.style.color='#475569'; }
+  else { el.style.background='linear-gradient(135deg, var(--primary), var(--navy))'; el.style.borderColor='transparent'; el.style.color='#fff'; }
+}
+
+// CAGE validation feedback
+const cage = document.getElementById('cage');
+cage.addEventListener('input', () => {
+  document.getElementById('cageCheck').classList.toggle('show', cage.value.length === 5);
+});
+
+document.getElementById('form').addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  btn.textContent = 'Creating account…';
+  btn.style.opacity = '0.8';
+  setTimeout(() => { window.location.href = 'suppliers-03-upload-inventory.html'; }, 800);
+});
+
+if (window.matchMedia('(pointer: fine)').matches) {
+  const hero = document.getElementById('hero');
+  if (hero) hero.addEventListener('mousemove', e => {
+    const r = hero.getBoundingClientRect();
+    hero.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
+    hero.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+  });
+}
+</script>
+</body>
+</html>
