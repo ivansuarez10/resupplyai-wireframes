@@ -133,12 +133,17 @@
         </div>
 
         <!-- Channels -->
-        <p class="label mb-2 mt-5">Where to send notifications</p>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="label" style="font-weight:700;text-transform:none;color:#64748b">Email</label><input class="field" value="john@hermestech.com"></div>
-          <div><label class="label" style="font-weight:700;text-transform:none;color:#64748b">SMS for urgent alerts <span class="text-slate-400">(optional)</span></label><input class="field" placeholder="+1 …"></div>
+        <p class="label mb-2 mt-5">Email recipients</p>
+        <div id="emailList" class="space-y-2">
+          <div class="flex gap-2"><input class="field" value="john@hermestech.com"><button class="px-3 rounded-xl text-slate-300" style="border:1px solid rgba(33,50,95,0.1)" disabled>Primary</button></div>
         </div>
-        <p class="text-xs text-slate-400 mt-2">SMS is only used for trace requests and wins — the time-sensitive ones.</p>
+        <button class="text-sm font-bold mt-2" style="color:var(--primary)" onclick="addEmail()">+ Add another email for alerts</button>
+
+        <div class="mt-4">
+          <label class="label" style="font-weight:700;text-transform:none;color:#64748b">SMS for urgent alerts <span class="text-slate-400">(optional)</span></label>
+          <input class="field" placeholder="+1 …">
+          <p class="text-xs text-slate-400 mt-2">SMS is only used for trace requests and wins — the time-sensitive ones.</p>
+        </div>
       </div>
 
       <!-- Inventory source -->
@@ -163,10 +168,10 @@
       <div class="float-card p-6">
         <div class="flex items-center justify-between mb-1">
           <h2 class="font-black text-slate-900">Team members</h2>
-          <button class="text-sm font-bold px-4 py-2 rounded-xl btn-primary" onclick="save('Invite sent')">+ Invite</button>
+          <button class="text-sm font-bold px-4 py-2 rounded-xl btn-primary" onclick="openInvite()">+ Invite</button>
         </div>
-        <p class="text-sm text-slate-500 mb-4">Add teammates who can quote on behalf of your company.</p>
-        <div class="space-y-2">
+        <p class="text-sm text-slate-500 mb-4">Invite teammates to your company account — each gets their own login, so every quote is tracked to the person who sent it.</p>
+        <div class="space-y-2" id="teamList">
           <div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
             <div class="flex items-center gap-3"><div class="avatar">JH</div><div><p class="text-sm font-bold text-slate-800">John Hermes</p><p class="text-xs text-slate-400">john@hermestech.com</p></div></div>
             <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">Owner</span>
@@ -183,7 +188,7 @@
         <h2 class="font-black text-slate-900 mb-4">Security</h2>
         <div class="flex items-center justify-between">
           <div><p class="text-sm font-bold text-slate-800">Password</p><p class="text-xs text-slate-400">Last changed 3 months ago</p></div>
-          <button class="text-sm font-bold px-4 py-2 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)">Change password</button>
+          <button class="text-sm font-bold px-4 py-2 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="openPwd()">Change password</button>
         </div>
       </div>
 
@@ -197,12 +202,94 @@
 
 <div class="toast" id="toast"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> <span id="toastMsg">Settings saved</span></div>
 
+<!-- INVITE MODAL -->
+<div id="inviteBg" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,0.4);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeInvite()">
+  <div style="background:#fff;border-radius:22px;max-width:440px;width:100%;box-shadow:0 40px 100px rgba(33,50,95,0.4)" class="p-7">
+    <h2 class="text-xl font-black text-slate-900 mb-1">Invite a teammate</h2>
+    <p class="text-sm text-slate-500 mb-5">They'll get an email to set up their own login under Hermes Technical. Every quote stays tracked to who sent it.</p>
+    <label class="label">Work email</label>
+    <input class="field mb-3" id="inviteEmail" placeholder="teammate@hermestech.com">
+    <label class="label">Role</label>
+    <select class="field mb-5" id="inviteRole"><option>Member — can quote</option><option>Admin — can quote & manage</option></select>
+    <div class="flex gap-2">
+      <button class="flex-1 text-sm font-bold py-3 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="closeInvite()">Cancel</button>
+      <button class="flex-1 btn-primary font-black py-3 rounded-xl text-sm" onclick="sendInvite()">Send invite →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="pwdBg" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,0.4);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closePwd()">
+  <div style="background:#fff;border-radius:22px;max-width:440px;width:100%;box-shadow:0 40px 100px rgba(33,50,95,0.4)" class="p-7">
+    <h2 class="text-xl font-black text-slate-900 mb-5">Change password</h2>
+    <label class="label">Current password</label>
+    <input type="password" class="field mb-3" placeholder="••••••••">
+    <label class="label">New password</label>
+    <input type="password" class="field mb-3" id="np1" placeholder="Min. 8 characters">
+    <label class="label">Confirm new password</label>
+    <input type="password" class="field mb-2" id="np2" placeholder="Re-enter">
+    <p id="pwdErr" class="text-xs mb-3" style="color:#ef4444;display:none">Passwords don't match.</p>
+    <div class="flex gap-2 mt-3">
+      <button class="flex-1 text-sm font-bold py-3 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="closePwd()">Cancel</button>
+      <button class="flex-1 btn-primary font-black py-3 rounded-xl text-sm" onclick="savePwd()">Update password</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let toastT;
+let team = [
+  {n:'John Hermes', e:'john@hermestech.com', role:'Owner'},
+  {n:'Maria Reyes', e:'maria@hermestech.com', role:'Member'},
+];
+function renderTeam(){
+  const colors=['linear-gradient(135deg,var(--primary),var(--navy))','linear-gradient(135deg,#5e7ee8,#4a63c4)','linear-gradient(135deg,#6b8af0,#3d5acb)'];
+  document.getElementById('teamList').innerHTML = team.map((m,i)=>{
+    const ini = m.n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const isOwner = m.role==='Owner';
+    const badge = isOwner ? 'background:rgba(42,61,136,0.1);color:var(--primary)'
+                : m.role==='Pending' ? 'background:#fff7ed;color:#b45309'
+                : 'background:#f1f5f9;color:#64748b';
+    return `<div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
+      <div class="flex items-center gap-3"><div class="avatar" style="background:${colors[i%3]}">${ini}</div><div><p class="text-sm font-bold text-slate-800">${m.n}</p><p class="text-xs text-slate-400">${m.e}</p></div></div>
+      <span class="text-xs font-black px-2.5 py-1 rounded-full" style="${badge}">${m.role}</span>
+    </div>`;
+  }).join('');
+}
+
+function openInvite(){ document.getElementById('inviteBg').style.display='flex'; }
+function closeInvite(){ document.getElementById('inviteBg').style.display='none'; }
+function sendInvite(){
+  const email=document.getElementById('inviteEmail').value.trim();
+  if(!email){ document.getElementById('inviteEmail').focus(); return; }
+  const name = email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  team.push({n:name, e:email, role:'Pending'});
+  renderTeam(); closeInvite();
+  document.getElementById('inviteEmail').value='';
+  save('Invite sent to '+email);
+}
+
+function openPwd(){ document.getElementById('pwdBg').style.display='flex'; }
+function closePwd(){ document.getElementById('pwdBg').style.display='none'; document.getElementById('pwdErr').style.display='none'; }
+function savePwd(){
+  const a=document.getElementById('np1').value, b=document.getElementById('np2').value;
+  if(a.length<8 || a!==b){ document.getElementById('pwdErr').style.display='block'; return; }
+  closePwd(); save('Password updated');
+}
+
+function addEmail(){
+  const wrap=document.createElement('div'); wrap.className='flex gap-2';
+  wrap.innerHTML=`<input class="field" placeholder="another@hermestech.com">
+    <button class="px-3 rounded-xl text-slate-400 hover:text-red-400" style="border:1px solid rgba(33,50,95,0.1)" onclick="this.parentElement.remove()" aria-label="Remove"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>`;
+  document.getElementById('emailList').appendChild(wrap);
+  wrap.querySelector('input').focus();
+}
+
+renderTeam();
 function save(msg){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg||'Settings saved'; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1800); }
 function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSidebar(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeSidebar(); closeInvite(); closePwd(); } });
 </script>
 </body>
 </html>
