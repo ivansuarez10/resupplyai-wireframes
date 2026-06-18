@@ -1,0 +1,12 @@
+# PRIVACY — real client portfolio + roster live ONLY in these local files, never published.
+# ops-02-clients.html is now a PUBLIC placeholder; the real data is in clients.private.js
+# (window.OPS_CLIENTS_FULL / OPS_CLIENTS_REAL), which overrides the placeholders locally.
+clients.private.js
+
+# Any local-only real-data variants (HTML, JS rosters, etc.)
+*.private.*
+*.real.*
+
+# Local tooling / editor state
+.claude/
+.DS_Store

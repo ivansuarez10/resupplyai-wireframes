@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI — Operations (Internal)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+
+  .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
+  .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
+  .nav-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .nav-item.active { background:rgba(42,61,136,0.1); color:var(--primary); }
+  .nav-item.active::before { content:''; position:absolute; left:-10px; top:20%; bottom:20%; width:3px; border-radius:3px; background:var(--primary); }
+  .nav-item svg { width:15px; height:15px; flex-shrink:0; }
+
+  .float-card { background:#fff; border-radius:18px; box-shadow:0 16px 44px rgba(33,50,95,0.08), 0 4px 16px rgba(33,50,95,0.04); border:1px solid rgba(255,255,255,0.9); }
+  .card-enter { animation: cIn .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes cIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
+  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
+  .hero-gradient { background-color:var(--primary); background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%); animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
+  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 380px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.12), transparent 70%); opacity:0; transition: opacity .3s; }
+  .hero-gradient:hover .hero-spot { opacity:1; }
+
+  /* big search */
+  .search-wrap { background:#fff; border-radius:16px; display:flex; align-items:center; gap:10px; padding:6px 6px 6px 16px; box-shadow:0 20px 50px rgba(13,20,45,0.28); }
+  .search-input { flex:1; border:none; outline:none; font-size:16px; font-weight:700; color:var(--navy); background:transparent; padding:12px 0; }
+  .search-input::placeholder { color:#94a3b8; font-weight:600; }
+  .search-go { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; font-weight:900; font-size:14px; padding:12px 22px; border-radius:12px; transition:all .18s; }
+  .search-go:hover { transform:translateY(-1px); box-shadow:0 10px 24px rgba(13,20,45,0.4); }
+  .try-chip { font-size:11px; font-weight:800; padding:4px 11px; border-radius:9999px; background:rgba(255,255,255,0.14); color:#fff; cursor:pointer; transition:all .15s; }
+  .try-chip:hover { background:rgba(255,255,255,0.24); }
+
+  table.res { width:100%; border-collapse:collapse; }
+  table.res th { font-size:10px; font-weight:900; color:#94a3b8; text-transform:uppercase; letter-spacing:.04em; padding:9px 12px; text-align:left; white-space:nowrap; }
+  table.res td { padding:11px 12px; font-size:12.5px; border-top:1px solid rgba(33,50,95,0.06); vertical-align:middle; }
+  .res-row { transition:background .12s; cursor:pointer; }
+  .res-row:hover { background:rgba(42,61,136,0.03); }
+  .avatar-sq { width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900; flex-shrink:0; }
+  .cond { font-size:10px; font-weight:900; padding:2px 8px; border-radius:7px; background:rgba(42,61,136,0.1); color:var(--primary); }
+  .best { font-size:9px; font-weight:900; padding:2px 7px; border-radius:6px; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; letter-spacing:.03em; }
+
+  .mini-row { display:flex; align-items:center; gap:11px; padding:11px 0; border-top:1px solid rgba(33,50,95,0.06); }
+  .mini-row:first-child { border-top:none; }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--primary); flex-shrink:0; }
+  .dot.soft { background:rgba(42,61,136,0.3); }
+  .due-pill { font-size:10px; font-weight:900; padding:3px 9px; border-radius:9999px; background:rgba(42,61,136,0.12); color:var(--primary); white-space:nowrap; }
+  .due-pill.urgent { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; }
+
+  .quick { display:flex; align-items:center; gap:12px; padding:16px; border-radius:16px; background:#fff; border:1px solid rgba(33,50,95,0.08); box-shadow:0 10px 30px rgba(33,50,95,0.06); transition:all .2s cubic-bezier(.16,1,.3,1); cursor:pointer; }
+  .quick:hover { transform:translateY(-3px); box-shadow:0 20px 50px rgba(33,50,95,0.12); border-color:rgba(42,61,136,0.2); }
+  .quick-ic { width:42px; height:42px; border-radius:13px; background:rgba(42,61,136,0.08); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .quick:hover .quick-ic { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; }
+
+  /* topbar user menu */
+  .avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; cursor:pointer; flex-shrink:0; }
+  .menu-pop { position:absolute; top:calc(100% + 10px); right:0; width:248px; max-width:calc(100vw - 32px); background:#fff; border-radius:16px; box-shadow:0 26px 70px rgba(33,50,95,0.20); border:1px solid rgba(33,50,95,0.06); z-index:70; overflow:hidden; opacity:0; transform:translateY(-8px) scale(.98); pointer-events:none; transition:all .18s cubic-bezier(.16,1,.3,1); transform-origin:top right; }
+  .menu-pop.open { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .menu-item { display:flex; align-items:center; gap:10px; padding:10px 16px; font-size:13px; font-weight:700; color:#475569; cursor:pointer; transition:background .12s; }
+  .menu-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .menu-item svg { width:16px; height:16px; flex-shrink:0; }
+
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+  @media (max-width:1023px){ .sidebar{display:none} }
+  @media (max-width:640px){ .grid.kpi{ grid-template-columns:repeat(2,1fr) !important; } }
+</style>
+</head>
+<body class="flex">
+
+<div class="bg-orb" style="width:460px;height:460px;background:#c7d4f8;top:-160px;right:-120px"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="px-5 mb-6 flex items-center gap-2">
+    <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:var(--navy);color:#fff">OPS</span>
+  </div>
+  <nav class="flex-1 space-y-0.5">
+    <div class="nav-item active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="location.href='ops-01-assignment.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+      Assignment Queue
+    </div>
+    <div class="nav-item" onclick="location.href='ops-02-clients.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4z"/></svg>
+      Clients
+    </div>
+    <div class="nav-item" onclick="location.href='ops-03-suppliers.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      Suppliers
+    </div>
+    <div class="nav-item" onclick="location.href='ops-04-awards.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      Awards
+    </div>
+  </nav>
+  <div class="px-4 py-3 mx-2 rounded-xl" style="background:rgba(42,61,136,0.06);border:1px solid rgba(42,61,136,0.1)">
+    <p class="text-xs font-bold text-slate-500">Internal console · restricted</p>
+    <p class="text-xs text-slate-400 mt-0.5">Ivan S. · admin</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="flex-1 flex flex-col min-w-0" style="position:relative;z-index:1">
+
+  <!-- Topbar -->
+  <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-lg font-black text-slate-900 leading-tight">Operations</h1>
+      <p class="text-xs text-slate-400 mt-0.5" id="todayLine">—</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <button class="avatar" id="avatarBtn" onclick="toggleMenu('userMenu', event)" aria-label="Account menu">IS</button>
+        <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
+          <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
+            <div class="avatar" style="cursor:default">IS</div>
+            <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+          </div>
+          <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
+            <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-6 pb-12 pt-1 space-y-6">
+
+    <!-- HERO + cross-supplier part search -->
+    <div class="hero-gradient rounded-3xl p-7 md:p-9 relative overflow-hidden" id="hero" style="box-shadow:0 30px 80px rgba(33,50,95,0.28)">
+      <div class="hero-spot"></div>
+      <div class="relative" style="z-index:1">
+        <p class="text-sm font-bold" style="color:rgba(255,255,255,0.6)" id="greet">Welcome back</p>
+        <h2 class="text-2xl md:text-3xl font-black text-white leading-tight mb-1" style="letter-spacing:-0.02em">Find a part across every supplier.</h2>
+        <p class="text-sm mb-5" style="color:rgba(255,255,255,0.72)">Search by NSN or part number — see who has it in stock, in what condition, and at what price.</p>
+
+        <div class="search-wrap" style="max-width:720px">
+          <svg class="w-5 h-5 flex-shrink-0" style="color:#94a3b8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input id="partSearch" class="search-input" placeholder="e.g. 2840-00-837-2071  or  BRK-118" oninput="runSearch()" autocomplete="off">
+          <button class="search-go" onclick="runSearch()">Search</button>
+        </div>
+        <div class="flex items-center gap-2 mt-3 flex-wrap">
+          <span class="text-xs font-bold" style="color:rgba(255,255,255,0.5)">Try:</span>
+          <span class="try-chip" onclick="fillSearch('2840-00-837-2071')">2840-00-837-2071</span>
+          <span class="try-chip" onclick="fillSearch('BRK-118')">BRK-118</span>
+          <span class="try-chip" onclick="fillSearch('relay')">relay</span>
+          <span class="try-chip" onclick="fillSearch('5330')">5330</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    <div id="resultsCard" class="float-card overflow-hidden" style="display:none">
+      <div class="px-5 py-3 flex items-center justify-between flex-wrap gap-2" style="border-bottom:1px solid rgba(33,50,95,0.06)">
+        <p class="text-sm font-black text-slate-900" id="resTitle">Results</p>
+        <p class="text-xs text-slate-400" id="resMeta"></p>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="res">
+          <thead><tr><th>Part / NSN</th><th>Supplier</th><th>Cond</th><th>In stock</th><th>Lead time</th><th>Their price</th></tr></thead>
+          <tbody id="resBody"></tbody>
+        </table>
+      </div>
+      <div id="resEmpty" class="px-5 py-10 text-center" style="display:none">
+        <p class="text-sm font-bold text-slate-500">No supplier has that part in stock right now.</p>
+        <p class="text-xs text-slate-400 mt-1">Try a partial NSN/PN, or a keyword like “bearing”.</p>
+      </div>
+    </div>
+
+    <!-- TODAY KPIs -->
+    <div>
+      <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Today at a glance</p>
+      <div class="grid kpi grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="float-card card-enter p-4"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Deadlines today</p><p class="text-2xl font-black" style="color:var(--primary)">4</p><p class="text-xs text-slate-400 mt-0.5">quotes due before 5 PM ET</p></div>
+        <div class="float-card card-enter p-4" style="animation-delay:.06s"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">New quotes</p><p class="text-2xl font-black text-slate-900">12</p><p class="text-xs text-slate-400 mt-0.5">unreviewed since 6 AM</p></div>
+        <div class="float-card card-enter p-4" style="animation-delay:.12s;cursor:pointer" onclick="document.getElementById('sentPanel').scrollIntoView({behavior:'smooth',block:'center'})"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Batches to send</p><p class="text-2xl font-black text-slate-900">3</p><p class="text-xs text-slate-400 mt-0.5"><span id="batchSentKpi" class="font-black" style="color:var(--primary)">0</span> sent today →</p></div>
+        <div class="float-card card-enter p-4" style="animation-delay:.18s"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Won profit · MTD</p><p class="text-2xl font-black text-slate-900">$94,900</p><p class="text-xs text-slate-400 mt-0.5">10 awards this cycle</p></div>
+      </div>
+    </div>
+
+    <!-- ASYMMETRIC BODY -->
+    <div class="grid lg:grid-cols-12 gap-6">
+      <!-- LEFT: deadlines today + batches sent today -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="float-card p-6">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Closing today</h3>
+            <a class="text-xs font-bold" style="color:var(--primary)" href="ops-01-assignment.html">Open assignment queue →</a>
+          </div>
+          <div id="dueList"></div>
+        </div>
+
+        <div class="float-card p-6" id="sentPanel">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Batches sent today</h3>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.12);color:var(--primary)"><span id="sentCount">0</span> sent</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-1">Who you've sent a batch to today — your running record per client.</p>
+          <div id="sentList"></div>
+          <div class="flex items-center justify-between mt-3 pt-3" style="border-top:1px solid rgba(33,50,95,0.06)">
+            <p class="text-xs text-slate-400"><span id="sentTotalsLines" class="font-black text-slate-700">0</span> solicitations across <span id="sentTotalsClients" class="font-black text-slate-700">0</span> clients</p>
+            <p class="text-xs text-slate-400">Total profit <span id="sentTotalsProfit" class="font-black" style="color:var(--primary)">$0</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: trace requests + recent awards -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="float-card p-6">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Trace requests</h3>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.12);color:var(--primary)" id="traceCount">0</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-1">A DLA trace request means the buyer is checking references — the quote is being taken seriously.</p>
+          <div id="traceList"></div>
+        </div>
+
+        <div class="float-card p-6">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Recent awards</h3>
+            <a class="text-xs font-bold" style="color:var(--primary)" href="ops-04-awards.html">All awards →</a>
+          </div>
+          <div id="awardList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div>
+      <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Jump to</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="quick" onclick="location.href='ops-01-assignment.html'">
+          <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg></div>
+          <div><p class="font-black text-slate-900 text-sm">Assignment Queue</p><p class="text-xs text-slate-400">Assign quotes to clients</p></div>
+        </div>
+        <div class="quick" onclick="location.href='ops-03-suppliers.html'">
+          <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+          <div><p class="font-black text-slate-900 text-sm">Suppliers</p><p class="text-xs text-slate-400">Certs, facilities, history</p></div>
+        </div>
+        <div class="quick" onclick="location.href='ops-02-clients.html'">
+          <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4z"/></svg></div>
+          <div><p class="font-black text-slate-900 text-sm">Clients</p><p class="text-xs text-slate-400">Criteria & set-asides</p></div>
+        </div>
+        <div class="quick" onclick="location.href='ops-04-awards.html'">
+          <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
+          <div><p class="font-black text-slate-900 text-sm">Awards</p><p class="text-xs text-slate-400">PO lifecycle & profit</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ---- date + greeting ---- */
+(function(){
+  const now = new Date();
+  document.getElementById('todayLine').textContent = now.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+  const h = now.getHours();
+  document.getElementById('greet').textContent = (h<12?'Good morning':h<18?'Good afternoon':'Good evening') + ', Ivan';
+})();
+
+/* ===========================================================================
+   Cross-supplier inventory (PLACEHOLDER — fictional suppliers; safe for Pages).
+   In production this queries each supplier's real stock behind login.
+   =========================================================================== */
+const INV = [
+  { nsn:'2840-00-837-2071', pn:'3011095',     desc:'Shaft, Turbine, Aircraft',   supplier:'Pacific Turbine',       cond:'OH', qty:6,   lt:88,  price:150.00 },
+  { nsn:'2840-00-837-2071', pn:'3011095',     desc:'Shaft, Turbine, Aircraft',   supplier:'Aeroparts Intl',        cond:'OH', qty:6,   lt:75,  price:240.00 },
+  { nsn:'2995-00-483-8668', pn:'3015676',     desc:'Nozzle, Turbine',            supplier:'Pacific Turbine',       cond:'OH', qty:7,   lt:81,  price:1000.00 },
+  { nsn:'5925-01-727-7515', pn:'7-1393246-5', desc:'Relay, Electromagnetic',     supplier:'DigiKey Electronics',   cond:'NE', qty:12,  lt:5,   price:69.52 },
+  { nsn:'5925-01-727-7515', pn:'7-1393246-5', desc:'Relay, Electromagnetic',     supplier:'Hermes Technical',      cond:'NE', qty:3,   lt:14,  price:74.00 },
+  { nsn:'5330-00-505-1693', pn:'721J8MT160AT',desc:'Packing, Preformed',         supplier:'Greene Tweed Sales',    cond:'NE', qty:64,  lt:60,  price:47.88 },
+  { nsn:'5330-00-512-3380', pn:'721J8MT120',  desc:'Packing, Preformed',         supplier:'Greene Tweed Sales',    cond:'NE', qty:40,  lt:60,  price:39.00 },
+  { nsn:'5340-01-234-8823', pn:'BRK-118',     desc:'Bracket, Mounting',          supplier:'Hermes Technical',      cond:'NE', qty:500, lt:30,  price:92.00 },
+  { nsn:'1560-00-732-2759', pn:'40290-9',     desc:'Duct Assembly',              supplier:'Air Commercial Jet',    cond:'NE', qty:5,   lt:169, price:186.62 },
+  { nsn:'1620-00-114-2230', pn:'SK-2290',     desc:'Rotor Blade Component',      supplier:'Sky Parts Intl',        cond:'NS', qty:3,   lt:120, price:640.00 },
+  { nsn:'2920-00-114-9921', pn:'AR-99821',    desc:'Armature Assembly',          supplier:'Aircraft Component Mfg',cond:'NE', qty:10,  lt:120, price:640.00 },
+  { nsn:'3020-00-118-0099', pn:'GR-1180',     desc:'Gear, Spur',                 supplier:'Aircraft Component Mfg',cond:'NE', qty:24,  lt:90,  price:88.00 },
+  { nsn:'3110-00-721-0099', pn:'BRG-7720',    desc:'Bearing, Roller',            supplier:'Pacific Turbine',       cond:'NE', qty:18,  lt:45,  price:210.00 },
+  { nsn:'5305-00-221-0011', pn:'HW-2210',     desc:'Screw, Machine',             supplier:'Hermes Technical',      cond:'NE', qty:1000,lt:21,  price:1.20 },
+];
+function initials(name){ const c=name.replace(/[(),.]/g,'').split(' ').filter(Boolean); return ((c[0]?.[0]||'')+(c[1]?.[0]||'')).toUpperCase(); }
+function norm(s){ return (s||'').toLowerCase().replace(/[\s-]/g,''); }
+function money(n){ return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function fillSearch(v){ document.getElementById('partSearch').value=v; runSearch(); document.getElementById('partSearch').focus(); }
+
+function runSearch(){
+  const raw = document.getElementById('partSearch').value.trim();
+  const card = document.getElementById('resultsCard');
+  if(!raw){ card.style.display='none'; return; }
+  const q = norm(raw);
+  // match on NSN, PN (ignoring spaces/dashes) or description keyword
+  let hits = INV.filter(it => norm(it.nsn).includes(q) || norm(it.pn).includes(q) || it.desc.toLowerCase().includes(raw.toLowerCase()));
+  hits.sort((a,b)=> a.price - b.price); // cheapest first
+  const minPrice = hits.length ? Math.min(...hits.map(h=>h.price)) : null;
+
+  card.style.display='block';
+  document.getElementById('resTitle').textContent = hits.length ? `${hits.length} supplier line${hits.length>1?'s':''} for “${raw}”` : `Nothing found for “${raw}”`;
+  const suppliers = new Set(hits.map(h=>h.supplier));
+  document.getElementById('resMeta').textContent = hits.length ? `${suppliers.size} supplier${suppliers.size>1?'s':''} · sorted by price` : '';
+  document.getElementById('resEmpty').style.display = hits.length ? 'none' : 'block';
+
+  const body = document.getElementById('resBody');
+  body.innerHTML = hits.map(it=>`
+    <tr class="res-row" onclick="location.href='ops-03-suppliers.html?supplier=${encodeURIComponent(it.supplier)}'">
+      <td><p class="font-black text-slate-900">${it.pn}</p><p class="text-slate-400" style="font-size:10.5px">${it.nsn} · ${it.desc}</p></td>
+      <td><div class="flex items-center gap-2"><div class="avatar-sq">${initials(it.supplier)}</div><span class="font-bold text-slate-700">${it.supplier}</span></div></td>
+      <td><span class="cond">${it.cond}</span></td>
+      <td class="font-bold text-slate-800">${it.qty}</td>
+      <td class="text-slate-600">${it.lt}d</td>
+      <td><span class="font-black text-slate-900">${money(it.price)}</span> ${it.price===minPrice?'<span class="best">BEST</span>':''}</td>
+    </tr>`).join('');
+}
+
+/* ---- Closing today (placeholder) ---- */
+const DUE = [
+  { solic:'SPE4A526Q0573', part:'Shaft, Turbine, Aircraft', supplier:'Pacific Turbine',    time:'5:00 PM', urgent:true },
+  { solic:'SPE4A526Q0571', part:'Nozzle, Turbine',          supplier:'Pacific Turbine',    time:'5:00 PM', urgent:true },
+  { solic:'SPE5A126Q1180', part:'Bracket, Mounting',        supplier:'Hermes Technical',   time:'3:00 PM', urgent:true },
+  { solic:'SPE4A526Q0540', part:'Shaft, Turbine, Aircraft', supplier:'Aeroparts Intl',     time:'5:00 PM', urgent:false },
+];
+document.getElementById('dueList').innerHTML = DUE.map(d=>`
+  <div class="mini-row" style="cursor:pointer" onclick="location.href='ops-01-assignment.html'">
+    <div class="dot ${d.urgent?'':'soft'}"></div>
+    <div class="min-w-0 flex-1">
+      <p class="font-bold text-slate-900 text-sm truncate">${d.solic} · ${d.part}</p>
+      <p class="text-xs text-slate-400 truncate">${d.supplier}</p>
+    </div>
+    <span class="due-pill ${d.urgent?'urgent':''}">Due ${d.time}</span>
+  </div>`).join('');
+
+/* ---- Trace requests (placeholder) ---- */
+const TRACE = [
+  { solic:'SPE4A526Q0573', supplier:'Pacific Turbine', when:'2h ago' },
+  { solic:'SPE7L326T064C', supplier:'Greene Tweed Sales', when:'yesterday' },
+];
+document.getElementById('traceCount').textContent = TRACE.length;
+document.getElementById('traceList').innerHTML = TRACE.map(t=>`
+  <div class="mini-row" style="cursor:pointer" onclick="location.href='ops-01-assignment.html'">
+    <div class="dot"></div>
+    <div class="min-w-0 flex-1">
+      <p class="font-bold text-slate-900 text-sm truncate">${t.solic}</p>
+      <p class="text-xs text-slate-400 truncate">${t.supplier} · buyer checking references</p>
+    </div>
+    <span class="text-xs text-slate-400 whitespace-nowrap">${t.when}</span>
+  </div>`).join('');
+
+/* ---- Recent awards (placeholder, matches ops-04) ---- */
+const AWARDS = [
+  { part:'Armature Assembly', client:'Acme Defense Supply', profit:18600 },
+  { part:'Relay Electromagnetic', client:'Acme Defense Supply', profit:1010 },
+  { part:'Bracket Mounting', client:'Veteran Parts LLC', profit:24000 },
+];
+document.getElementById('awardList').innerHTML = AWARDS.map(a=>`
+  <div class="mini-row" style="cursor:pointer" onclick="location.href='ops-04-awards.html'">
+    <div class="avatar-sq">${initials(a.client)}</div>
+    <div class="min-w-0 flex-1">
+      <p class="font-bold text-slate-900 text-sm truncate">${a.part}</p>
+      <p class="text-xs text-slate-400 truncate">${a.client}</p>
+    </div>
+    <span class="font-black text-sm whitespace-nowrap" style="color:var(--primary)">+$${a.profit.toLocaleString()}</span>
+  </div>`).join('');
+
+/* ---- Batches sent today (placeholder; per-client record for the day) ---- */
+const SENT_TODAY = [
+  { client:'Acme Defense Supply', n:12, profit:38600, time:'9:14 AM' },
+  { client:'Veteran Parts LLC',   n:8,  profit:24000, time:'10:02 AM' },
+  { client:'HUBZone Logistics',   n:5,  profit:9540,  time:'11:20 AM' },
+];
+document.getElementById('sentList').innerHTML = SENT_TODAY.length ? SENT_TODAY.map(b=>`
+  <div class="mini-row" style="cursor:pointer" onclick="location.href='ops-04-awards.html'">
+    <div class="avatar-sq">${initials(b.client)}</div>
+    <div class="min-w-0 flex-1">
+      <p class="font-bold text-slate-900 text-sm truncate">${b.client}</p>
+      <p class="text-xs text-slate-400 truncate">${b.n} solicitations · sent ${b.time}</p>
+    </div>
+    <span class="font-black text-sm whitespace-nowrap" style="color:var(--primary)">+$${b.profit.toLocaleString()}</span>
+  </div>`).join('') : '<p class="text-sm text-slate-400 py-3">No batches sent yet today.</p>';
+document.getElementById('sentCount').textContent = SENT_TODAY.length;
+document.getElementById('batchSentKpi').textContent = SENT_TODAY.length;
+document.getElementById('sentTotalsLines').textContent = SENT_TODAY.reduce((s,b)=>s+b.n,0);
+document.getElementById('sentTotalsClients').textContent = new Set(SENT_TODAY.map(b=>b.client)).size;
+document.getElementById('sentTotalsProfit').textContent = '$'+SENT_TODAY.reduce((s,b)=>s+b.profit,0).toLocaleString();
+
+/* ---- topbar user menu ---- */
+function toggleMenu(id, ev){
+  ev.stopPropagation();
+  const el=document.getElementById(id); if(!el) return;
+  document.querySelectorAll('.menu-pop').forEach(m=>{ if(m!==el) m.classList.remove('open'); });
+  el.classList.toggle('open');
+}
+document.addEventListener('click', ()=> document.querySelectorAll('.menu-pop').forEach(m=>m.classList.remove('open')));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') document.querySelectorAll('.menu-pop').forEach(m=>m.classList.remove('open')); });
+
+/* hero cursor spotlight */
+if (window.matchMedia('(pointer: fine)').matches) {
+  const h=document.getElementById('hero');
+  if(h) h.addEventListener('mousemove', e=>{ const r=h.getBoundingClientRect(); h.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%'); h.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%'); });
+}
+</script>
+</body>
+</html>

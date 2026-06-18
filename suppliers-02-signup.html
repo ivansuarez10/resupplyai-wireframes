@@ -151,7 +151,7 @@
       </div>
 
       <button id="verifyBtn" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm mb-4">Verify & Continue →</button>
-      <p class="text-xs text-slate-400">Didn't get it? <a href="#" class="font-bold" style="color:var(--primary)" onclick="return false">Resend code</a> · check spam</p>
+      <p class="text-xs text-slate-400">Didn't get it? <a href="#" id="resendCode" class="font-bold" style="color:var(--primary)">Resend code</a><span id="resentCodeNote" style="display:none"> · sent again ✓</span> · check spam</p>
     </div>
 
     <div id="formCard" class="float-card p-8">
@@ -321,6 +321,16 @@ document.getElementById('verifyBtn').addEventListener('click', () => {
   btn.textContent = 'Verifying…';
   btn.style.opacity = '0.8';
   setTimeout(() => { window.location.href = 'suppliers-03-upload-inventory.html'; }, 800);
+});
+
+// Resend code — brief confirmation, then re-armable after a short cooldown
+document.getElementById('resendCode').addEventListener('click', e => {
+  e.preventDefault();
+  const link = e.currentTarget, note = document.getElementById('resentCodeNote');
+  note.style.display = 'inline';
+  link.style.pointerEvents = 'none';
+  link.style.opacity = '0.5';
+  setTimeout(() => { link.style.pointerEvents = ''; link.style.opacity = ''; note.style.display = 'none'; }, 4000);
 });
 
 if (window.matchMedia('(pointer: fine)').matches) {

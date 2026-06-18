@@ -48,6 +48,16 @@
 <div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-140px;right:-100px"></div>
 <div class="bg-orb" style="width:360px;height:360px;background:#dbe4fb;bottom:-100px;left:-100px;animation-delay:-8s"></div>
 
+<!-- Wireframe-only demo hint: explains the single-door, role-routing behavior. Not product chrome. -->
+<div id="demoHint" style="position:fixed;bottom:16px;left:16px;z-index:40;max-width:300px;background:#fff;border:1px solid rgba(33,50,95,0.1);border-radius:14px;box-shadow:0 16px 44px rgba(33,50,95,0.12);padding:12px 14px">
+  <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+    <span style="font-size:9px;font-weight:900;letter-spacing:.06em;color:#fff;background:var(--navy);padding:2px 7px;border-radius:6px">WIREFRAME</span>
+    <span style="font-size:11px;font-weight:900;color:var(--navy)">One door · routed by role</span>
+    <button onclick="document.getElementById('demoHint').remove()" aria-label="Dismiss" style="margin-left:auto;color:#94a3b8;line-height:1;font-size:15px">✕</button>
+  </div>
+  <p style="font-size:11.5px;color:#64748b;line-height:1.5">A <b style="color:var(--navy)">@resupplyai.com</b> email signs in to the internal <b style="color:var(--navy)">Ops console</b>. Any other email lands on the supplier daily matches.</p>
+</div>
+
 <!-- LEFT -->
 <div class="left-panel left-enter w-[44%] p-5 relative" style="z-index:1">
   <div class="hero-gradient rounded-3xl h-full p-10 flex flex-col relative overflow-hidden" id="hero" style="box-shadow:0 40px 100px rgba(33,50,95,0.34)">
@@ -112,6 +122,10 @@
 
 <script>
 function setErr(el, show){ el.classList.toggle('invalid', show); const e=el.closest('div').querySelector('.err'); if(e) e.style.display=show?'block':'none'; }
+// Same door, routed by role. Backend resolves the real role; in this wireframe we
+// route by email domain: staff @resupplyai.com → internal Ops console; everyone
+// else (supplier owners + team members) → their daily matches.
+function isStaff(email){ return /@resupplyai\.com\s*$/i.test(email.trim()); }
 document.getElementById('form').addEventListener('submit', e=>{
   e.preventDefault();
   const email=document.getElementById('email'), pwd=document.getElementById('pwd');
@@ -119,8 +133,11 @@ document.getElementById('form').addEventListener('submit', e=>{
   if(!email.value.trim()){ setErr(email,true); ok=false; } else setErr(email,false);
   if(!pwd.value){ setErr(pwd,true); ok=false; } else setErr(pwd,false);
   if(!ok) return;
-  const btn=e.target.querySelector('button'); btn.textContent='Signing in…'; btn.style.opacity='0.8';
-  setTimeout(()=>{ window.location.href='suppliers-04-daily-matches.html'; }, 700);
+  const staff = isStaff(email.value);
+  const btn=e.target.querySelector('button');
+  btn.textContent = staff ? 'Entering Ops console…' : 'Signing in…';
+  btn.style.opacity='0.8';
+  setTimeout(()=>{ window.location.href = staff ? 'ops-00-dashboard.html' : 'suppliers-04-daily-matches.html'; }, 700);
 });
 if (window.matchMedia('(pointer: fine)').matches) {
   const hero=document.getElementById('hero');

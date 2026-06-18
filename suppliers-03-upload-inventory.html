@@ -139,7 +139,7 @@
             <span class="opt-chip">Gov. contract #</span>
           </div>
         </div>
-        <a href="#" onclick="return false" class="inline-flex items-center gap-1.5 text-xs font-bold mt-4" style="color:var(--primary)">
+        <a href="#" onclick="downloadTemplate(event)" class="inline-flex items-center gap-1.5 text-xs font-bold mt-4" style="color:var(--primary)">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
           Download our Excel/CSV template
         </a>
@@ -440,6 +440,21 @@ function requestInt(name, e){
   btn.style.background = 'rgba(42,61,136,0.1)';
   btn.style.color = '#2a3d88';
   btn.style.borderColor = 'transparent';
+}
+
+// Download a real CSV inventory template with the columns we expect
+function downloadTemplate(e){
+  if(e) e.preventDefault();
+  const headers = ['NSN','Part Number','Manufacturer','CAGE','Description','Quantity','UOM','Condition','Unit Price (USD)','Lead Time (days)'];
+  const example = ['5330-00-505-1693','721J8MT160AT','Greene Tweed','1GT55','Packing, Preformed','64','EA','NE','47.88','60'];
+  const note   = ['# Fill one row per item. Condition: NE=New, OH=Overhauled, NS=New Surplus. Leave Unit Price blank if you want us to ask.','','','','','','','','',''];
+  const csv = [headers, example, note].map(r => r.map(c => /[",\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'resupplyai-inventory-template.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
 }
 </script>
 </body>
