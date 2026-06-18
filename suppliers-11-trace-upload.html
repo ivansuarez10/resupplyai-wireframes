@@ -34,6 +34,11 @@
 
   .drop { border:2px dashed rgba(42,61,136,0.25); border-radius:16px; padding:30px; text-align:center; cursor:pointer; transition:all .18s; background:rgba(42,61,136,0.02); }
   .drop:hover { border-color:var(--primary); background:rgba(42,61,136,0.05); }
+
+  .drop-hero { position:relative; border:2px dashed rgba(42,61,136,0.28); border-radius:26px; padding:56px 40px; text-align:center; cursor:pointer; transition:all .25s cubic-bezier(.16,1,.3,1);
+    background:radial-gradient(circle at 50% 0%, rgba(94,126,232,0.08), rgba(255,255,255,0) 70%), #fff; overflow:hidden; }
+  .drop-hero:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:0 24px 60px rgba(33,50,95,0.12); }
+  .drop-hero::before { content:''; position:absolute; top:-40%; left:50%; transform:translateX(-50%); width:340px; height:340px; border-radius:50%; background:radial-gradient(circle, rgba(94,126,232,0.10), transparent 70%); pointer-events:none; }
   .file-row { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:12px; background:#fafbff; border:1px solid rgba(33,50,95,0.08); margin-top:10px; }
   .page-enter { animation: pIn .5s cubic-bezier(.16,1,.3,1) both; }
   @keyframes pIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
@@ -61,64 +66,53 @@
 
   <!-- MAIN STATE -->
   <div id="mainState" class="page-enter">
-    <!-- Why this matters banner -->
-    <div class="hero-gradient rounded-2xl p-5 mb-5" style="box-shadow:0 20px 50px rgba(33,50,95,0.28)">
-      <div class="flex items-start gap-3">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,0.15)">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div>
-          <p class="text-white font-black">The DLA requested traceability — your quote is being seriously considered</p>
-          <p class="text-sm" style="color:rgba(255,255,255,0.78)">Upload the docs that trace this item to an approved source. Fast turnaround keeps you in the running.</p>
-        </div>
-      </div>
+
+    <!-- slim status ribbon -->
+    <div class="inline-flex items-center gap-2.5 mb-7 pl-2 pr-4 py-2 rounded-full" style="background:rgba(42,61,136,0.07);border:1px solid rgba(42,61,136,0.14)">
+      <span class="w-6 h-6 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,var(--primary),var(--navy))">
+        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </span>
+      <span class="text-xs font-black" style="color:var(--primary)">DLA requested traceability — your quote is being seriously considered</span>
     </div>
 
-    <h1 class="text-2xl font-black text-slate-900 mb-1">Upload traceability</h1>
-    <p class="text-slate-500 text-sm mb-5">For your quote on <span class="font-bold text-slate-700">2530-01-687-4521 · Brake Drum Assembly</span></p>
+    <!-- Editorial heading -->
+    <h1 class="font-black text-slate-900 leading-[1.05] mb-3" style="font-size:2.6rem;letter-spacing:-0.03em">Prove the source.<br>Stay in the running.</h1>
+    <p class="text-lg text-slate-500 mb-8" style="max-width:560px">Upload the documents that trace this item back to an approved manufacturer. The faster you respond, the stronger your position.</p>
 
-    <div class="grid lg:grid-cols-5 gap-5">
-      <!-- left: quote context -->
-      <div class="lg:col-span-2">
-        <div class="hero-gradient rounded-2xl p-5" style="box-shadow:0 20px 50px rgba(33,50,95,0.26)">
-          <p class="text-xs font-bold uppercase tracking-wide mb-3" style="color:rgba(255,255,255,0.6)">Your quote</p>
-          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">NSN</span><span class="font-bold text-white">2530-01-687-4521</span></div>
-          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Part No</span><span class="font-bold text-white">BD-44871</span></div>
-          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Approved mfr</span><span class="font-bold text-white">Canadian Commercial</span></div>
-          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Your price</span><span class="font-bold text-white">$1,840 / EA</span></div>
-          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Requested by</span><span class="font-bold text-white">Jun 18 · 2 days</span></div>
-        </div>
-      </div>
-
-      <!-- right: upload -->
-      <div class="lg:col-span-3 space-y-4">
-        <div class="float-card p-6">
-          <p class="label mb-2">What we need (any that apply)</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">Certificate of Conformance</span>
-            <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">OEM invoice / packing slip</span>
-            <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">Mfr traceability letter</span>
-          </div>
-
-          <div class="drop" id="drop" onclick="addFiles()">
-            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg,var(--primary),var(--navy))">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            </div>
-            <p class="text-sm font-black text-slate-900 mb-1">Drag files or browse</p>
-            <p class="text-xs text-slate-400">PDF, JPG, PNG · up to 10 files</p>
-          </div>
-
-          <div id="fileList"></div>
-
-          <div class="mt-4">
-            <label class="label">Note to ResupplyAI <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
-            <textarea class="field" rows="2" placeholder="e.g. CoC attached, OEM traceability confirmed by Canadian Commercial"></textarea>
-          </div>
-        </div>
-
-        <button class="btn-primary w-full font-black py-3.5 rounded-xl text-sm" onclick="submitTrace()">Submit traceability →</button>
-      </div>
+    <!-- Quote meta — horizontal, light, no box -->
+    <div class="flex flex-wrap gap-x-10 gap-y-4 mb-9 pb-7" style="border-bottom:1px solid rgba(33,50,95,0.1)">
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Item</p><p class="text-sm font-black text-slate-900">Brake Drum Assembly</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">NSN</p><p class="text-sm font-black text-slate-900">2530-01-687-4521</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Approved mfr</p><p class="text-sm font-black text-slate-900">Canadian Commercial</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Your price</p><p class="text-sm font-black text-slate-900">$1,840 / EA</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Due</p><p class="text-sm font-black" style="color:var(--primary)">Jun 18 · 2 days</p></div>
     </div>
+
+    <!-- What we need -->
+    <p class="text-sm font-bold text-slate-600 mb-3">Attach any that apply</p>
+    <div class="flex flex-wrap gap-2 mb-5">
+      <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">Certificate of Conformance</span>
+      <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">OEM invoice / packing slip</span>
+      <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">Mfr traceability letter</span>
+    </div>
+
+    <!-- Upload hero -->
+    <div class="drop-hero" id="drop" onclick="addFiles()">
+      <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:linear-gradient(135deg,var(--primary),var(--navy));box-shadow:0 14px 34px rgba(33,50,95,0.35)">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      </div>
+      <p class="text-lg font-black text-slate-900 mb-1">Drag your documents here</p>
+      <p class="text-sm text-slate-400">or <span class="font-bold" style="color:var(--primary)">browse your files</span> · PDF, JPG, PNG · up to 10</p>
+    </div>
+
+    <div id="fileList" class="mt-3"></div>
+
+    <div class="mt-6">
+      <label class="text-sm font-bold text-slate-600 mb-2 block">Note to ResupplyAI <span class="text-slate-400 font-normal">(optional)</span></label>
+      <textarea class="field" rows="2" placeholder="e.g. CoC attached, OEM traceability confirmed by Canadian Commercial"></textarea>
+    </div>
+
+    <button class="btn-primary w-full font-black py-4 rounded-2xl text-sm mt-6" onclick="submitTrace()">Submit traceability →</button>
   </div>
 
   <!-- SUCCESS -->

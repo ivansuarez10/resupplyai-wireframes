@@ -98,36 +98,28 @@
 
       <!-- Notifications -->
       <div class="float-card p-6">
-        <div class="flex items-center gap-2 mb-1">
-          <h2 class="font-black text-slate-900">Notifications</h2>
-        </div>
-        <p class="text-sm text-slate-500 mb-4">We hate inbox clutter as much as you do. Choose exactly what reaches you.</p>
+        <h2 class="font-black text-slate-900 mb-1">Notifications</h2>
+        <p class="text-sm text-slate-500 mb-4">Choose what reaches you, and where.</p>
 
-        <!-- Digest frequency -->
-        <p class="label mb-2">How often should we email you about matches?</p>
-        <div class="grid grid-cols-3 gap-3 mb-5">
-          <div class="radio-card on" onclick="pickFreq(this)">
-            <p class="text-sm font-black text-slate-900">Daily digest</p>
-            <p class="text-xs text-slate-400 mt-0.5">One summary each morning</p>
+        <!-- Daily digest is always on (info, not a choice) -->
+        <div class="rounded-xl p-4 mb-5 flex items-start gap-3" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,var(--primary),var(--navy))">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
-          <div class="radio-card" onclick="pickFreq(this)">
-            <p class="text-sm font-black text-slate-900">Hot matches only</p>
-            <p class="text-xs text-slate-400 mt-0.5">Just the high-value ones</p>
-          </div>
-          <div class="radio-card" onclick="pickFreq(this)">
-            <p class="text-sm font-black text-slate-900">Off</p>
-            <p class="text-xs text-slate-400 mt-0.5">I'll check the dashboard</p>
+          <div>
+            <p class="text-sm font-black text-slate-900">Daily match summary — every morning at 6 AM</p>
+            <p class="text-xs text-slate-500 mt-0.5">We always send your full list of matches so you never miss a sale. This one stays on.</p>
           </div>
         </div>
 
-        <!-- toggles -->
+        <p class="label mb-1">Also notify me about</p>
         <div>
           <div class="opt-row">
             <div><p class="text-sm font-bold text-slate-800">High-value match alerts</p><p class="text-xs text-slate-400">Instant ping when the DLA needs a top-dollar item you stock</p></div>
             <div class="toggle on" onclick="this.classList.toggle('on')"></div>
           </div>
           <div class="opt-row">
-            <div><p class="text-sm font-bold text-slate-800">Trace requests</p><p class="text-xs text-slate-400">When the DLA asks for traceability on your quote — always recommended</p></div>
+            <div><p class="text-sm font-bold text-slate-800">Trace requests</p><p class="text-xs text-slate-400">When the DLA asks for traceability — your quote is being considered</p></div>
             <div class="toggle on" onclick="this.classList.toggle('on')"></div>
           </div>
           <div class="opt-row">
@@ -138,14 +130,51 @@
             <div><p class="text-sm font-bold text-slate-800">Inventory sync issues</p><p class="text-xs text-slate-400">If your Google Sheet or file fails to sync</p></div>
             <div class="toggle on" onclick="this.classList.toggle('on')"></div>
           </div>
-          <div class="opt-row">
-            <div><p class="text-sm font-bold text-slate-800">Product news & tips</p><p class="text-xs text-slate-400">Occasional updates — no more than monthly</p></div>
-            <div class="toggle" onclick="this.classList.toggle('on')"></div>
-          </div>
         </div>
-        <div class="mt-3">
-          <label class="label">Send to</label>
-          <input class="field" value="john@hermestech.com">
+
+        <!-- Channels -->
+        <p class="label mb-2 mt-5">Where to send notifications</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="label" style="font-weight:700;text-transform:none;color:#64748b">Email</label><input class="field" value="john@hermestech.com"></div>
+          <div><label class="label" style="font-weight:700;text-transform:none;color:#64748b">SMS for urgent alerts <span class="text-slate-400">(optional)</span></label><input class="field" placeholder="+1 …"></div>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">SMS is only used for trace requests and wins — the time-sensitive ones.</p>
+      </div>
+
+      <!-- Inventory source -->
+      <div class="float-card p-6">
+        <h2 class="font-black text-slate-900 mb-1">Inventory source</h2>
+        <p class="text-sm text-slate-500 mb-4">How your stock stays up to date for matching.</p>
+        <div class="flex items-center justify-between p-4 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(42,61,136,0.1)">
+              <svg class="w-5 h-5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-black text-slate-900">Google Sheet · connected</p>
+              <p class="text-xs text-slate-400">1,284 items · auto-syncs nightly · last sync 4h ago</p>
+            </div>
+          </div>
+          <button class="text-sm font-bold px-4 py-2 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="location.href='suppliers-08-my-inventory.html'">Manage</button>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="float-card p-6">
+        <div class="flex items-center justify-between mb-1">
+          <h2 class="font-black text-slate-900">Team members</h2>
+          <button class="text-sm font-bold px-4 py-2 rounded-xl btn-primary" onclick="save('Invite sent')">+ Invite</button>
+        </div>
+        <p class="text-sm text-slate-500 mb-4">Add teammates who can quote on behalf of your company.</p>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
+            <div class="flex items-center gap-3"><div class="avatar">JH</div><div><p class="text-sm font-bold text-slate-800">John Hermes</p><p class="text-xs text-slate-400">john@hermestech.com</p></div></div>
+            <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">Owner</span>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
+            <div class="flex items-center gap-3"><div class="avatar" style="background:linear-gradient(135deg,#5e7ee8,#4a63c4)">MR</div><div><p class="text-sm font-bold text-slate-800">Maria Reyes</p><p class="text-xs text-slate-400">maria@hermestech.com</p></div></div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#f1f5f9;color:#64748b">Member</span>
+          </div>
         </div>
       </div>
 
@@ -166,12 +195,11 @@
   </div>
 </div>
 
-<div class="toast" id="toast"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Settings saved</div>
+<div class="toast" id="toast"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> <span id="toastMsg">Settings saved</span></div>
 
 <script>
-function pickFreq(el){ el.parentElement.querySelectorAll('.radio-card').forEach(c=>c.classList.remove('on')); el.classList.add('on'); }
 let toastT;
-function save(){ const t=document.getElementById('toast'); t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1800); }
+function save(msg){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg||'Settings saved'; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1800); }
 function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSidebar(); });
