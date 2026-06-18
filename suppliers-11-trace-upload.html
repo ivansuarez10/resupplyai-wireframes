@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Upload Traceability</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .float-card { background:#fff; border-radius:20px; box-shadow:0 16px 44px rgba(33,50,95,0.08), 0 4px 16px rgba(33,50,95,0.04); border:1px solid rgba(255,255,255,0.9); }
+
+  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
+  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
+  .hero-gradient { background-color:var(--primary); background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%); animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
+  .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
+  .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+  .label { display:block; font-size:12px; font-weight:800; color:#475569; margin-bottom:5px; text-transform:uppercase; letter-spacing:.03em; }
+  .field { width:100%; border:1px solid rgba(33,50,95,0.14); border-radius:11px; padding:10px 13px; font-size:14px; font-weight:700; color:var(--navy); outline:none; }
+  .field:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
+  .dla-line { display:flex; justify-content:space-between; padding:7px 0; border-top:1px solid rgba(255,255,255,0.12); font-size:13px; }
+  .dla-line:first-child { border-top:none; }
+
+  .drop { border:2px dashed rgba(42,61,136,0.25); border-radius:16px; padding:30px; text-align:center; cursor:pointer; transition:all .18s; background:rgba(42,61,136,0.02); }
+  .drop:hover { border-color:var(--primary); background:rgba(42,61,136,0.05); }
+  .file-row { display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:12px; background:#fafbff; border:1px solid rgba(33,50,95,0.08); margin-top:10px; }
+  .page-enter { animation: pIn .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes pIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .confetti { position:fixed; width:9px; height:9px; border-radius:2px; pointer-events:none; z-index:99; animation: cf linear forwards; }
+  @keyframes cf { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb" style="width:420px;height:420px;background:#c7d4f8;top:-140px;right:-100px"></div>
+
+<div class="relative max-w-3xl mx-auto px-6 pb-16" style="z-index:1">
+
+  <div class="py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+    </div>
+    <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to My Quotes
+    </a>
+  </div>
+
+  <!-- MAIN STATE -->
+  <div id="mainState" class="page-enter">
+    <!-- Why this matters banner -->
+    <div class="hero-gradient rounded-2xl p-5 mb-5" style="box-shadow:0 20px 50px rgba(33,50,95,0.28)">
+      <div class="flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,0.15)">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-white font-black">The DLA requested traceability — your quote is being seriously considered</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.78)">Upload the docs that trace this item to an approved source. Fast turnaround keeps you in the running.</p>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="text-2xl font-black text-slate-900 mb-1">Upload traceability</h1>
+    <p class="text-slate-500 text-sm mb-5">For your quote on <span class="font-bold text-slate-700">2530-01-687-4521 · Brake Drum Assembly</span></p>
+
+    <div class="grid lg:grid-cols-5 gap-5">
+      <!-- left: quote context -->
+      <div class="lg:col-span-2">
+        <div class="hero-gradient rounded-2xl p-5" style="box-shadow:0 20px 50px rgba(33,50,95,0.26)">
+          <p class="text-xs font-bold uppercase tracking-wide mb-3" style="color:rgba(255,255,255,0.6)">Your quote</p>
+          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">NSN</span><span class="font-bold text-white">2530-01-687-4521</span></div>
+          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Part No</span><span class="font-bold text-white">BD-44871</span></div>
+          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Approved mfr</span><span class="font-bold text-white">Canadian Commercial</span></div>
+          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Your price</span><span class="font-bold text-white">$1,840 / EA</span></div>
+          <div class="dla-line"><span style="color:rgba(255,255,255,0.65)">Requested by</span><span class="font-bold text-white">Jun 18 · 2 days</span></div>
+        </div>
+      </div>
+
+      <!-- right: upload -->
+      <div class="lg:col-span-3 space-y-4">
+        <div class="float-card p-6">
+          <p class="label mb-2">What we need (any that apply)</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">Certificate of Conformance</span>
+            <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">OEM invoice / packing slip</span>
+            <span class="text-xs font-bold px-3 py-1.5 rounded-full" style="background:rgba(42,61,136,0.08);color:var(--primary)">Mfr traceability letter</span>
+          </div>
+
+          <div class="drop" id="drop" onclick="addFiles()">
+            <div class="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg,var(--primary),var(--navy))">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            </div>
+            <p class="text-sm font-black text-slate-900 mb-1">Drag files or browse</p>
+            <p class="text-xs text-slate-400">PDF, JPG, PNG · up to 10 files</p>
+          </div>
+
+          <div id="fileList"></div>
+
+          <div class="mt-4">
+            <label class="label">Note to ResupplyAI <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+            <textarea class="field" rows="2" placeholder="e.g. CoC attached, OEM traceability confirmed by Canadian Commercial"></textarea>
+          </div>
+        </div>
+
+        <button class="btn-primary w-full font-black py-3.5 rounded-xl text-sm" onclick="submitTrace()">Submit traceability →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="successState" class="float-card p-12 text-center mt-6" style="display:none">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy));box-shadow:0 20px 50px rgba(33,50,95,0.4)">
+      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <h2 class="text-2xl font-black text-slate-900 mb-2">Traceability submitted</h2>
+    <p class="text-slate-500 mb-6">We've forwarded your documentation to the DLA review. We'll notify you the moment there's an update on this quote.</p>
+    <a href="suppliers-07-my-quotes.html" class="btn-primary inline-block font-black px-7 py-3 rounded-xl text-sm">Back to My Quotes →</a>
+  </div>
+
+</div>
+
+<script>
+let files = [];
+const SAMPLE = ['CoC_BD-44871.pdf','OEM_invoice_canadian.pdf','traceability_letter.pdf'];
+function addFiles(){
+  if(files.length >= SAMPLE.length) return;
+  files.push(SAMPLE[files.length]);
+  renderFiles();
+}
+function renderFiles(){
+  const l = document.getElementById('fileList'); l.innerHTML='';
+  files.forEach((f,i)=>{
+    const row=document.createElement('div'); row.className='file-row';
+    row.innerHTML=`
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,61,136,0.1)">
+        <svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+      </div>
+      <span class="flex-1 text-sm font-bold text-slate-800">${f}</span>
+      <span class="text-xs" style="color:#16a34a">uploaded</span>
+      <button onclick="files.splice(${i},1);renderFiles()" class="text-slate-300 hover:text-red-400" aria-label="Remove"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>`;
+    l.appendChild(row);
+  });
+}
+function submitTrace(){
+  if(files.length===0){ addFiles(); }
+  document.getElementById('mainState').style.display='none';
+  document.getElementById('successState').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  confettiBurst();
+}
+function confettiBurst(){
+  const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
+  for(let i=0;i<45;i++){ const c=document.createElement('div'); c.className='confetti'; const s=6+Math.random()*7; c.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.8+Math.random()*1.5}s`; document.body.appendChild(c); setTimeout(()=>c.remove(),3600); }
+}
+</script>
+</body>
+</html>

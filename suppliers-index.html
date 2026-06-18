@@ -105,6 +105,41 @@
     </a>
   </div>
 
+  <!-- Account & support -->
+  <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Account & Support</p>
+  <div class="grid sm:grid-cols-3 gap-5 mb-8">
+    <a href="suppliers-09-login.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">9</div><span class="step-label">Auth</span></div>
+      <p class="font-black text-slate-900 mb-1">Sign In</p>
+      <p class="text-sm text-slate-500">Returning supplier login.</p>
+    </a>
+    <a href="suppliers-10-settings.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">10</div><span class="step-label">Settings</span></div>
+      <p class="font-black text-slate-900 mb-1">Settings</p>
+      <p class="text-sm text-slate-500">Profile + notification preferences (no spam).</p>
+    </a>
+    <a href="suppliers-11-trace-upload.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">11</div><span class="step-label">Trace</span></div>
+      <p class="font-black text-slate-900 mb-1">Upload Traceability</p>
+      <p class="text-sm text-slate-500">When the DLA requests traces on a quote.</p>
+    </a>
+  </div>
+
+  <!-- Internal ops -->
+  <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Internal — Operations (ResupplyAI only)</p>
+  <div class="grid sm:grid-cols-2 gap-5 mb-8">
+    <a href="ops-01-assignment.html" class="card" style="border:1px solid rgba(42,61,136,0.18)">
+      <div class="flex items-center gap-3 mb-3"><div class="num" style="background:var(--navy)">OPS</div><span class="tag" style="background:rgba(42,61,136,0.1);color:var(--primary)">ENGINE</span></div>
+      <p class="font-black text-slate-900 mb-1">Quote Assignment Console</p>
+      <p class="text-sm text-slate-500">Where supplier quotes get assigned to bidder clients. The bridge between both platforms.</p>
+    </a>
+    <a href="ops-02-clients.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num" style="background:var(--navy)">OPS</div><span class="step-label">Config</span></div>
+      <p class="font-black text-slate-900 mb-1">Clients</p>
+      <p class="text-sm text-slate-500">Client profiles & criteria that power the auto-filter.</p>
+    </a>
+  </div>
+
   <div class="rounded-2xl p-5" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
     <p class="text-sm font-black text-slate-900 mb-1">How matching works behind the scenes</p>
     <p class="text-sm text-slate-500">Each DLA solicitation is cross-referenced against every supplier's stock — first by NSN (exact), then by approved Part Number + manufacturer, then by AI for the messy cases. Suppliers only ever see their own matches.</p>
