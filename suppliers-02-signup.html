@@ -212,12 +212,23 @@
           </div>
         </div>
 
+        <!-- CAPTCHA slot — placeholder; the backend plugs a real provider (reCAPTCHA/hCaptcha/Turnstile) here -->
+        <div class="flex items-center justify-between rounded-xl px-4 py-3 mt-1" style="border:1px solid rgba(33,50,95,0.14);background:#fafbff">
+          <label class="flex items-center gap-2.5 text-sm font-bold text-slate-600 cursor-pointer">
+            <input type="checkbox" id="captcha" style="accent-color:var(--primary);width:18px;height:18px"> I'm not a robot
+          </label>
+          <span class="text-[10px] font-black text-slate-400 text-right leading-tight" style="letter-spacing:.04em">CAPTCHA<br>placeholder</span>
+        </div>
+
+        <!-- Consent -->
+        <label class="flex items-start gap-2.5 text-xs text-slate-500 cursor-pointer leading-relaxed">
+          <input type="checkbox" id="consent" style="accent-color:var(--primary);width:16px;height:16px;margin-top:1px;flex-shrink:0">
+          <span>I agree to the <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Supplier Terms</a> and <a href="suppliers-legal-privacy.html" class="font-bold" style="color:var(--primary)">Privacy Policy</a>. ResupplyAI never shares your buyer or pricing data.</span>
+        </label>
+        <p class="err-consent text-xs" style="color:#ef4444;display:none">Please confirm the CAPTCHA and accept the terms to continue.</p>
+
         <button type="submit" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm mt-2">Create Account →</button>
       </form>
-
-      <p class="text-xs text-slate-400 text-center mt-4 leading-relaxed">
-        By joining you agree to our <a href="#" class="font-bold" style="color:var(--primary)">Supplier Terms</a>. We never share your buyer or pricing data.
-      </p>
 
       <div class="flex items-center gap-3 my-5">
         <div class="flex-1 h-px bg-slate-100"></div>
@@ -272,6 +283,10 @@ document.getElementById('form').addEventListener('submit', e => {
   if(pwd.value.length < 8){ setErr(pwd,true); ok=false; } else setErr(pwd,false);
   const pwd2 = document.getElementById('pwd2');
   if(pwd2.value !== pwd.value || !pwd2.value){ setErr(pwd2,true); ok=false; } else setErr(pwd2,false);
+
+  const captcha = document.getElementById('captcha'), consent = document.getElementById('consent');
+  if(!captcha.checked || !consent.checked){ document.querySelector('.err-consent').style.display='block'; ok=false; }
+  else { document.querySelector('.err-consent').style.display='none'; }
 
   if(!ok) return;
 

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Contact Us</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+  .float-card { background:#fff; border-radius:22px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
+  .label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
+  .input { width:100%; border:1px solid rgba(33,50,95,0.12); border-radius:12px; padding:11px 14px; font-size:14px; color:#0f172a; transition: all .18s; outline:none; background:#fff; }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(42,61,136,0.1); }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; box-shadow: 0 12px 28px rgba(33,50,95,0.3); transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(33,50,95,0.4); }
+  .chan { display:flex; align-items:center; gap:12px; padding:13px 0; border-top:1px solid rgba(33,50,95,0.06); }
+  .chan:first-of-type { border-top:none; }
+  .chan-ico { width:38px;height:38px;border-radius:11px;background:rgba(42,61,136,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--primary); }
+  .ftr a { color:#64748b; font-weight:700; transition:color .15s; }
+  .ftr a:hover { color:var(--primary); }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
+
+<div class="relative max-w-4xl mx-auto px-6 py-10" style="z-index:1">
+
+  <div class="flex items-center justify-between mb-7">
+    <a href="suppliers-01-landing.html" class="flex items-center gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+    </a>
+    <a href="suppliers-01-landing.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to home
+    </a>
+  </div>
+
+  <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:var(--primary)">Support</p>
+  <h1 class="text-3xl font-black text-slate-900 mb-1" style="letter-spacing:-0.02em">Contact us</h1>
+  <p class="text-slate-500 text-sm mb-7" style="max-width:560px">Questions about matching, quotes, traceability, or your account? Send us a note — a real person on the ResupplyAI team gets back to you, usually within one business day.</p>
+
+  <div class="grid md:grid-cols-5 gap-6 items-start">
+
+    <!-- form -->
+    <div class="md:col-span-3 float-card p-7">
+      <form id="cform" class="space-y-4" novalidate>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div><label class="label">Your name</label><input class="input" id="c_name" placeholder="Hector Torres"></div>
+          <div><label class="label">Company</label><input class="input" placeholder="Hermes Technical"></div>
+        </div>
+        <div><label class="label">Business email</label><input class="input" id="c_email" type="email" placeholder="you@company.com"></div>
+        <div>
+          <label class="label">Topic</label>
+          <select class="input">
+            <option>General question</option>
+            <option>Quote or matching issue</option>
+            <option>Traceability / documents</option>
+            <option>Account &amp; team</option>
+            <option>Billing / purchase order</option>
+            <option>Report a problem</option>
+          </select>
+        </div>
+        <div><label class="label">Message</label><textarea class="input" id="c_msg" rows="5" placeholder="How can we help?"></textarea></div>
+        <button type="submit" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm">Send message →</button>
+        <p id="cok" class="text-sm font-bold text-center" style="color:var(--primary);display:none">✓ Thanks — your message is on its way. We'll reply by email.</p>
+      </form>
+    </div>
+
+    <!-- channels -->
+    <div class="md:col-span-2 float-card p-7">
+      <p class="font-black text-slate-900 mb-3">Other ways to reach us</p>
+      <div class="chan">
+        <div class="chan-ico"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <div><p class="text-sm font-bold text-slate-800">Email</p><p class="text-xs text-slate-500">support@resupplyai.com</p></div>
+      </div>
+      <div class="chan">
+        <div class="chan-ico"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div>
+        <div><p class="text-sm font-bold text-slate-800">Phone</p><p class="text-xs text-slate-500">Mon–Fri · 9am–6pm ET</p></div>
+      </div>
+      <div class="chan">
+        <div class="chan-ico"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <div><p class="text-sm font-bold text-slate-800">Help &amp; FAQ</p><p class="text-xs text-slate-500">Common questions about quoting &amp; traces</p></div>
+      </div>
+      <div class="mt-5 rounded-xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
+        <p class="text-xs text-slate-500 leading-relaxed">Already a supplier? You can also reach us from the <span class="font-bold" style="color:var(--navy)">Settings</span> page inside your account.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ftr flex flex-wrap items-center justify-between gap-3 mt-8 text-xs text-slate-400">
+    <span>© 2026 ResupplyAI · Helping dealers sell to the DLA.</span>
+    <div class="flex items-center gap-4">
+      <a href="suppliers-legal-terms.html">Terms</a>
+      <a href="suppliers-legal-privacy.html">Privacy</a>
+      <a href="suppliers-contact.html">Contact</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.getElementById('cform').addEventListener('submit', e=>{
+  e.preventDefault();
+  const name=document.getElementById('c_name'), email=document.getElementById('c_email'), msg=document.getElementById('c_msg');
+  if(!name.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()) || !msg.value.trim()){
+    (!name.value.trim()?name:!msg.value.trim()?msg:email).focus(); return;
+  }
+  const btn=e.target.querySelector('button'); btn.style.display='none';
+  document.getElementById('cok').style.display='block';
+});
+</script>
+</body>
+</html>

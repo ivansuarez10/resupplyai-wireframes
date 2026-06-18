@@ -91,7 +91,46 @@
     .q-item{flex-wrap:wrap; gap:10px}
     .cartbar-fixed { left:16px !important; right:16px !important; transform:none !important; }
   }
+  @media (max-width:640px){
+    .hide-mobile { display:none !important; }
+    /* Daily-matches rows stack cleanly: info full-width, metas in a row, buttons full-width */
+    .q-item { gap:12px 14px; padding:16px; }
+    .q-item > .flex-1 { flex-basis:100%; }
+    .q-item .meta { flex:0 0 auto; }
+    .q-item .price-input { width:84px; }
+    .q-item > .flex.items-center.gap-2 { flex-basis:100%; }
+    .q-item > .flex.items-center.gap-2 .qbtn { flex:1; text-align:center; }
+  }
   *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+
+  /* Topbar actions: notification bell + user menu */
+  .tb-icon { position:relative; width:38px; height:38px; border-radius:11px; background:#fff; border:1px solid rgba(33,50,95,0.08); box-shadow:0 4px 16px rgba(33,50,95,0.05); display:flex; align-items:center; justify-content:center; color:#64748b; cursor:pointer; transition:all .15s; flex-shrink:0; }
+  .tb-icon:hover { color:var(--primary); border-color:rgba(42,61,136,0.2); }
+  .tb-badge { position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; font-size:10px; font-weight:900; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(33,50,95,0.45); border:2px solid #f5f7fc; }
+  .menu-pop { position:absolute; top:calc(100% + 10px); right:0; width:320px; max-width:calc(100vw - 32px); background:#fff; border-radius:16px; box-shadow:0 26px 70px rgba(33,50,95,0.20); border:1px solid rgba(33,50,95,0.06); z-index:60; overflow:hidden; opacity:0; transform:translateY(-8px) scale(.98); pointer-events:none; transition:all .18s cubic-bezier(.16,1,.3,1); transform-origin:top right; }
+  .menu-pop.open { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .menu-item { display:flex; align-items:center; gap:11px; padding:11px 16px; font-size:13px; font-weight:700; color:#334155; cursor:pointer; transition:background .12s; }
+  .menu-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .menu-item svg { width:16px; height:16px; flex-shrink:0; }
+  .notif-row { display:flex; gap:11px; padding:12px 16px; border-top:1px solid rgba(33,50,95,0.05); cursor:pointer; transition:background .12s; }
+  .notif-row:hover { background:rgba(42,61,136,0.04); }
+  .notif-dot { width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:5px; flex-shrink:0; }
+  .notif-dot.read { background:#cbd5e1; }
+
+  /* Skeleton shimmer */
+  .skel { background:linear-gradient(90deg, rgba(33,50,95,0.07) 25%, rgba(33,50,95,0.14) 37%, rgba(33,50,95,0.07) 63%); background-size:400% 100%; animation: shimmer 1.4s ease infinite; border-radius:8px; display:block; }
+  .skel-light { background:linear-gradient(90deg, rgba(255,255,255,0.14) 25%, rgba(255,255,255,0.28) 37%, rgba(255,255,255,0.14) 63%); background-size:400% 100%; animation: shimmer 1.4s ease infinite; border-radius:8px; }
+  @keyframes shimmer { 0%{background-position:100% 0} 100%{background-position:-100% 0} }
+  @media (prefers-reduced-motion: reduce){ .skel,.skel-light{animation:none} }
+  .skel-row { display:flex; align-items:center; gap:16px; padding:18px 20px; border-radius:16px; background:#fff; border:1px solid rgba(33,50,95,0.07); margin-bottom:10px; }
+
+  /* Preview-state dock (demo only) */
+  .preview-dock { position:fixed; bottom:18px; left:18px; z-index:45; background:#fff; border:1px solid rgba(33,50,95,0.1); box-shadow:0 14px 36px rgba(33,50,95,0.18); border-radius:14px; padding:7px 8px; display:flex; align-items:center; gap:3px; flex-wrap:wrap; max-width:calc(100vw - 36px); }
+  .preview-dock .pv-label { font-size:9px; font-weight:900; letter-spacing:.08em; color:#94a3b8; text-transform:uppercase; padding:0 6px 0 2px; }
+  .preview-dock .pv-demo { font-size:9px; font-weight:900; letter-spacing:.08em; color:#fff; text-transform:uppercase; padding:3px 7px; border-radius:7px; background:linear-gradient(135deg,var(--primary),var(--navy)); }
+  .preview-dock .pv { font-size:11px; font-weight:800; padding:6px 11px; border-radius:9px; cursor:pointer; color:#64748b; transition:all .15s; white-space:nowrap; }
+  .preview-dock .pv:hover { background:rgba(42,61,136,0.07); color:var(--primary); }
+  .preview-dock .pv.on { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; }
 </style>
 </head>
 <body class="flex">
@@ -144,17 +183,98 @@
       <p class="text-xs text-slate-400 mt-0.5">Tuesday, June 17, 2026 · matches refreshed 6:00 AM</p>
       </div>
     </div>
-    <div class="flex items-center gap-3">
-      <div class="relative">
+    <div class="flex items-center gap-3 relative">
+      <div class="relative hide-mobile">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input class="bg-white rounded-xl pl-9 pr-4 py-2 text-sm outline-none" style="border:1px solid rgba(33,50,95,0.08);box-shadow:0 4px 16px rgba(33,50,95,0.05);width:220px" placeholder="Search NSN, P/N…">
       </div>
-      <div class="avatar">HT</div>
+
+      <!-- Notification bell -->
+      <button class="tb-icon" id="bellBtn" onclick="toggleMenu('notifMenu', event)" aria-label="Notifications">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="tb-badge">2</span>
+      </button>
+
+      <!-- Avatar -->
+      <button class="avatar flex-shrink-0" id="avatarBtn" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
+
+      <!-- Notifications dropdown -->
+      <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
+        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)">
+          <p class="font-black text-slate-900 text-sm">Notifications</p>
+          <span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span>
+        </div>
+        <div style="max-height:360px;overflow-y:auto">
+          <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
+            <span class="notif-dot"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability — upload to stay in the running · 2h ago</p></div>
+          </div>
+          <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
+            <span class="notif-dot"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Engine Cylinder Head</p><p class="text-xs text-slate-400 mt-0.5">1 quote needs documentation · 5h ago</p></div>
+          </div>
+          <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'">
+            <span class="notif-dot read"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
+          </div>
+          <div class="notif-row" onclick="location.href='suppliers-10-settings.html'">
+            <span class="notif-dot read"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Inventory synced · 1,284 items updated</p><p class="text-xs text-slate-400 mt-0.5">Latest pull from your Google Sheet · yesterday</p></div>
+          </div>
+          <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-10-settings.html'">
+            <span class="notif-dot read"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">New login · Maria Reyes</p><p class="text-xs text-slate-400 mt-0.5">A teammate signed in from a new device · 2d ago</p></div>
+          </div>
+          <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-10-settings.html'">
+            <span class="notif-dot read"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Teammate joined · Maria Reyes</p><p class="text-xs text-slate-400 mt-0.5">Set up her login under Hermes Technical · 3d ago</p></div>
+          </div>
+          <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-14-quote-status.html'">
+            <span class="notif-dot read"></span>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-400 mt-0.5">Assigned to a buyer — you're in the running · 4d ago</p></div>
+          </div>
+        </div>
+        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><button id="seeMore" class="text-xs font-bold" style="color:var(--primary)" onclick="seeMore()">See more</button></div>
+      </div>
+
+      <!-- User menu dropdown -->
+      <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
+          <div class="avatar flex-shrink-0">HT</div>
+          <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
+        </div>
+        <div class="py-1">
+          <div class="menu-item" onclick="location.href='suppliers-10-settings.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Settings</div>
+          <div class="menu-item" onclick="location.href='suppliers-08-my-inventory.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg> My inventory</div>
+        </div>
+        <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
+          <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="flex-1 overflow-y-auto px-6 pb-8 pt-2">
     <div class="max-w-4xl mx-auto">
+
+      <!-- STALE / SYNC-FAILED BANNER (shown above live data when sync is behind) -->
+      <div id="staleBanner" class="float-card mb-5 p-4 flex items-center justify-between flex-wrap gap-3" style="display:none; border:1px solid rgba(42,61,136,0.18)">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(42,61,136,0.1)">
+            <svg class="w-5 h-5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-sm font-black text-slate-900">You're seeing yesterday's matches — this morning's sync didn't finish</p>
+            <p class="text-xs text-slate-400">Last successful sync: Mon Jun 16, 6:00 AM. Your inventory is safe; this is on our end.</p>
+          </div>
+        </div>
+        <button onclick="retrySync(this)" class="btn-ghost text-xs font-black px-4 py-2 rounded-xl whitespace-nowrap flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Retry sync
+        </button>
+      </div>
+
+      <div id="liveView">
 
       <!-- QUEUE PROGRESS HERO -->
       <div class="hero-gradient rounded-3xl p-7 mb-6" style="box-shadow:0 28px 70px rgba(33,50,95,0.3)">
@@ -181,7 +301,7 @@
           <span class="sort-tab" onclick="setSort(this)">Value</span>
           <span class="sort-tab" onclick="setSort(this)">Volume</span>
         </div>
-        <button class="btn-ghost text-xs font-bold px-4 py-2 rounded-xl">Quote all in-stock →</button>
+        <button class="btn-ghost text-xs font-bold px-4 py-2 rounded-xl" onclick="quoteAllInStock(event)">Quote all in-stock →</button>
       </div>
 
       <!-- QUEUE -->
@@ -190,13 +310,13 @@
         <!-- HOT 1 -->
         <div class="q-item hot item-enter" data-val="1840" data-hot="1">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:#16a34a">340 in stock ✓</span></div>
+            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:var(--primary)">340 in stock ✓</span></div>
             <p class="text-sm font-black text-slate-900">2530-01-687-4521 · Brake Drum Assembly</p>
             <p class="text-xs text-slate-400">P/N BD-44871 · Meritor</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">120 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 19 · 2d</span></div>
-          <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="1,840"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="1,840"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
@@ -206,13 +326,13 @@
         <!-- HOT 2 -->
         <div class="q-item hot item-enter" data-val="4210" data-hot="1">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:#16a34a">60 in stock ✓</span></div>
+            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:var(--primary)">60 in stock ✓</span></div>
             <p class="text-sm font-black text-slate-900">1560-01-445-8821 · Structural Panel</p>
             <p class="text-xs text-slate-400">P/N SP-2245 · Boeing</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">45 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 20 · 3d</span></div>
-          <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="4,210"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="4,210"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
@@ -228,7 +348,7 @@
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">30 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 24 · 7d</span></div>
-          <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="3,560"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="3,560"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
@@ -238,13 +358,13 @@
         <!-- NORMAL -->
         <div class="q-item item-enter" data-val="92">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:#16a34a">1,200 in stock ✓</span></div>
+            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">1,200 in stock ✓</span></div>
             <p class="text-sm font-black text-slate-900">5340-01-234-8823 · Bracket, Mounting</p>
             <p class="text-xs text-slate-400">P/N BRK-118</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">500 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jun 27 · 10d</span></div>
-          <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="92"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="92"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
@@ -253,13 +373,13 @@
 
         <div class="q-item item-enter" data-val="14">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:#16a34a">8,500 in stock ✓</span></div>
+            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">8,500 in stock ✓</span></div>
             <p class="text-sm font-black text-slate-900">5305-01-112-3344 · Screw, Machine</p>
             <p class="text-xs text-slate-400">P/N SCM-04</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">1,200 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jun 28 · 11d</span></div>
-          <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="14"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="14"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
@@ -268,13 +388,13 @@
 
         <div class="q-item item-enter" data-val="210">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:#16a34a">150 in stock ✓</span></div>
+            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">150 in stock ✓</span></div>
             <p class="text-sm font-black text-slate-900">4730-01-556-1243 · Hose Assembly</p>
             <p class="text-xs text-slate-400">P/N HA-9920</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">80 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jul 1 · 14d</span></div>
-          <div class="meta"><span class="meta-label">Suggested</span><input class="price-input" value="210"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="210"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
@@ -285,7 +405,60 @@
 
       <!-- Load more -->
       <div class="text-center mt-4" id="loadMore">
-        <button class="text-sm font-bold transition-opacity hover:opacity-75" style="color:var(--primary)">Load 41 more matches ↓</button>
+        <button class="text-sm font-bold transition-opacity hover:opacity-75" style="color:var(--primary)" onclick="loadMore(this)">Load 41 more matches ↓</button>
+      </div>
+
+      </div><!-- /liveView -->
+
+      <!-- SKELETON LOADING state -->
+      <div id="skeletonView" style="display:none">
+        <!-- skeleton hero -->
+        <div class="rounded-3xl p-7 mb-6" style="background:linear-gradient(135deg, #2f3f73, #21325f); box-shadow:0 28px 70px rgba(33,50,95,0.3)">
+          <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <div>
+              <div class="skel skel-light" style="width:140px;height:11px;margin-bottom:10px"></div>
+              <div class="skel skel-light" style="width:220px;height:26px"></div>
+            </div>
+            <div class="flex gap-7">
+              <div><div class="skel skel-light" style="width:40px;height:26px;margin-bottom:6px"></div><div class="skel skel-light" style="width:46px;height:9px"></div></div>
+              <div><div class="skel skel-light" style="width:40px;height:26px;margin-bottom:6px"></div><div class="skel skel-light" style="width:46px;height:9px"></div></div>
+            </div>
+          </div>
+          <div class="skel skel-light" style="height:10px;border-radius:9999px"></div>
+        </div>
+        <!-- skeleton rows -->
+        <div id="skelRows"></div>
+        <p class="text-center text-xs text-slate-400 mt-5">Pulling this morning's DLA solicitations and matching them to your stock…</p>
+      </div>
+
+      <!-- NO MATCHES TODAY state (positive empty — distinct from "queue cleared") -->
+      <div id="noMatches" class="float-card p-10 text-center mt-2" style="display:none">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.08))">
+          <svg class="w-8 h-8" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 mb-2">No new matches this morning</h2>
+        <p class="text-slate-500 mb-1 max-w-md mx-auto">Nothing in today's DLA solicitations lined up with your stock — that's normal on a quiet day.</p>
+        <p class="text-slate-400 text-sm mb-6 max-w-md mx-auto">Your <span class="font-bold" style="color:var(--primary)">1,284 items</span> are live and we're watching <span class="font-bold" style="color:var(--primary)">3,200+</span> open solicitations. We'll alert you the moment one fits.</p>
+        <div class="flex items-center justify-center gap-2 flex-wrap">
+          <a href="suppliers-08-my-inventory.html" class="btn-ghost inline-block font-black px-6 py-3 rounded-xl text-sm">Review my inventory</a>
+          <a href="suppliers-07-my-quotes.html" class="text-sm font-bold px-4 py-3" style="color:var(--primary)">See open quotes →</a>
+        </div>
+      </div>
+
+      <!-- ERROR state (couldn't load — navy, not alarming) -->
+      <div id="errorState" class="float-card p-10 text-center mt-2" style="display:none">
+        <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:rgba(42,61,136,0.1)">
+          <svg class="w-8 h-8" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"/></svg>
+        </div>
+        <h2 class="text-2xl font-black text-slate-900 mb-2">We couldn't load today's matches</h2>
+        <p class="text-slate-500 mb-6 max-w-md mx-auto">Something went wrong on our side while building your queue. Your inventory and quotes are safe — nothing was lost.</p>
+        <div class="flex items-center justify-center gap-2 flex-wrap">
+          <button onclick="retrySync(this)" class="btn-ghost inline-flex items-center gap-1.5 font-black px-6 py-3 rounded-xl text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Try again
+          </button>
+          <span class="text-sm text-slate-400 px-3 py-3">or <a href="suppliers-10-settings.html" class="font-bold" style="color:var(--primary)">contact support</a></span>
+        </div>
       </div>
 
       <!-- INBOX ZERO state -->
@@ -316,6 +489,17 @@
       <a href="suppliers-06-quote-cart.html" class="bg-white font-black text-sm px-5 py-2.5 rounded-xl whitespace-nowrap" style="color:var(--navy)">Review & Submit →</a>
     </div>
   </div>
+</div>
+
+<!-- PREVIEW STATE DOCK (demo only — flip through every state) -->
+<div class="preview-dock" id="previewDock">
+  <span class="pv-demo">DEMO</span>
+  <span class="pv-label">states</span>
+  <span class="pv on" data-s="live" onclick="setState('live',this)">Live</span>
+  <span class="pv" data-s="loading" onclick="setState('loading',this)">Loading</span>
+  <span class="pv" data-s="stale" onclick="setState('stale',this)">Stale</span>
+  <span class="pv" data-s="empty" onclick="setState('empty',this)">No matches</span>
+  <span class="pv" data-s="error" onclick="setState('error',this)">Error</span>
 </div>
 
 <script>
@@ -379,6 +563,69 @@ function setSort(el){
   el.classList.add('active');
 }
 
+// Bulk-quote every in-stock match → add to cart and go review
+function quoteAllInStock(ev){
+  const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
+  let added = 0, needPrice = 0;
+  document.querySelectorAll('#queue .q-item').forEach(item=>{
+    if(!item.textContent.includes('in stock ✓')) return; // skip short / out of stock
+    const unit = parseFloat((item.querySelector('.price-input')?.value || '').replace(/[^0-9.]/g,'')) || 0;
+    if(!unit){                       // their uploaded sheet had no price for this item
+      needPrice++;
+      const inp = item.querySelector('.price-input');
+      if(inp){ inp.style.borderColor = 'var(--primary)'; inp.placeholder = 'Set price'; }
+      return;                        // never quote at $0
+    }
+    const title = item.querySelector('.font-black.text-slate-900').textContent;
+    cart.push({ nsn: title.split(' · ')[0].trim(), name: (title.split(' · ')[1] || '').trim(),
+      qty: parseInt((item.querySelector('.meta-val')?.textContent || '').replace(/[^0-9]/g,'')) || 0,
+      unit, value: ((parseInt((item.querySelector('.meta-val')?.textContent||'').replace(/[^0-9]/g,''))||0) * unit) });
+    added++;
+  });
+  const btn = ev.target.closest('button');
+  if(added === 0){ btn.textContent = needPrice ? `${needPrice} need a price first` : 'Nothing in stock'; return; }
+  localStorage.setItem('quoteCart', JSON.stringify(cart));
+  btn.textContent = needPrice ? `✓ Added ${added} · ${needPrice} need a price` : `✓ Added ${added} to cart`;
+  btn.style.opacity = '0.85';
+  setTimeout(()=>{ window.location.href = 'suppliers-06-quote-cart.html'; }, 800);
+}
+
+// Load more matches → append a few, then end
+let moreLoaded = false;
+function loadMore(btn){
+  if(moreLoaded) return;
+  btn.textContent = 'Loading…';
+  const samples = [
+    ['5310-01-334-7781','Washer, Flat','P/N WF-220','3,000','2,000 EA','Jul 2 · 15d','6'],
+    ['6150-01-220-1144','Wire Harness','P/N WH-55','40','25 EA','Jul 3 · 16d',''],
+    ['4820-01-441-9921','Valve, Globe','P/N VG-12','75','60 EA','Jul 5 · 18d','488'],
+  ];
+  setTimeout(()=>{
+    moreLoaded = true;
+    const queue = document.getElementById('queue');
+    samples.forEach(([nsn,name,pn,stock,need,deadline,price])=>{
+      const el = document.createElement('div');
+      el.className = 'q-item item-enter';
+      el.dataset.val = price.replace(/[^0-9.]/g,'');
+      el.innerHTML = `
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">${stock} in stock ✓</span></div>
+          <p class="text-sm font-black text-slate-900">${nsn} · ${name}</p>
+          <p class="text-xs text-slate-400">${pn}</p>
+        </div>
+        <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">${need}</span></div>
+        <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">${deadline}</span></div>
+        <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="${price}" ${price?'':'placeholder="Set price" style="border-color:var(--primary)"'}></div>
+        <div class="flex items-center gap-2">
+          <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
+          <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
+        </div>`;
+      queue.appendChild(el);
+    });
+    document.getElementById('loadMore').innerHTML = '<p class="text-sm text-slate-400">That\'s all of today\'s matches.</p>';
+  }, 700);
+}
+
 // confetti
 function confettiBurst(){
   const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
@@ -416,6 +663,80 @@ function refreshCart(){
   }
 }
 refreshCart();
+
+// ---- State machine: live / loading / stale / empty / error -----------------
+function buildSkeletonRows(n){
+  const wrap = document.getElementById('skelRows');
+  if(wrap.childElementCount) return; // build once
+  let html='';
+  for(let i=0;i<n;i++){
+    html += `
+      <div class="skel-row">
+        <div class="flex-1 min-w-0">
+          <span class="skel" style="width:90px;height:10px;margin-bottom:9px"></span>
+          <span class="skel" style="width:${55+Math.random()*25}%;height:13px;margin-bottom:7px"></span>
+          <span class="skel" style="width:120px;height:9px"></span>
+        </div>
+        <span class="skel" style="width:60px;height:30px"></span>
+        <span class="skel" style="width:64px;height:30px"></span>
+        <span class="skel" style="width:96px;height:34px"></span>
+        <span class="skel" style="width:120px;height:34px"></span>
+      </div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function setState(state, btn){
+  // dock highlight
+  if(btn){ document.querySelectorAll('#previewDock .pv').forEach(p=>p.classList.remove('on')); btn.classList.add('on'); }
+  const show = (id,disp='block')=>{ const el=document.getElementById(id); if(el) el.style.display=disp; };
+  const hide = (id)=>{ const el=document.getElementById(id); if(el) el.style.display='none'; };
+
+  // reset everything
+  hide('liveView'); hide('skeletonView'); hide('noMatches'); hide('errorState'); hide('inboxZero'); hide('staleBanner');
+
+  if(state==='live'){
+    show('liveView');
+  } else if(state==='loading'){
+    buildSkeletonRows(5);
+    show('skeletonView');
+  } else if(state==='stale'){
+    show('staleBanner'); show('liveView');
+  } else if(state==='empty'){
+    show('noMatches');
+  } else if(state==='error'){
+    show('errorState');
+  }
+}
+
+// Retry from stale banner or error card → quick loading flash, then back to live
+function retrySync(btn){
+  const orig = btn.innerHTML;
+  btn.innerHTML = 'Syncing…'; btn.style.opacity='0.7'; btn.disabled = true;
+  setState('loading');
+  setTimeout(()=>{
+    setState('live', document.querySelector('#previewDock .pv[data-s="live"]'));
+    btn.innerHTML = orig; btn.style.opacity=''; btn.disabled=false;
+  }, 1200);
+}
+
+// Topbar dropdowns (notifications + user menu)
+function toggleMenu(id, ev){
+  ev.stopPropagation();
+  var el=document.getElementById(id); if(!el) return;
+  document.querySelectorAll('.menu-pop').forEach(m=>{ if(m!==el) m.classList.remove('open'); });
+  el.classList.toggle('open');
+}
+function markAllRead(){
+  document.querySelectorAll('#notifMenu .notif-dot').forEach(d=>d.classList.add('read'));
+  var b=document.querySelector('#bellBtn .tb-badge'); if(b) b.remove();
+}
+function seeMore(){
+  var hidden=[...document.querySelectorAll('#notifMenu [data-extra]')].filter(r=>r.style.display==='none');
+  hidden.slice(0,3).forEach(r=>{ r.style.display=''; });
+  if([...document.querySelectorAll('#notifMenu [data-extra]')].every(r=>r.style.display!=='none')){ var b=document.getElementById('seeMore'); if(b) b.style.display='none'; }
+}
+document.addEventListener('click', ()=> document.querySelectorAll('.menu-pop').forEach(m=>m.classList.remove('open')));
 
 function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }

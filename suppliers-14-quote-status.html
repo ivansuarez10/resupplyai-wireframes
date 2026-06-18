@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI Suppliers — Quote Detail</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Lato', sans-serif; }
+  :root { --navy: #21325f; --primary: #2a3d88; }
+  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
+
+  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .float-card { background:#fff; border-radius:20px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
+
+  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
+  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
+  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
+  .hero-gradient { background-color:var(--primary);
+    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%);
+    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
+  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
+  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 360px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.10), transparent 70%); opacity:0; transition:opacity .3s; }
+  .hero-gradient:hover .hero-spot { opacity:1; }
+  @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
+
+  /* Status pill */
+  .st { font-size:11px; font-weight:900; padding:5px 13px; border-radius:9999px; letter-spacing:.03em; display:inline-flex; align-items:center; gap:6px; }
+  .st .dot{ width:7px;height:7px;border-radius:50%;background:currentColor; }
+  .st-pending  { background:#eef1f8; color:#64748b; }
+  .st-assigned { background:rgba(42,61,136,0.1); color:var(--primary); }
+  .st-trace    { background:linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; }
+  .st-won      { background:linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; }
+  .st-closed   { background:#eef1f8; color:#94a3b8; }
+
+  /* Timeline (horizontal, editorial) */
+  .track { display:flex; gap:0; }
+  .step { flex:1; position:relative; padding-top:34px; }
+  .step::before { content:''; position:absolute; top:11px; left:0; right:0; height:2px; background:rgba(33,50,95,0.1); }
+  .step:first-child::before { left:50%; }
+  .step:last-child::before { right:50%; }
+  .step .node { position:absolute; top:3px; left:calc(50% - 9px); width:18px; height:18px; border-radius:50%; background:#fff; border:2px solid rgba(33,50,95,0.18); z-index:1; transition:all .2s; }
+  .step.done::before, .step.current::before { background:linear-gradient(90deg, var(--primary), #5e7ee8); }
+  .step.done .node { background:var(--primary); border-color:var(--primary); }
+  .step.current .node { background:#fff; border-color:var(--primary); box-shadow:0 0 0 5px rgba(42,61,136,0.15); }
+  .step.current .node::after { content:''; position:absolute; inset:3px; border-radius:50%; background:var(--primary); }
+  .step .s-label { font-size:12px; font-weight:900; color:var(--navy); }
+  .step .s-sub { font-size:11px; color:#94a3b8; margin-top:1px; }
+  .step.upcoming .s-label { color:#cbd5e1; }
+  .step.upcoming .s-sub { color:#d8dee9; }
+  .step.lost.current .node { border-color:#94a3b8; }
+  .step.lost.current .node::after { background:#94a3b8; }
+
+  .spec { display:flex; flex-direction:column; gap:3px; }
+  .spec .k { font-size:11px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:.04em; }
+  .spec .v { font-size:16px; font-weight:900; color:var(--navy); }
+
+  .doc { display:flex; align-items:center; gap:12px; padding:13px 15px; border-radius:14px; background:#fafbff; border:1px solid rgba(33,50,95,0.06); transition:all .15s; }
+  .doc:hover { border-color:rgba(42,61,136,0.2); background:#fff; box-shadow:0 8px 22px rgba(33,50,95,0.07); }
+  .doc-ico { width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.08)); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--primary); }
+
+  .feed-item { position:relative; padding-left:26px; padding-bottom:20px; }
+  .feed-item::before { content:''; position:absolute; left:5px; top:16px; bottom:-4px; width:2px; background:rgba(33,50,95,0.08); }
+  .feed-item:last-child::before { display:none; }
+  .feed-item::after { content:''; position:absolute; left:0; top:5px; width:12px; height:12px; border-radius:50%; background:#fff; border:2px solid rgba(33,50,95,0.2); }
+  .feed-item.hl::after { background:var(--primary); border-color:var(--primary); }
+
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
+  .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
+  .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
+
+  .page-enter { animation: pIn .55s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes pIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  .rise { animation: rise .6s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes rise { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+  @media (max-width: 920px){
+    .track { flex-direction:column; gap:18px; }
+    .step { padding-top:0; padding-left:30px; }
+    .step::before { top:0; bottom:0; left:8px; right:auto; width:2px; height:auto; }
+    .step:first-child::before { top:50%; left:8px; }
+    .step:last-child::before { bottom:50%; left:8px; }
+    .step .node { top:calc(50% - 9px); left:0; }
+  }
+  /* Topbar actions: notification bell + user menu */
+  .tb-icon { position:relative; width:38px; height:38px; border-radius:11px; background:#fff; border:1px solid rgba(33,50,95,0.08); box-shadow:0 4px 16px rgba(33,50,95,0.05); display:flex; align-items:center; justify-content:center; color:#64748b; cursor:pointer; transition:all .15s; flex-shrink:0; }
+  .tb-icon:hover { color:var(--primary); border-color:rgba(42,61,136,0.2); }
+  .tb-badge { position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; font-size:10px; font-weight:900; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(33,50,95,0.45); border:2px solid #f5f7fc; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+  .menu-pop { position:absolute; top:calc(100% + 10px); right:0; width:300px; max-width:calc(100vw - 32px); background:#fff; border-radius:16px; box-shadow:0 26px 70px rgba(33,50,95,0.20); border:1px solid rgba(33,50,95,0.06); z-index:60; overflow:hidden; opacity:0; transform:translateY(-8px) scale(.98); pointer-events:none; transition:all .18s cubic-bezier(.16,1,.3,1); transform-origin:top right; }
+  .menu-pop.open { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .menu-item { display:flex; align-items:center; gap:11px; padding:11px 16px; font-size:13px; font-weight:700; color:#334155; cursor:pointer; transition:background .12s; }
+  .menu-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .menu-item svg { width:16px; height:16px; flex-shrink:0; }
+  .notif-row { display:flex; gap:11px; padding:12px 16px; border-top:1px solid rgba(33,50,95,0.05); cursor:pointer; transition:background .12s; }
+  .notif-row:hover { background:rgba(42,61,136,0.04); }
+  .notif-dot { width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:5px; flex-shrink:0; }
+  .notif-dot.read { background:#cbd5e1; }
+  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb" style="width:460px;height:460px;background:#c7d4f8;top:-160px;right:-120px"></div>
+<div class="bg-orb" style="width:340px;height:340px;background:#dbe4fb;bottom:-120px;left:-120px"></div>
+
+<div class="relative" style="z-index:1">
+
+  <!-- Top bar -->
+  <div class="px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
+    <div class="flex items-center gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
+      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+    </div>
+    <div class="flex items-center gap-3 relative">
+      <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mr-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to My Quotes
+      </a>
+      <button class="tb-icon" id="bellBtn" onclick="toggleMenu('notifMenu', event)" aria-label="Notifications">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="tb-badge">2</span>
+      </button>
+      <button class="avatar flex-shrink-0" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
+      <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
+        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-black text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
+        <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
+      </div>
+      <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
+        <div class="py-1">
+          <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
+          <div class="menu-item" onclick="location.href='suppliers-07-my-quotes.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> My quotes</div>
+          <div class="menu-item" onclick="location.href='suppliers-10-settings.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Settings</div>
+        </div>
+        <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)"><div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 pb-24 page-enter">
+
+    <!-- HEADER — editorial, asymmetric -->
+    <div class="flex flex-wrap items-end justify-between gap-6 mt-2 mb-9">
+      <div style="max-width:640px">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="st" id="statusPill"><span class="dot"></span> Trace requested</span>
+          <span class="text-xs font-bold text-slate-400" id="submittedLine">Submitted Jun 12, 2026 · by Hector T.</span>
+        </div>
+        <h1 class="font-black text-slate-900 leading-tight" style="font-size:34px;letter-spacing:-0.02em" id="itemName">Brake Drum Assembly</h1>
+        <p class="text-slate-500 text-sm mt-1.5" id="itemNsn">NSN 2530-01-687-4521 · P/N BD-44871 · Quote #RS-10428</p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Your quote total</p>
+        <p class="font-black text-slate-900 leading-none" style="font-size:40px" id="quoteTotal">$220,800</p>
+        <p class="text-sm font-bold text-slate-400 mt-1.5" id="quoteBreak">120 units × $1,840</p>
+      </div>
+    </div>
+
+    <!-- STATUS TIMELINE — full width band -->
+    <div class="float-card rise p-7 mb-6">
+      <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+        <h2 class="font-black text-slate-900 text-base">Where this quote stands</h2>
+        <p class="text-xs text-slate-400">Statuses update daily as we assign quotes to buyers · last sync 4 hours ago</p>
+      </div>
+      <div class="track" id="track">
+        <!-- steps injected by JS -->
+      </div>
+      <!-- contextual banner under the track -->
+      <div id="statusBanner" class="mt-6 hero-gradient rounded-2xl p-5 flex items-center justify-between flex-wrap gap-4 relative overflow-hidden" style="box-shadow:0 20px 50px rgba(33,50,95,0.26)">
+        <div class="hero-spot"></div>
+        <div class="flex items-center gap-4 relative" style="z-index:1">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,0.15)">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <div>
+            <p class="text-white font-black text-base" id="bannerTitle">The DLA requested traceability — your quote is being seriously considered</p>
+            <p class="text-sm" style="color:rgba(255,255,255,0.78)" id="bannerSub">Upload your trace docs fast to stay in the running. This is a strong buying signal.</p>
+          </div>
+        </div>
+        <a id="bannerBtn" href="suppliers-11-trace-upload.html" class="bg-white font-black text-sm px-5 py-2.5 rounded-xl whitespace-nowrap relative" style="color:var(--navy);z-index:1">Upload trace →</a>
+      </div>
+    </div>
+
+    <!-- BODY GRID — asymmetric: wide left, narrow right rail -->
+    <div class="grid lg:grid-cols-3 gap-6 items-start">
+
+      <!-- LEFT (spans 2) -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- What you quoted -->
+        <div class="float-card rise p-7" style="animation-delay:.06s">
+          <h2 class="font-black text-slate-900 text-base mb-5">What you quoted</h2>
+          <div class="grid sm:grid-cols-3 gap-y-6 gap-x-4">
+            <div class="spec"><span class="k">Quantity supplied</span><span class="v">120 EA</span></div>
+            <div class="spec"><span class="k">Your unit price</span><span class="v">$1,840.00</span></div>
+            <div class="spec"><span class="k">Condition</span><span class="v">New</span></div>
+            <div class="spec"><span class="k">Lead time</span><span class="v">14 days</span></div>
+            <div class="spec"><span class="k">Manufacturer / OEM</span><span class="v">Meritor</span></div>
+            <div class="spec"><span class="k">CAGE</span><span class="v">0VGZ7</span></div>
+          </div>
+          <div class="mt-6 pt-5" style="border-top:1px solid rgba(33,50,95,0.07)">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Your note to ResupplyAI</p>
+            <p class="text-sm text-slate-600 leading-relaxed">Stock is on the shelf in our Tampa warehouse, OEM-boxed. Can ship within 10 days if needed — flagged 14 to be safe.</p>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="float-card rise p-7" style="animation-delay:.12s">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="font-black text-slate-900 text-base">Documents you submitted</h2>
+            <span class="text-xs font-bold text-slate-400">3 files</span>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="doc">
+              <div class="doc-ico"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+              <div class="min-w-0 flex-1"><p class="text-sm font-bold text-slate-800 truncate">Certificate_of_Conformance.pdf</p><p class="text-xs text-slate-400">PDF · 240 KB · Jun 12</p></div>
+            </div>
+            <div class="doc">
+              <div class="doc-ico"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+              <div class="min-w-0 flex-1"><p class="text-sm font-bold text-slate-800 truncate">Meritor_traceability.pdf</p><p class="text-xs text-slate-400">PDF · 512 KB · Jun 12</p></div>
+            </div>
+            <div class="doc sm:col-span-2">
+              <div class="doc-ico"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <div class="min-w-0 flex-1"><p class="text-sm font-bold text-slate-800 truncate">brake_drum_photos.zip</p><p class="text-xs text-slate-400">3 images · 1.8 MB · Jun 12</p></div>
+            </div>
+          </div>
+          <div id="traceDocSlot" class="mt-3 rounded-xl p-3.5 flex items-center justify-between gap-3" style="background:rgba(42,61,136,0.05);border:1px dashed rgba(42,61,136,0.28)">
+            <p class="text-xs text-slate-500"><span class="font-bold" style="color:var(--navy)">Trace documentation</span> requested by the DLA — not yet uploaded.</p>
+            <a href="suppliers-11-trace-upload.html" class="text-xs font-black whitespace-nowrap" style="color:var(--primary)">Upload now →</a>
+          </div>
+        </div>
+
+        <!-- Activity feed -->
+        <div class="float-card rise p-7" style="animation-delay:.18s">
+          <h2 class="font-black text-slate-900 text-base mb-5">Activity</h2>
+          <div id="feed">
+            <!-- injected by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT RAIL — DLA solicitation (navy) -->
+      <div class="rise" style="animation-delay:.1s">
+        <div class="hero-gradient rounded-2xl p-6 sticky top-5 relative overflow-hidden" id="hero" style="box-shadow:0 24px 60px rgba(33,50,95,0.28)">
+          <div class="hero-spot"></div>
+          <div class="relative" style="z-index:1">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:linear-gradient(135deg,#fff,rgba(255,255,255,0.85));color:var(--navy)">HIGH VALUE</span>
+              <span class="text-xs font-bold" style="color:rgba(255,255,255,0.7)">DLA Solicitation</span>
+            </div>
+            <h3 class="text-white font-black text-lg leading-tight mb-1">Brake Drum Assembly</h3>
+            <p class="text-sm mb-5" style="color:rgba(255,255,255,0.7)">NSN 2530-01-687-4521 · SPE7M3-26-T-0142</p>
+
+            <div class="rounded-xl p-3 mb-4" style="background:rgba(255,255,255,0.1)">
+              <div class="flex justify-between py-2"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity needed</span><span class="text-sm font-black text-white">120 EA</span></div>
+              <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Required condition</span><span class="text-sm font-bold text-white">New</span></div>
+              <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Delivery required</span><span class="text-sm font-bold text-white">≤ 30 days</span></div>
+              <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Solicitation closed</span><span class="text-sm font-bold text-white">Jun 19, 2026</span></div>
+            </div>
+
+            <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.12)">
+              <p class="text-xs font-black text-white uppercase tracking-wide mb-1.5">You quoted as</p>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Meritor</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 0VGZ7 · approved ✓</span></div>
+            </div>
+
+            <p class="text-xs mt-4" style="color:rgba(255,255,255,0.55)">You can't see the buyer, and the buyer can't see you — ResupplyAI matches both sides.</p>
+          </div>
+        </div>
+
+        <!-- secondary actions under the rail -->
+        <div class="mt-4 space-y-2">
+          <a href="suppliers-04-daily-matches.html" class="btn-ghost w-full text-sm font-bold py-3 rounded-xl flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            See today's matches
+          </a>
+          <button class="w-full text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors py-1.5">Need help with this quote? Contact ResupplyAI</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- Status model ----------------------------------------------------------
+// Stages: submitted → assigned → review (DLA/trace) → outcome
+const STAGES = [
+  { key:'submitted', label:'Submitted',        sub:'Jun 12' },
+  { key:'assigned',  label:'Assigned to buyer', sub:'Jun 13' },
+  { key:'review',    label:'DLA review',        sub:'Trace stage' },
+  { key:'outcome',   label:'Outcome',           sub:'Pending' },
+];
+
+// Per-status configuration
+const CONFIG = {
+  pending: {
+    pill:'st-pending', pillText:'Pending assignment', reach:0, lost:false,
+    banner:{ title:"We've received your quote — it's in tonight's assignment run",
+             sub:"Every morning we match quotes to buyers. We'll let you know the moment yours is picked up.",
+             btn:null }, traceSlot:false, outcomeSub:'Pending'
+  },
+  assigned: {
+    pill:'st-assigned', pillText:'Assigned to buyer', reach:1, lost:false,
+    banner:{ title:"Assigned to a buyer — you're in the running",
+             sub:"A buyer is preparing their DLA submission with your quote included. No action needed right now.",
+             btn:null }, traceSlot:false, outcomeSub:'Pending'
+  },
+  trace: {
+    pill:'st-trace', pillText:'Trace requested', reach:2, lost:false,
+    banner:{ title:"The DLA requested traceability — your quote is being seriously considered",
+             sub:"Upload your trace docs fast to stay in the running. This is a strong buying signal.",
+             btn:{ text:'Upload trace →', href:'suppliers-11-trace-upload.html' } },
+    traceSlot:true, outcomeSub:'Pending'
+  },
+  won: {
+    pill:'st-won', pillText:'Won — buyer purchasing', reach:3, lost:false,
+    banner:{ title:"You won this one — the buyer is purchasing your stock",
+             sub:"We'll share the PO and delivery details here. Congratulations.",
+             btn:{ text:'View PO & finish →', href:'suppliers-15-purchase-order.html' } }, traceSlot:false, outcomeSub:'Won ✓'
+  },
+  closed: {
+    pill:'st-closed', pillText:'Awarded elsewhere', reach:3, lost:true,
+    banner:{ title:"The DLA awarded this solicitation to another company",
+             sub:"On most solicitations the award goes elsewhere — the DLA weighs every bid and often prioritizes the OEM or an existing approved source. It's a normal part of bidding and not a reflection of you or your stock. Your inventory stays listed for the next match.",
+             btn:{ text:'See today’s matches →', href:'suppliers-04-daily-matches.html' } },
+    traceSlot:false, outcomeSub:'Awarded elsewhere'
+  }
+};
+
+// Activity feeds per status
+const FEEDS = {
+  pending: [
+    ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',true],
+    ['Quote queued for the next assignment run','Jun 12, 2026 · 9:14 AM',false],
+  ],
+  assigned: [
+    ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',false],
+    ['Assigned to a buyer','Jun 13, 2026 · 6:02 AM',true],
+  ],
+  trace: [
+    ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',false],
+    ['Assigned to a buyer','Jun 13, 2026 · 6:02 AM',false],
+    ['DLA requested traceability documentation','Jun 14, 2026 · 11:38 AM',true],
+  ],
+  won: [
+    ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',false],
+    ['Assigned to a buyer','Jun 13, 2026 · 6:02 AM',false],
+    ['Trace documentation accepted','Jun 14, 2026 · 4:20 PM',false],
+    ['Won — buyer issued a purchase order','Jun 16, 2026 · 10:05 AM',true],
+  ],
+  closed: [
+    ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',false],
+    ['Assigned to a buyer','Jun 13, 2026 · 6:02 AM',false],
+    ['DLA awarded the solicitation to another company','Jun 16, 2026 · 2:11 PM',true],
+  ]
+};
+
+function render(status){
+  const cfg = CONFIG[status] || CONFIG.trace;
+
+  // status pill
+  const pill = document.getElementById('statusPill');
+  pill.className = 'st ' + cfg.pill;
+  pill.innerHTML = (status==='won'?'✓ ':status==='closed'?'':'<span class="dot"></span> ') + cfg.pillText;
+
+  // timeline
+  const track = document.getElementById('track');
+  track.innerHTML = STAGES.map((s,i)=>{
+    let cls='upcoming';
+    if(i < cfg.reach) cls='done';
+    else if(i === cfg.reach) cls = cfg.lost ? 'current lost' : 'current';
+    const sub = s.key==='outcome' ? cfg.outcomeSub : s.sub;
+    return `<div class="step ${cls}"><span class="node"></span><div class="s-label">${s.label}</div><div class="s-sub">${sub}</div></div>`;
+  }).join('');
+
+  // banner
+  document.getElementById('bannerTitle').textContent = cfg.banner.title;
+  document.getElementById('bannerSub').textContent = cfg.banner.sub;
+  const btn = document.getElementById('bannerBtn');
+  if(cfg.banner.btn){ btn.style.display=''; btn.textContent=cfg.banner.btn.text; btn.href=cfg.banner.btn.href; }
+  else { btn.style.display='none'; }
+
+  // trace doc slot
+  document.getElementById('traceDocSlot').style.display = cfg.traceSlot ? 'flex' : 'none';
+
+  // feed
+  document.getElementById('feed').innerHTML = (FEEDS[status]||FEEDS.trace).map(([t,when,hl])=>
+    `<div class="feed-item ${hl?'hl':''}"><p class="text-sm font-bold text-slate-800">${t}</p><p class="text-xs text-slate-400 mt-0.5">${when}</p></div>`
+  ).join('');
+}
+
+// Pick up the quote clicked in My Quotes (if any), else default to a rich example
+(function(){
+  let status = 'trace';
+  const params = new URLSearchParams(location.search);
+  if(params.get('status')) status = params.get('status');
+  try {
+    const q = JSON.parse(sessionStorage.getItem('activeQuote') || 'null');
+    if(q){
+      if(q.status) status = q.status;
+      if(q.nsn) document.getElementById('itemNsn').textContent = `NSN ${q.nsn} · Quote #RS-10428`;
+      if(q.name) { document.getElementById('itemName').textContent = q.name; }
+      if(q.value) document.getElementById('quoteTotal').textContent = '$' + Number(q.value).toLocaleString();
+      if(q.qty && q.price) document.getElementById('quoteBreak').textContent = `${Number(q.qty).toLocaleString()} units × $${Number(q.price).toLocaleString()}`;
+    }
+  } catch(e){}
+  render(status);
+})();
+
+if (window.matchMedia('(pointer: fine)').matches) {
+  const hero=document.getElementById('hero');
+  if(hero) hero.addEventListener('mousemove', e=>{ const r=hero.getBoundingClientRect(); hero.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%'); hero.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%'); });
+}
+</script>
+<script>
+function toggleMenu(id, ev){ ev.stopPropagation(); var el=document.getElementById(id); if(!el) return; document.querySelectorAll('.menu-pop').forEach(m=>{ if(m!==el) m.classList.remove('open'); }); el.classList.toggle('open'); }
+function markAllRead(){ document.querySelectorAll('#notifMenu .notif-dot').forEach(d=>d.classList.add('read')); var b=document.querySelector('#bellBtn .tb-badge'); if(b) b.remove(); }
+document.addEventListener('click', ()=> document.querySelectorAll('.menu-pop').forEach(m=>m.classList.remove('open')));
+</script>
+</body>
+</html>

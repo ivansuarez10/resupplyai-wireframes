@@ -45,6 +45,20 @@
   @keyframes pIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
   .confetti { position:fixed; width:9px; height:9px; border-radius:2px; pointer-events:none; z-index:99; animation: cf linear forwards; }
   @keyframes cf { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
+  /* Topbar actions: notification bell + user menu */
+  .tb-icon { position:relative; width:38px; height:38px; border-radius:11px; background:#fff; border:1px solid rgba(33,50,95,0.08); box-shadow:0 4px 16px rgba(33,50,95,0.05); display:flex; align-items:center; justify-content:center; color:#64748b; cursor:pointer; transition:all .15s; flex-shrink:0; }
+  .tb-icon:hover { color:var(--primary); border-color:rgba(42,61,136,0.2); }
+  .tb-badge { position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; font-size:10px; font-weight:900; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(33,50,95,0.45); border:2px solid #f5f7fc; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+  .menu-pop { position:absolute; top:calc(100% + 10px); right:0; width:300px; max-width:calc(100vw - 32px); background:#fff; border-radius:16px; box-shadow:0 26px 70px rgba(33,50,95,0.20); border:1px solid rgba(33,50,95,0.06); z-index:60; overflow:hidden; opacity:0; transform:translateY(-8px) scale(.98); pointer-events:none; transition:all .18s cubic-bezier(.16,1,.3,1); transform-origin:top right; }
+  .menu-pop.open { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+  .menu-item { display:flex; align-items:center; gap:11px; padding:11px 16px; font-size:13px; font-weight:700; color:#334155; cursor:pointer; transition:background .12s; }
+  .menu-item:hover { background:rgba(42,61,136,0.06); color:var(--primary); }
+  .menu-item svg { width:16px; height:16px; flex-shrink:0; }
+  .notif-row { display:flex; gap:11px; padding:12px 16px; border-top:1px solid rgba(33,50,95,0.05); cursor:pointer; transition:background .12s; }
+  .notif-row:hover { background:rgba(42,61,136,0.04); }
+  .notif-dot { width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:5px; flex-shrink:0; }
+  .notif-dot.read { background:#cbd5e1; }
   *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
 </style>
 </head>
@@ -59,10 +73,32 @@
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
       <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
     </div>
-    <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-      Back to My Quotes
-    </a>
+    <div class="flex items-center gap-3 relative">
+      <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mr-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Back to My Quotes
+      </a>
+      <button class="tb-icon" id="bellBtn" onclick="toggleMenu('notifMenu', event)" aria-label="Notifications">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="tb-badge">2</span>
+      </button>
+      <button class="avatar flex-shrink-0" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
+      <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
+        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-black text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
+        <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
+      </div>
+      <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
+        <div class="py-1">
+          <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
+          <div class="menu-item" onclick="location.href='suppliers-07-my-quotes.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> My quotes</div>
+          <div class="menu-item" onclick="location.href='suppliers-10-settings.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Settings</div>
+        </div>
+        <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)"><div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- MAIN STATE -->
@@ -149,7 +185,7 @@ function renderFiles(){
         <svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
       </div>
       <span class="flex-1 text-sm font-bold text-slate-800">${f}</span>
-      <span class="text-xs" style="color:#16a34a">uploaded</span>
+      <span class="text-xs font-bold" style="color:var(--primary)">✓ uploaded</span>
       <button onclick="files.splice(${i},1);renderFiles()" class="text-slate-300 hover:text-red-400" aria-label="Remove"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>`;
     l.appendChild(row);
   });
@@ -165,6 +201,11 @@ function confettiBurst(){
   const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
   for(let i=0;i<45;i++){ const c=document.createElement('div'); c.className='confetti'; const s=6+Math.random()*7; c.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.8+Math.random()*1.5}s`; document.body.appendChild(c); setTimeout(()=>c.remove(),3600); }
 }
+</script>
+<script>
+function toggleMenu(id, ev){ ev.stopPropagation(); var el=document.getElementById(id); if(!el) return; document.querySelectorAll('.menu-pop').forEach(m=>{ if(m!==el) m.classList.remove('open'); }); el.classList.toggle('open'); }
+function markAllRead(){ document.querySelectorAll('#notifMenu .notif-dot').forEach(d=>d.classList.add('read')); var b=document.querySelector('#bellBtn .tb-badge'); if(b) b.remove(); }
+document.addEventListener('click', ()=> document.querySelectorAll('.menu-pop').forEach(m=>m.classList.remove('open')));
 </script>
 </body>
 </html>

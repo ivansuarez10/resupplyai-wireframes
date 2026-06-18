@@ -92,7 +92,7 @@
 
   <!-- Management -->
   <p class="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Tracking & Management</p>
-  <div class="grid sm:grid-cols-2 gap-5 mb-8">
+  <div class="grid sm:grid-cols-3 gap-5 mb-8">
     <a href="suppliers-07-my-quotes.html" class="card">
       <div class="flex items-center gap-3 mb-3"><div class="num">7</div><span class="step-label">Tracking</span></div>
       <p class="font-black text-slate-900 mb-1">My Quotes</p>
@@ -102,6 +102,16 @@
       <div class="flex items-center gap-3 mb-3"><div class="num">8</div><span class="step-label">Manage</span></div>
       <p class="font-black text-slate-900 mb-1">My Inventory</p>
       <p class="text-sm text-slate-500">View, add, edit, remove stock. Re-import a new file anytime.</p>
+    </a>
+    <a href="suppliers-14-quote-status.html?status=trace" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">14</div><span class="step-label">Detail</span></div>
+      <p class="font-black text-slate-900 mb-1">Quote Detail</p>
+      <p class="text-sm text-slate-500">One quote's status timeline, what you quoted, docs, and outcome (incl. "Awarded elsewhere").</p>
+    </a>
+    <a href="suppliers-15-purchase-order.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">15</div><span class="step-label">Win</span></div>
+      <p class="font-black text-slate-900 mb-1">Purchase Order</p>
+      <p class="text-sm text-slate-500">After a win: billing details from ResupplyAI, upload the PO. Last step before the off-platform sale.</p>
     </a>
   </div>
 
@@ -122,6 +132,16 @@
       <div class="flex items-center gap-3 mb-3"><div class="num">11</div><span class="step-label">Trace</span></div>
       <p class="font-black text-slate-900 mb-1">Upload Traceability</p>
       <p class="text-sm text-slate-500">When the DLA requests traces on a quote.</p>
+    </a>
+    <a href="suppliers-13-forgot-password.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">13</div><span class="step-label">Auth</span></div>
+      <p class="font-black text-slate-900 mb-1">Reset Password</p>
+      <p class="text-sm text-slate-500">Sends a reset link to the company's primary email only (not to members).</p>
+    </a>
+    <a href="suppliers-12-accept-invite.html" class="card">
+      <div class="flex items-center gap-3 mb-3"><div class="num">12</div><span class="step-label">Team</span></div>
+      <p class="font-black text-slate-900 mb-1">Accept Invite</p>
+      <p class="text-sm text-slate-500">A teammate joins an existing company with just name + password.</p>
     </a>
   </div>
 
@@ -145,7 +165,12 @@
     <p class="text-sm text-slate-500">Each DLA solicitation is cross-referenced against every supplier's stock — first by NSN (exact), then by approved Part Number + manufacturer, then by AI for the messy cases. Suppliers only ever see their own matches.</p>
   </div>
 
-  <p class="text-center text-xs text-slate-400 mt-8">ResupplyAI Suppliers · Wireframe demo · for partner review</p>
+  <div class="flex items-center justify-center gap-4 mt-8 text-xs font-bold text-slate-500">
+    <a href="suppliers-legal-terms.html" class="hover:text-slate-700 transition-colors">Terms</a>
+    <a href="suppliers-legal-privacy.html" class="hover:text-slate-700 transition-colors">Privacy</a>
+    <a href="suppliers-contact.html" class="hover:text-slate-700 transition-colors">Contact</a>
+  </div>
+  <p class="text-center text-xs text-slate-400 mt-3">ResupplyAI Suppliers · Wireframe demo · for partner review</p>
 
 </div>
 </body>
