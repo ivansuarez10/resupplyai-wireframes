@@ -142,6 +142,15 @@
       </div>
     </div>
 
+    <!-- Declared "trace available" but no docs on file → re-confirm now that the DLA asks -->
+    <div id="claimedBanner" class="mb-6 rounded-2xl p-4 flex items-start gap-3" style="display:none;background:#fafbff;border:1px solid rgba(33,50,95,0.12)">
+      <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <div>
+        <p class="text-sm font-bold text-slate-800">You marked this item as <span style="color:var(--primary)">traceable</span> when you quoted.</p>
+        <p class="text-xs text-slate-500 mt-0.5">The DLA is requesting it now. Upload the documents below. If it turns out you don't have them, you can <button onclick="toggleDecline()" class="font-bold underline" style="color:var(--primary)">mark it as no trace</button>.</p>
+      </div>
+    </div>
+
     <!-- What we need -->
     <p class="text-sm font-bold text-slate-600 mb-3">Attach any that apply</p>
     <div class="flex flex-wrap gap-2 mb-5">
@@ -210,6 +219,25 @@
     <p class="text-slate-500 mb-2" style="max-width:520px;margin-left:auto;margin-right:auto">This quote is closed for lack of traceability and saved to your history. We've noted the NSN so you can see what documentation to source next.</p>
     <p class="mono text-sm font-bold mb-6" style="color:var(--primary)" id="ntSummary">2530-01-687-4521 · Brake Drum Assembly</p>
     <a href="suppliers-07-my-quotes.html" class="inline-block font-bold px-7 py-3 rounded-xl text-sm" style="background:var(--navy);color:#fff">Back to My Quotes →</a>
+  </div>
+
+  <!-- ALREADY ON FILE: declared available + attached at quote time → notify only, no upload -->
+  <div id="onFileState" class="float-card p-10 mt-6" style="display:none">
+    <div class="flex items-start gap-3 mb-6">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg, var(--primary), var(--navy));box-shadow:0 14px 34px rgba(33,50,95,0.35)">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">You already provided this trace</h2>
+        <p class="text-sm text-slate-500 mt-1" style="max-width:520px">The DLA requested traceability for this item. You attached it when you quoted, so there's nothing to upload. We'll forward what we have on file.</p>
+      </div>
+    </div>
+    <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2">On file</p>
+    <div id="onFileDocs" class="mb-6"></div>
+    <div class="flex gap-2">
+      <a href="suppliers-07-my-quotes.html" class="flex-1 text-center font-bold py-3 rounded-xl text-sm" style="background:#fff;border:1px solid rgba(33,50,95,0.2);color:var(--navy)">Back to My Quotes</a>
+      <button onclick="confirmForward()" class="btn-primary flex-1 font-bold py-3 rounded-xl text-sm">Forward to DLA →</button>
+    </div>
   </div>
 
 </div>
@@ -283,13 +311,36 @@ function unlockUpload(){
   document.getElementById('declinePanel').style.display='none';
   document.getElementById('noTraceToggle').style.display='';
 }
-// If this item was declared "no trace" when quoting, pre-lock the upload
+// Branch on what the supplier declared when quoting:
+//  · none                       → lock upload, offer confirm / "I found it"
+//  · available + docs on file   → notify only, nothing to upload
+//  · available + no docs (claim)→ re-confirm: upload now, or admit no trace
 (function(){
   try{
     const decl = JSON.parse(localStorage.getItem('traceDecl') || '{}')[TRACE_ITEM.nsn];
-    if(decl && decl.trace==='none') lockUpload(decl.reason);
+    if(!decl) return;
+    if(decl.trace==='none') lockUpload(decl.reason);
+    else if(decl.trace==='available' && decl.hasDocs) showOnFile(decl.docs || []);
+    else if(decl.trace==='available') showClaimed();
   }catch(e){}
 })();
+function showClaimed(){
+  document.getElementById('claimedBanner').style.display='flex';
+}
+function showOnFile(docs){
+  document.getElementById('mainState').style.display='none';
+  document.getElementById('onFileState').style.display='block';
+  const list = (docs && docs.length) ? docs : ['Traceability documents'];
+  document.getElementById('onFileDocs').innerHTML = list.map(f=>`<div class="file-row"><div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,61,136,0.1)"><svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div><span class="flex-1 text-sm font-bold text-slate-800">${f}</span><span class="text-xs font-bold" style="color:var(--primary)">on file</span></div>`).join('');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function confirmForward(){
+  recordTrace('provided');
+  document.getElementById('onFileState').style.display='none';
+  document.getElementById('successState').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  confettiBurst();
+}
 function confettiBurst(){
   const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
   for(let i=0;i<45;i++){ const c=document.createElement('div'); c.className='confetti'; const s=6+Math.random()*7; c.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.8+Math.random()*1.5}s`; document.body.appendChild(c); setTimeout(()=>c.remove(),3600); }

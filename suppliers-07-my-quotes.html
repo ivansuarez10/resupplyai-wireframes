@@ -471,11 +471,18 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSidebar(); }
   document.querySelectorAll('#qbody .q-row[data-status="trace"]').forEach(row=>{
     const nsn = row.querySelector('p')?.textContent.trim();
     const d = decl[nsn];
-    if(d && d.trace==='none'){
-      const cells = row.querySelectorAll('td');
+    if(!d) return;
+    const cells = row.querySelectorAll('td');
+    if(d.trace==='none'){
+      // declared can't trace → don't ask for an upload
       cells[5].innerHTML = '<span class="st st-notrace">No trace declared</span>';
       cells[6].innerHTML = '<button class="text-xs font-bold" style="color:var(--navy)" onclick="location.href=\'suppliers-11-trace-upload.html\'">Review →</button>';
+    } else if(d.trace==='available' && d.hasDocs){
+      // already attached at quote time → nothing to upload, just on file
+      cells[5].innerHTML = '<span class="st st-assigned">Trace on file</span>';
+      cells[6].innerHTML = '<button class="text-xs font-bold" style="color:var(--navy)" onclick="location.href=\'suppliers-11-trace-upload.html\'">View →</button>';
     }
+    // claimed (available, no docs): default "Trace requested" + "Upload trace" is correct
   });
 })();
 </script>
