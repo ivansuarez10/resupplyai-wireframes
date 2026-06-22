@@ -552,9 +552,10 @@
       <div class="rounded-xl p-3 mt-3" style="background:rgba(42,61,136,0.05);border:1px solid rgba(42,61,136,0.1)">
         <p class="text-xs text-slate-500">Same part number, different wording is common (e.g. “Rivet, Solid” vs “P-Rivet”). Only confirm if you're sure it's the exact item the DLA needs.</p>
       </div>
-      <div class="flex gap-2 mt-5">
+      <button class="w-full font-bold py-3 rounded-xl text-sm text-white mt-5" style="background:linear-gradient(135deg,var(--primary),var(--navy))" onclick="valYes()">Yes, same part, quote it</button>
+      <div class="flex gap-2 mt-2">
         <button class="btn-ghost flex-1 font-bold py-3 rounded-xl text-sm" onclick="valClose()">Not sure, keep in queue</button>
-        <button class="flex-1 font-bold py-3 rounded-xl text-sm text-white" style="background:linear-gradient(135deg,var(--primary),var(--navy))" onclick="valYes()">Yes, same part, quote it</button>
+        <button class="flex-1 font-bold py-3 rounded-xl text-sm" style="background:#fff;border:1px solid rgba(33,50,95,0.2);color:var(--navy)" onclick="valNo()">No, different part</button>
       </div>
     </div>
   </div>
@@ -641,6 +642,28 @@ function valYes(){
   const it = valItem;
   document.getElementById('valBg').classList.remove('show'); valItem=null;
   openQuote(it.querySelector('.qbtn-quote'));   // re-run; now passes the gate
+}
+// Supplier confirms it is NOT the same part: a wrong match. Record it (feedback to the
+// matching engine) and clear it from today's queue. Distinct from Skip ("not quoting today").
+function valNo(){
+  if(!valItem){ valClose(); return; }
+  const it = valItem;
+  try{
+    const fb = JSON.parse(localStorage.getItem('matchFeedback') || '[]');
+    fb.unshift({ nsn: it.dataset.dlaNsn||'', dlaPn: it.dataset.dlaPn||'', dlaDesc: it.dataset.dlaDesc||'',
+                 supPn: it.dataset.supPn||'', supDesc: it.dataset.supDesc||'', reason: 'wrong_part', date: 'Jun 18, 2026' });
+    localStorage.setItem('matchFeedback', JSON.stringify(fb));
+  }catch(e){}
+  document.getElementById('valBg').classList.remove('show'); valItem=null;
+  removeItem(it);
+  miniToast("Thanks, we'll stop matching this part for you.");
+}
+function miniToast(msg){
+  const t=document.createElement('div'); t.textContent=msg;
+  t.style.cssText='position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);background:var(--navy);color:#fff;font-size:13px;font-weight:700;padding:11px 18px;border-radius:12px;box-shadow:0 14px 34px rgba(33,50,95,0.4);z-index:9999;opacity:0;transition:opacity .25s,transform .25s';
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{ t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; setTimeout(()=>t.remove(),300); }, 2600);
 }
 
 // Adjust = open the detail builder (qty / condition / price) carrying the match context
