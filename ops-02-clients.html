@@ -3,14 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI — Clients (Internal)</title>
+<title>ResupplyAI · Clients (Internal)</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+  .bg-orb { display:none; }
 
   .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
   .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
@@ -36,7 +52,7 @@
   .st-reg     { background:#eef1f8; color:#64748b; }
   .st-dormant { background:#f1f5f9; color:#aab4c4; }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(33,50,95,0.3); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
@@ -78,13 +94,11 @@
 </head>
 <body class="flex">
 
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
-
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="px-5 mb-6 flex items-center gap-2">
     <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:var(--navy);color:#fff">OPS</span>
+    <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:var(--navy);color:#fff">OPS</span>
   </div>
   <nav class="flex-1 space-y-0.5">
     <div class="nav-item" onclick="location.href='ops-00-dashboard.html'">
@@ -119,17 +133,17 @@
 
   <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
     <div>
-      <h1 class="text-lg font-black text-slate-900 leading-tight">Clients</h1>
+      <h1 class="text-lg font-bold text-slate-900 leading-tight">Clients</h1>
       <p class="text-xs text-slate-400 mt-0.5">Their criteria power the auto-filter in the assignment console</p>
     </div>
     <div class="flex items-center gap-3">
-      <button class="btn-primary text-sm font-black px-4 py-2.5 rounded-xl" onclick="openAdd()">+ Add client</button>
+      <button class="btn-primary text-sm font-bold px-4 py-2.5 rounded-xl" onclick="openAdd()">+ Add client</button>
       <div class="relative">
         <button class="avatar" id="avatarBtn" onclick="toggleMenu('userMenu', event)" aria-label="Account menu">IS</button>
         <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
           <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
             <div class="avatar" style="cursor:default">IS</div>
-            <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
           </div>
           <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
             <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
@@ -143,10 +157,10 @@
 
     <!-- KPI strip -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="float-card card-enter p-4"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Clients</p><p class="text-2xl font-black text-slate-900" id="kClients">0</p></div>
-      <div class="float-card card-enter p-4" style="animation-delay:.06s"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Recurring primes</p><p class="text-2xl font-black" style="color:var(--primary)" id="kPrimes">0</p></div>
-      <div class="float-card card-enter p-4" style="animation-delay:.12s"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Combined visible spend</p><p class="text-2xl font-black text-slate-900" id="kSpend">$0</p></div>
-      <div class="float-card card-enter p-4" style="animation-delay:.18s"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Manufacturers</p><p class="text-2xl font-black text-slate-900" id="kMfg">0</p></div>
+      <div class="field card-enter"><span class="cap">Clients</span><p class="text-2xl font-bold text-slate-900" id="kClients">0</p></div>
+      <div class="field card-enter" style="animation-delay:.06s"><span class="cap">Recurring primes</span><p class="text-2xl font-bold" style="color:var(--primary)" id="kPrimes">0</p></div>
+      <div class="field card-enter" style="animation-delay:.12s"><span class="cap">Combined visible spend</span><p class="text-2xl font-bold text-slate-900" id="kSpend">$0</p></div>
+      <div class="field card-enter" style="animation-delay:.18s"><span class="cap">Manufacturers</span><p class="text-2xl font-bold text-slate-900" id="kMfg">0</p></div>
     </div>
 
     <!-- Filters + search -->
@@ -173,7 +187,7 @@
 <div class="modal-bg" id="modalBg">
   <div class="modal p-7">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-xl font-black text-slate-900" id="modalTitle">Add client</h2>
+      <h2 class="text-xl font-bold text-slate-900" id="modalTitle">Add client</h2>
       <div class="icon-btn" aria-label="Close" onclick="closeModal()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></div>
     </div>
 
@@ -240,7 +254,7 @@
 
     <div class="flex gap-2 mt-6">
       <button class="btn-ghost flex-1 font-bold py-3 rounded-xl text-sm" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary flex-1 font-black py-3 rounded-xl text-sm" onclick="saveClient()">Save client</button>
+      <button class="btn-primary flex-1 font-bold py-3 rounded-xl text-sm" onclick="saveClient()">Save client</button>
     </div>
   </div>
 </div>
@@ -258,7 +272,7 @@ const STATUS = {
 let clients = [
   { name:'Acme Defense Supply', uei:'ACME1A2B3C4D', cage:'50401', city:'Columbus', state:'OH',
     setAside:['Small Business'], buyer:'DLA (Land & Maritime)',
-    niche:'Electronic components — switches, relays, connectors', naics:'334419',
+    niche:'Electronic components: switches, relays, connectors', naics:'334419',
     spend:120000, status:'prime_recurrente', origin:true, active:true, notes:'' },
   { name:'Veteran Parts LLC', uei:'VETP5E6F7G8H', cage:'7K2L9', city:'San Antonio', state:'TX',
     setAside:['SDVOSB','Veteran-Owned','Small Business'], buyer:'DLA',
@@ -270,16 +284,16 @@ let clients = [
     spend:150000, status:'prime_recurrente', origin:true, active:true, notes:'' },
   { name:'Coastal Aero Supply', uei:'COAS3M4N5O6P', cage:'8C5D2', city:'Jacksonville', state:'FL',
     setAside:['WOSB','Minority-Owned','Small Business'], buyer:'DLA (Aviation)',
-    niche:'Aviation spares — rivets, brackets, couplings', naics:'334416',
+    niche:'Aviation spares: rivets, brackets, couplings', naics:'334416',
     spend:60000, status:'prime_recurrente', origin:true, active:true, notes:'' },
   { name:'Forge Industrial LLC', uei:'FORG7Q8R9S0T', cage:'6M2N8', city:'Akron', state:'OH',
     setAside:['Small Business','Manufacturer of Goods'], buyer:'DLA (Land & Maritime)',
-    niche:'Machined parts — gears, shafts, housings', naics:'332710',
+    niche:'Machined parts: gears, shafts, housings', naics:'332710',
     spend:200000, status:'prime_recurrente', origin:true, active:true, notes:'Manufacturer (not a dealer).' },
   { name:'Summit Components Co', uei:null, cage:'2F9G7', city:'Denver', state:'CO',
     setAside:['U.S. Distributor'], buyer:'DLA (Land & Maritime)',
     niche:'General hardware', naics:null,
-    spend:8000, status:'prime_early_stage', origin:true, active:true, notes:'New entity — first POs this year.' },
+    spend:8000, status:'prime_early_stage', origin:true, active:true, notes:'New entity, first POs this year.' },
   { name:'Ridgeline Parts, Inc.', uei:'RIDG1U2V3W4X', cage:'5H1J3', city:'Reno', state:'NV',
     setAside:['WOSB'], buyer:'DLA (approved NSNs, no prime)',
     niche:'Fasteners + aviation parts', naics:'332722',
@@ -341,7 +355,7 @@ function render(){
         <div class="flex items-center gap-3 min-w-0">
           <div class="avatar-sq">${initials(c.name)}</div>
           <div class="min-w-0">
-            <p class="font-black text-slate-900 leading-tight truncate">${c.name}</p>
+            <p class="font-bold text-slate-900 leading-tight truncate">${c.name}</p>
             <p class="text-xs text-slate-400 truncate">${c.city||'—'}${c.state?', '+c.state:''} · ${ids}</p>
           </div>
         </div>
@@ -356,7 +370,7 @@ function render(){
       <div class="flex items-end justify-between pt-3 mt-auto" style="border-top:1px solid rgba(33,50,95,0.06)">
         <div>
           <p class="text-xs text-slate-400 uppercase tracking-wide font-bold">Visible spend</p>
-          <p class="text-xl font-black ${c.spend?'text-slate-900':'text-slate-300'} leading-tight">${fmtMoney(c.spend)}</p>
+          <p class="text-xl font-bold ${c.spend?'text-slate-900':'text-slate-300'} leading-tight">${fmtMoney(c.spend)}</p>
         </div>
         <span class="st-c ${sm.cls}">${sm.short}</span>
       </div>

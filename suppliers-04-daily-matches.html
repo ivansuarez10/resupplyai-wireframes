@@ -3,16 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Daily Matches</title>
+<title>ResupplyAI Suppliers · Daily Matches</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
 
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; animation: orbFloat 16s ease-in-out infinite; }
-  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.1)} }
+  .bg-orb { display:none; }
 
   .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
   .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
@@ -22,22 +37,8 @@
   .nav-item svg { width:15px; height:15px; flex-shrink:0; }
 
   .float-card { background:#fff; border-radius:20px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
-
-  /* Animated gradient hero */
-  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
-  @property --gs1 { syntax:'<percentage>'; inherits:false; initial-value:55%; }
-  @property --gs2 { syntax:'<percentage>'; inherits:false; initial-value:55%; }
-  .hero-gradient { background-color:var(--primary);
-    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent var(--gs1)), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent var(--gs2));
-    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite, size1 5s ease-in-out infinite, size2 5.8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
-  @keyframes size1 { 0%,100%{--gs1:45%} 50%{--gs1:75%} }
-  @keyframes size2 { 0%,100%{--gs2:45%} 50%{--gs2:80%} }
-  @media (prefers-reduced-motion: reduce){ .hero-gradient,.bg-orb{animation:none} }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
 
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
@@ -53,6 +54,20 @@
   .q-item.removing { opacity:0; transform: translateX(40px) scale(0.97); margin-bottom:-72px; pointer-events:none; }
 
   .badge-hot { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; font-size:9px; font-weight:900; padding:2px 8px; border-radius:9999px; letter-spacing:.04em; }
+  /* match-confidence badges, navy intensity, no traffic light */
+  .badge-match { font-size:9px; font-weight:900; padding:2px 8px; border-radius:9999px; letter-spacing:.03em; display:inline-flex; align-items:center; gap:4px; white-space:nowrap; }
+  .bm-nsn { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; }       /* strong: NSN exact */
+  .bm-pn  { background:rgba(42,61,136,0.12); color:var(--primary); }                            /* needs confirm */
+  .bm-alt { background:rgba(94,126,232,0.16); color:#4a63c4; }                                  /* alt P/N, needs confirm */
+  .confirm-tag { font-size:9px; font-weight:900; color:#4a63c4; }
+  /* validation modal */
+  .vbg { position:fixed; inset:0; z-index:80; background:rgba(15,23,42,0.45); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:20px; }
+  .vbg.show { display:flex; }
+  .vcard { background:#fff; border-radius:20px; max-width:520px; width:100%; box-shadow:0 40px 100px rgba(33,50,95,0.4); animation:vIn .3s cubic-bezier(.16,1,.3,1) both; overflow:hidden; }
+  @keyframes vIn { from{opacity:0;transform:translateY(16px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
+  .vrow { display:flex; gap:12px; padding:13px 0; border-top:1px solid rgba(33,50,95,0.07); }
+  .vrow:first-of-type { border-top:none; }
+  .vtag { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; width:74px; flex-shrink:0; padding-top:2px; }
 
   .meta { display:flex; flex-direction:column; }
   .meta-label { font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:.04em; }
@@ -66,6 +81,30 @@
   .qbtn-quote:hover { transform: translateY(-1px); box-shadow:0 6px 16px rgba(33,50,95,0.3); }
   .qbtn-skip { background:#f1f5f9; color:#64748b; }
   .qbtn-skip:hover { background:#e2e8f0; }
+  .qbtn-adjust { background:#fff; border:1px solid rgba(33,50,95,0.14); color:var(--navy); }
+  .qbtn-adjust:hover { border-color:var(--primary); color:var(--primary); }
+
+  /* ---- Rai (AI assistant) ---- */
+  .cp-fab { position:fixed; bottom:22px; right:22px; z-index:50; display:flex; align-items:center; gap:9px; padding:13px 18px; border-radius:9999px; background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; font-weight:900; font-size:14px; cursor:pointer; box-shadow:0 16px 40px rgba(33,50,95,0.4); transition:all .2s cubic-bezier(.16,1,.3,1); }
+  .cp-fab:hover { transform:translateY(-2px); box-shadow:0 22px 52px rgba(33,50,95,0.5); }
+  .cp-bg { position:fixed; inset:0; background:rgba(15,23,42,0.4); backdrop-filter:blur(3px); z-index:60; display:none; }
+  .cp-bg.show { display:block; }
+  .cp-panel { position:fixed; top:0; right:0; height:100vh; width:440px; max-width:94vw; background:#f5f7fc; z-index:61; display:flex; flex-direction:column; transform:translateX(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); box-shadow:-20px 0 60px rgba(33,50,95,0.28); }
+  .cp-panel.show { transform:translateX(0); }
+  .cp-body { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:11px; }
+  .cp-msg { max-width:90%; font-size:13px; line-height:1.5; border-radius:16px; padding:11px 14px; }
+  .cp-msg.ai { background:#fff; color:#0f172a; border:1px solid rgba(33,50,95,0.07); box-shadow:0 6px 20px rgba(33,50,95,0.05); align-self:flex-start; border-bottom-left-radius:5px; }
+  .cp-msg.user { background:linear-gradient(135deg,var(--primary),var(--navy)); color:#fff; align-self:flex-end; border-bottom-right-radius:5px; }
+  .cp-insight { background:#fff; border:1px solid rgba(33,50,95,0.08); border-left:3px solid var(--primary); border-radius:12px; padding:11px 13px; font-size:12.5px; line-height:1.5; align-self:stretch; }
+  .cp-insight .t { font-weight:900; color:var(--navy); display:block; margin-bottom:2px; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }
+  .cp-chip { font-size:11.5px; font-weight:800; padding:7px 12px; border-radius:9999px; background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--primary); cursor:pointer; transition:all .15s; white-space:nowrap; flex-shrink:0; }
+  .cp-chip:hover { border-color:var(--primary); background:rgba(42,61,136,0.06); }
+  .cp-foot { flex-shrink:0; padding:12px 14px; border-top:1px solid rgba(33,50,95,0.08); background:#fff; }
+  .cp-input { width:100%; border:1px solid rgba(33,50,95,0.14); border-radius:12px; padding:11px 46px 11px 14px; font-size:13px; outline:none; background:#fff; }
+  .cp-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
+  .cp-typing span { display:inline-block; width:6px;height:6px;border-radius:50%;background:#94a3b8;margin:0 1px; animation:cpb 1s infinite; }
+  .cp-typing span:nth-child(2){animation-delay:.15s} .cp-typing span:nth-child(3){animation-delay:.3s}
+  @keyframes cpb { 0%,60%,100%{opacity:.3;transform:translateY(0)} 30%{opacity:1;transform:translateY(-3px)} }
 
   .sort-tab { font-size:12px; font-weight:800; padding:7px 14px; border-radius:10px; cursor:pointer; transition:all .15s; color:#64748b; }
   .sort-tab.active { background:#fff; color:var(--primary); box-shadow:0 2px 10px rgba(33,50,95,0.08); }
@@ -134,15 +173,13 @@
 </style>
 </head>
 <body class="flex">
-
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
 <div class="sb-overlay" id="overlay" aria-label="Close menu" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="px-5 mb-7 flex items-center gap-2">
     <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+    <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
   </div>
   <nav class="flex-1 space-y-0.5">
     <div class="nav-item active">
@@ -179,7 +216,7 @@
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
       <div>
-      <h1 class="text-lg font-black text-slate-900 leading-tight">Good morning, Hermes Technical</h1>
+      <h1 class="text-lg font-bold text-slate-900 leading-tight">Good morning, Hermes Technical</h1>
       <p class="text-xs text-slate-400 mt-0.5">Tuesday, June 17, 2026 · matches refreshed 6:00 AM</p>
       </div>
     </div>
@@ -201,13 +238,13 @@
       <!-- Notifications dropdown -->
       <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
         <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)">
-          <p class="font-black text-slate-900 text-sm">Notifications</p>
+          <p class="font-bold text-slate-900 text-sm">Notifications</p>
           <span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span>
         </div>
         <div style="max-height:360px;overflow-y:auto">
           <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
             <span class="notif-dot"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability — upload to stay in the running · 2h ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability, upload to stay in the running · 2h ago</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
             <span class="notif-dot"></span>
@@ -215,7 +252,7 @@
           </div>
           <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-10-settings.html'">
             <span class="notif-dot read"></span>
@@ -231,7 +268,7 @@
           </div>
           <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-14-quote-status.html'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-400 mt-0.5">Assigned to a buyer — you're in the running · 4d ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-400 mt-0.5">Assigned to a buyer, you're in the running · 4d ago</p></div>
           </div>
         </div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><button id="seeMore" class="text-xs font-bold" style="color:var(--primary)" onclick="seeMore()">See more</button></div>
@@ -241,7 +278,7 @@
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
         <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
           <div class="avatar flex-shrink-0">HT</div>
-          <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
+          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
         </div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-10-settings.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Settings</div>
@@ -264,11 +301,11 @@
             <svg class="w-5 h-5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <div>
-            <p class="text-sm font-black text-slate-900">You're seeing yesterday's matches — this morning's sync didn't finish</p>
+            <p class="text-sm font-bold text-slate-900">You're seeing yesterday's matches, this morning's sync didn't finish</p>
             <p class="text-xs text-slate-400">Last successful sync: Mon Jun 16, 6:00 AM. Your inventory is safe; this is on our end.</p>
           </div>
         </div>
-        <button onclick="retrySync(this)" class="btn-ghost text-xs font-black px-4 py-2 rounded-xl whitespace-nowrap flex items-center gap-1.5">
+        <button onclick="retrySync(this)" class="btn-ghost text-xs font-bold px-4 py-2 rounded-xl whitespace-nowrap flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           Retry sync
         </button>
@@ -281,12 +318,12 @@
         <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div>
             <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color:rgba(255,255,255,0.55)">Today's quote queue</p>
-            <h2 class="text-2xl font-black text-white"><span id="reviewed">0</span> of <span id="total">47</span> reviewed</h2>
+            <h2 class="text-2xl font-bold text-white"><span id="reviewed">0</span> of <span id="total">47</span> reviewed</h2>
           </div>
           <div class="flex gap-7">
-            <div><p class="text-2xl font-black text-white pulse-num" id="quotedNum">0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">quoted</p></div>
-            <div><p class="text-2xl font-black text-white" id="hotLeft">3</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">hot left</p></div>
-            <div><p class="text-2xl font-black text-white" id="potVal">$0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">quoted value</p></div>
+            <div><p class="text-2xl font-bold text-white pulse-num" id="quotedNum">0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">quoted</p></div>
+            <div><p class="text-2xl font-bold text-white" id="hotLeft">3</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">high-value left</p></div>
+            <div><p class="text-2xl font-bold text-white" id="potVal">$0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">quoted value</p></div>
           </div>
         </div>
         <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
@@ -297,9 +334,8 @@
       <div class="flex items-center justify-between flex-wrap gap-3 mb-4">
         <div class="flex items-center gap-1 p-1 rounded-xl" style="background:rgba(33,50,95,0.05)">
           <span class="text-xs font-bold text-slate-400 px-2">Sort:</span>
-          <span class="sort-tab active" onclick="setSort(this)">Urgency</span>
-          <span class="sort-tab" onclick="setSort(this)">Value</span>
-          <span class="sort-tab" onclick="setSort(this)">Volume</span>
+          <span class="sort-tab active" data-sort="urgency" onclick="setSort(this)">Closing soon</span>
+          <span class="sort-tab" data-sort="volume" onclick="setSort(this)">Volume</span>
         </div>
         <button class="btn-ghost text-xs font-bold px-4 py-2 rounded-xl" onclick="quoteAllInStock(event)">Quote all in-stock →</button>
       </div>
@@ -308,11 +344,11 @@
       <div id="queue">
 
         <!-- HOT 1 -->
-        <div class="q-item hot item-enter" data-val="1840" data-hot="1">
+        <div class="q-item hot item-enter" data-val="1840" data-hot="1" data-match="nsn">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:var(--primary)">340 in stock ✓</span></div>
-            <p class="text-sm font-black text-slate-900">2530-01-687-4521 · Brake Drum Assembly</p>
-            <p class="text-xs text-slate-400">P/N BD-44871 · Meritor</p>
+            <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-hot">HIGH VALUE</span><span class="badge-match bm-nsn">NSN match</span><span class="text-xs font-bold" style="color:var(--primary)">340 in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
+            <p class="mono text-sm font-bold text-slate-900">2530-01-687-4521 · Brake Drum Assembly</p>
+            <p class="text-xs text-slate-400">P/N <span class="mono">BD-44871</span> · Meritor</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">120 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 19 · 2d</span></div>
@@ -324,11 +360,11 @@
         </div>
 
         <!-- HOT 2 -->
-        <div class="q-item hot item-enter" data-val="4210" data-hot="1">
+        <div class="q-item hot item-enter" data-val="4210" data-hot="1" data-match="nsn">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:var(--primary)">60 in stock ✓</span></div>
-            <p class="text-sm font-black text-slate-900">1560-01-445-8821 · Structural Panel</p>
-            <p class="text-xs text-slate-400">P/N SP-2245 · Boeing</p>
+            <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-hot">HIGH VALUE</span><span class="badge-match bm-nsn">NSN match</span><span class="text-xs font-bold" style="color:var(--primary)">60 in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
+            <p class="mono text-sm font-bold text-slate-900">1560-01-445-8821 · Structural Panel</p>
+            <p class="text-xs text-slate-400">P/N <span class="mono">SP-2245</span> · Boeing</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">45 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 20 · 3d</span></div>
@@ -340,11 +376,11 @@
         </div>
 
         <!-- HOT 3 -->
-        <div class="q-item hot item-enter" data-val="3560" data-hot="1">
+        <div class="q-item hot item-enter" data-val="3560" data-hot="1" data-match="nsn">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="badge-hot">HIGH VALUE</span><span class="text-xs font-bold" style="color:#64748b">22 in stock · short 8</span></div>
-            <p class="text-sm font-black text-slate-900">2815-01-112-9087 · Engine Cylinder Head</p>
-            <p class="text-xs text-slate-400">P/N CH-7781 · Caterpillar</p>
+            <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-hot">HIGH VALUE</span><span class="badge-match bm-nsn">NSN match</span><span class="text-xs font-bold" style="color:#64748b">22 in stock · short 8</span></div>
+            <p class="mono text-sm font-bold text-slate-900">2815-01-112-9087 · Engine Cylinder Head</p>
+            <p class="text-xs text-slate-400">P/N <span class="mono">CH-7781</span> · Caterpillar</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">30 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val" style="color:var(--navy)">Jun 24 · 7d</span></div>
@@ -355,27 +391,32 @@
           </div>
         </div>
 
-        <!-- NORMAL -->
-        <div class="q-item item-enter" data-val="92">
+        <!-- P/N MATCH, descriptions differ → must confirm before quoting -->
+        <div class="q-item item-enter" data-val="0.85" data-match="pn" data-validate="1"
+             data-dla-desc="Rivet, Solid" data-dla-pn="MS20470AD4-4" data-dla-nsn="5320-01-119-8876"
+             data-sup-desc="P-Rivet (alum, 1/8&quot;)" data-sup-pn="MS20470AD4-4">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">1,200 in stock ✓</span></div>
-            <p class="text-sm font-black text-slate-900">5340-01-234-8823 · Bracket, Mounting</p>
-            <p class="text-xs text-slate-400">P/N BRK-118</p>
+            <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-match bm-pn">P/N match · confirm part</span><span class="text-xs font-bold" style="color:var(--primary)">12,000 in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
+            <p class="mono text-sm font-bold text-slate-900">5320-01-119-8876 · Rivet, Solid</p>
+            <p class="text-xs text-slate-400">P/N <span class="mono">MS20470AD4-4</span> · you listed it as “P-Rivet” <span class="confirm-tag">· confirm it's the same part</span></p>
           </div>
-          <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">500 EA</span></div>
+          <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">5,000 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jun 27 · 10d</span></div>
-          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="92"></div>
+          <div class="meta"><span class="meta-label">Your price</span><input class="price-input" value="0.85"></div>
           <div class="flex items-center gap-2">
             <span class="qbtn qbtn-quote" onclick="openQuote(this)">Quote</span>
             <span class="qbtn qbtn-skip" onclick="skip(this)">Skip</span>
           </div>
         </div>
 
-        <div class="q-item item-enter" data-val="14">
+        <!-- ALT P/N MATCH, matched on supplier's alternate P/N → confirm -->
+        <div class="q-item item-enter" data-val="14" data-match="altpn" data-validate="1"
+             data-dla-desc="Screw, Machine" data-dla-pn="SCM-04" data-dla-nsn="5305-01-112-3344"
+             data-sup-desc="Machine Screw 1/4-20" data-sup-pn="S-104" data-alt-pn="SCM-04">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">8,500 in stock ✓</span></div>
-            <p class="text-sm font-black text-slate-900">5305-01-112-3344 · Screw, Machine</p>
-            <p class="text-xs text-slate-400">P/N SCM-04</p>
+            <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-match bm-alt">Alt P/N match · confirm part</span><span class="text-xs font-bold" style="color:var(--primary)">8,500 in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
+            <p class="mono text-sm font-bold text-slate-900">5305-01-112-3344 · Screw, Machine</p>
+            <p class="text-xs text-slate-400">P/N <span class="mono">SCM-04</span> · matched on your alt P/N <span class="font-bold" style="color:#4a63c4">S-104</span></p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">1,200 EA</span></div>
           <div class="meta"><span class="meta-label">Deadline</span><span class="meta-val text-slate-500">Jun 28 · 11d</span></div>
@@ -386,10 +427,10 @@
           </div>
         </div>
 
-        <div class="q-item item-enter" data-val="210">
+        <div class="q-item item-enter" data-val="210" data-match="nsn">
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">150 in stock ✓</span></div>
-            <p class="text-sm font-black text-slate-900">4730-01-556-1243 · Hose Assembly</p>
+            <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-match bm-nsn">NSN match</span><span class="text-xs font-bold" style="color:var(--primary)">150 in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
+            <p class="mono text-sm font-bold text-slate-900">4730-01-556-1243 · Hose Assembly</p>
             <p class="text-xs text-slate-400">P/N HA-9920</p>
           </div>
           <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">80 EA</span></div>
@@ -431,29 +472,29 @@
         <p class="text-center text-xs text-slate-400 mt-5">Pulling this morning's DLA solicitations and matching them to your stock…</p>
       </div>
 
-      <!-- NO MATCHES TODAY state (positive empty — distinct from "queue cleared") -->
+      <!-- NO MATCHES TODAY state (positive empty, distinct from "queue cleared") -->
       <div id="noMatches" class="float-card p-10 text-center mt-2" style="display:none">
         <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.08))">
           <svg class="w-8 h-8" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        <h2 class="text-2xl font-black text-slate-900 mb-2">No new matches this morning</h2>
-        <p class="text-slate-500 mb-1 max-w-md mx-auto">Nothing in today's DLA solicitations lined up with your stock — that's normal on a quiet day.</p>
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">No new matches this morning</h2>
+        <p class="text-slate-500 mb-1 max-w-md mx-auto">Nothing in today's DLA solicitations lined up with your stock, that's normal on a quiet day.</p>
         <p class="text-slate-400 text-sm mb-6 max-w-md mx-auto">Your <span class="font-bold" style="color:var(--primary)">1,284 items</span> are live and we're watching <span class="font-bold" style="color:var(--primary)">3,200+</span> open solicitations. We'll alert you the moment one fits.</p>
         <div class="flex items-center justify-center gap-2 flex-wrap">
-          <a href="suppliers-08-my-inventory.html" class="btn-ghost inline-block font-black px-6 py-3 rounded-xl text-sm">Review my inventory</a>
+          <a href="suppliers-08-my-inventory.html" class="btn-ghost inline-block font-bold px-6 py-3 rounded-xl text-sm">Review my inventory</a>
           <a href="suppliers-07-my-quotes.html" class="text-sm font-bold px-4 py-3" style="color:var(--primary)">See open quotes →</a>
         </div>
       </div>
 
-      <!-- ERROR state (couldn't load — navy, not alarming) -->
+      <!-- ERROR state (couldn't load, navy, not alarming) -->
       <div id="errorState" class="float-card p-10 text-center mt-2" style="display:none">
         <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:rgba(42,61,136,0.1)">
           <svg class="w-8 h-8" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414"/></svg>
         </div>
-        <h2 class="text-2xl font-black text-slate-900 mb-2">We couldn't load today's matches</h2>
-        <p class="text-slate-500 mb-6 max-w-md mx-auto">Something went wrong on our side while building your queue. Your inventory and quotes are safe — nothing was lost.</p>
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">We couldn't load today's matches</h2>
+        <p class="text-slate-500 mb-6 max-w-md mx-auto">Something went wrong on our side while building your queue. Your inventory and quotes are safe, nothing was lost.</p>
         <div class="flex items-center justify-center gap-2 flex-wrap">
-          <button onclick="retrySync(this)" class="btn-ghost inline-flex items-center gap-1.5 font-black px-6 py-3 rounded-xl text-sm">
+          <button onclick="retrySync(this)" class="btn-ghost inline-flex items-center gap-1.5 font-bold px-6 py-3 rounded-xl text-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             Try again
           </button>
@@ -466,9 +507,9 @@
         <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
           <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
         </div>
-        <h2 class="text-2xl font-black text-slate-900 mb-2">Queue cleared!</h2>
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Queue cleared!</h2>
         <p class="text-slate-500 mb-6" id="zeroMsg">You reviewed every match today. Your quotes are on their way to ResupplyAI.</p>
-        <a href="suppliers-07-my-quotes.html" class="btn-ghost inline-block font-black px-7 py-3 rounded-xl text-sm">View My Quotes →</a>
+        <a href="suppliers-07-my-quotes.html" class="btn-ghost inline-block font-bold px-7 py-3 rounded-xl text-sm">View My Quotes →</a>
       </div>
 
     </div>
@@ -482,16 +523,44 @@
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
         </div>
         <div>
-          <p class="text-white font-black text-sm"><span id="cartCount">0</span> quotes ready to send</p>
+          <p class="text-white font-bold text-sm"><span id="cartCount">0</span> quotes ready to send</p>
           <p class="text-xs" style="color:rgba(255,255,255,0.7)">Worth <span id="cartValue">$0</span> in potential sales</p>
         </div>
       </div>
-      <a href="suppliers-06-quote-cart.html" class="bg-white font-black text-sm px-5 py-2.5 rounded-xl whitespace-nowrap" style="color:var(--navy)">Review & Submit →</a>
+      <a href="suppliers-06-quote-cart.html" class="bg-white font-bold text-sm px-5 py-2.5 rounded-xl whitespace-nowrap" style="color:var(--navy)">Review & Submit →</a>
     </div>
   </div>
 </div>
 
-<!-- PREVIEW STATE DOCK (demo only — flip through every state) -->
+<!-- DESCRIPTION VALIDATION MODAL (shown for P/N & Alt P/N matches before quoting) -->
+<div class="vbg" id="valBg" onclick="if(event.target===this)valClose()">
+  <div class="vcard">
+    <div class="hero-gradient p-5">
+      <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">CONFIRM THE PART</span>
+      <h2 class="text-white font-bold text-xl leading-tight mt-3">Is this the same part?</h2>
+      <p class="text-sm mt-1" style="color:rgba(255,255,255,0.78)">We matched on part number, not NSN. Confirm it's the same item before quoting, this avoids a bad quote you'd have to cancel.</p>
+    </div>
+    <div class="p-5">
+      <div class="vrow">
+        <span class="vtag" style="color:#94a3b8">DLA asks</span>
+        <div class="min-w-0"><p class="font-bold text-slate-900" id="vDlaDesc">—</p><p class="text-xs text-slate-400" id="vDlaMeta">—</p></div>
+      </div>
+      <div class="vrow">
+        <span class="vtag" style="color:var(--primary)">You have</span>
+        <div class="min-w-0"><p class="font-bold text-slate-900" id="vSupDesc">—</p><p class="text-xs text-slate-400" id="vSupMeta">—</p></div>
+      </div>
+      <div class="rounded-xl p-3 mt-3" style="background:rgba(42,61,136,0.05);border:1px solid rgba(42,61,136,0.1)">
+        <p class="text-xs text-slate-500">Same part number, different wording is common (e.g. “Rivet, Solid” vs “P-Rivet”). Only confirm if you're sure it's the exact item the DLA needs.</p>
+      </div>
+      <div class="flex gap-2 mt-5">
+        <button class="btn-ghost flex-1 font-bold py-3 rounded-xl text-sm" onclick="valClose()">Not sure, keep in queue</button>
+        <button class="flex-1 font-bold py-3 rounded-xl text-sm text-white" style="background:linear-gradient(135deg,var(--primary),var(--navy))" onclick="valYes()">Yes, same part, quote it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW STATE DOCK (demo only, flip through every state) -->
 <div class="preview-dock" id="previewDock">
   <span class="pv-demo">DEMO</span>
   <span class="pv-label">states</span>
@@ -519,7 +588,7 @@ function updateProgress(){
   document.getElementById('progFill').style.width = pct + '%';
   bump(document.getElementById('quotedNum'));
 
-  if(reviewed >= 5) document.getElementById('progMsg').textContent = "You're on a roll — keep going!";
+  if(reviewed >= 5) document.getElementById('progMsg').textContent = "You're on a roll, keep going!";
 }
 
 function removeItem(item){
@@ -534,16 +603,72 @@ function removeItem(item){
   updateProgress();
 }
 
+// Quote = quick-add to cart (no page change) so the queue bar reflects it.
+// P/N & Alt P/N matches must be confirmed first (description gate).
 function openQuote(btn){
-  // Carry the item's NSN to the detail builder, then go there
   const item = btn.closest('.q-item');
-  const nsn = item.querySelector('.font-black.text-slate-900').textContent.split(' · ')[0];
-  sessionStorage.setItem('quoteNSN', nsn.trim());
+  if(item.dataset.validate === '1' && item.dataset.validated !== '1'){ openValidate(item); return; }
+  const inp = item.querySelector('.price-input');
+  const unit = parseFloat((inp?.value || '').replace(/[^0-9.]/g,'')) || 0;
+  if(!unit){ if(inp){ inp.style.borderColor='var(--primary)'; inp.placeholder='Set price'; inp.focus(); } return; }
+  const qty = parseInt((item.querySelector('.meta-val')?.textContent || '').replace(/[^0-9]/g,'')) || 0;
+  const title = item.querySelector('.font-bold.text-slate-900').textContent;
+  const value = qty * unit;
+  const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
+  cart.push({ nsn:title.split(' · ')[0].trim(), name:(title.split(' · ')[1]||'').trim(), qty, unit, value });
+  localStorage.setItem('quoteCart', JSON.stringify(cart));
+  quoted++; quotedValue += value;
+  confettiMini(btn);
+  removeItem(item);     // reviewed++ + updateProgress (shows the new quoted/value)
+  refreshCart();
+}
+function skip(btn){ removeItem(btn.closest('.q-item')); }
+
+// ---- description validation gate (P/N & Alt P/N matches) ----
+let valItem = null;
+function openValidate(item){
+  valItem = item;
+  document.getElementById('vDlaDesc').textContent = item.dataset.dlaDesc || '—';
+  document.getElementById('vDlaMeta').textContent = 'P/N ' + (item.dataset.dlaPn||'—') + (item.dataset.dlaNsn ? ' · NSN '+item.dataset.dlaNsn+' (you have no NSN on file)' : '');
+  document.getElementById('vSupDesc').textContent = item.dataset.supDesc || '—';
+  document.getElementById('vSupMeta').textContent = 'P/N ' + (item.dataset.supPn||'—') + (item.dataset.altPn ? ' · matched on your alt P/N' : '');
+  document.getElementById('valBg').classList.add('show');
+}
+function valClose(){ document.getElementById('valBg').classList.remove('show'); valItem=null; }
+function valYes(){
+  if(!valItem){ valClose(); return; }
+  valItem.dataset.validated = '1';
+  const it = valItem;
+  document.getElementById('valBg').classList.remove('show'); valItem=null;
+  openQuote(it.querySelector('.qbtn-quote'));   // re-run; now passes the gate
+}
+
+// Adjust = open the detail builder (qty / condition / price) carrying the match context
+function adjust(btn){
+  const item = btn.closest('.q-item');
+  const title = item.querySelector('.font-bold.text-slate-900').textContent;
+  const ctx = {
+    nsn: title.split(' · ')[0].trim(), name: (title.split(' · ')[1]||'').trim(),
+    match: item.dataset.match || 'nsn', validate: item.dataset.validate === '1', validated: item.dataset.validated === '1',
+    dlaDesc: item.dataset.dlaDesc||'', dlaPn: item.dataset.dlaPn||'', dlaNsn: item.dataset.dlaNsn||'',
+    supDesc: item.dataset.supDesc||'', supPn: item.dataset.supPn||'', altPn: item.dataset.altPn||'',
+    qty: parseInt((item.querySelector('.meta-val')?.textContent||'').replace(/[^0-9]/g,''))||0,
+    unit: parseFloat((item.querySelector('.price-input')?.value||'').replace(/[^0-9.]/g,''))||0
+  };
+  sessionStorage.setItem('quoteCtx', JSON.stringify(ctx));
+  sessionStorage.setItem('quoteNSN', ctx.nsn);   // back-compat with existing detail page
   window.location.href = 'suppliers-05-quote-detail.html';
 }
-function skip(btn){
-  const item = btn.closest('.q-item');
-  removeItem(item);
+// Inject an "Adjust" button into every queue item (covers items added by Load more)
+function addAdjustButtons(){
+  document.querySelectorAll('#queue .q-item').forEach(item=>{
+    const row = item.lastElementChild;
+    if(!row || row.querySelector('.qbtn-adjust')) return;
+    const skip = row.querySelector('.qbtn-skip');
+    const adj = document.createElement('span');
+    adj.className = 'qbtn qbtn-adjust'; adj.textContent = 'Adjust'; adj.setAttribute('onclick','adjust(this)');
+    if(skip) row.insertBefore(adj, skip); else row.appendChild(adj);
+  });
 }
 
 function checkEmpty(){
@@ -558,36 +683,55 @@ function checkEmpty(){
   }
 }
 
+function metricsOf(item){
+  const metas = item.querySelectorAll('.meta-val');
+  const qty = parseInt((metas[0]?.textContent||'').replace(/[^0-9]/g,'')) || 0;
+  const dm = (metas[1]?.textContent||'').match(/(\d+)\s*d/);
+  const days = dm ? parseInt(dm[1]) : 999;
+  const unit = parseFloat((item.dataset.val||'').replace(/[^0-9.]/g,''))
+            || parseFloat((item.querySelector('.price-input')?.value||'').replace(/[^0-9.]/g,'')) || 0;
+  return { qty, days, value: unit*qty };
+}
 function setSort(el){
   document.querySelectorAll('.sort-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+  const key = el.dataset.sort;
+  const queue = document.getElementById('queue');
+  const items = [...queue.querySelectorAll('.q-item')];
+  items.sort((a,b)=>{
+    const A=metricsOf(a), B=metricsOf(b);
+    if(key==='urgency') return A.days - B.days;     // soonest deadline first
+    if(key==='volume')  return B.qty - A.qty;       // largest quantity first
+    return 0;
+  });
+  items.forEach(it=>{ it.style.animation='none'; queue.appendChild(it); });
 }
 
-// Bulk-quote every in-stock match → add to cart and go review
+// Bulk-quote in-stock matches → add to cart + advance the bar (skips items needing confirmation)
 function quoteAllInStock(ev){
   const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
-  let added = 0, needPrice = 0;
+  let added = 0, needPrice = 0, needConfirm = 0;
   document.querySelectorAll('#queue .q-item').forEach(item=>{
-    if(!item.textContent.includes('in stock ✓')) return; // skip short / out of stock
+    if(!item.textContent.includes('in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>')) return;                       // skip short / out of stock
+    if(item.dataset.validate==='1' && item.dataset.validated!=='1'){ needConfirm++; return; } // confirm part first
     const unit = parseFloat((item.querySelector('.price-input')?.value || '').replace(/[^0-9.]/g,'')) || 0;
-    if(!unit){                       // their uploaded sheet had no price for this item
-      needPrice++;
-      const inp = item.querySelector('.price-input');
-      if(inp){ inp.style.borderColor = 'var(--primary)'; inp.placeholder = 'Set price'; }
-      return;                        // never quote at $0
-    }
-    const title = item.querySelector('.font-black.text-slate-900').textContent;
-    cart.push({ nsn: title.split(' · ')[0].trim(), name: (title.split(' · ')[1] || '').trim(),
-      qty: parseInt((item.querySelector('.meta-val')?.textContent || '').replace(/[^0-9]/g,'')) || 0,
-      unit, value: ((parseInt((item.querySelector('.meta-val')?.textContent||'').replace(/[^0-9]/g,''))||0) * unit) });
-    added++;
+    if(!unit){ needPrice++; const inp=item.querySelector('.price-input'); if(inp){ inp.style.borderColor='var(--primary)'; inp.placeholder='Set price'; } return; }
+    const qty = parseInt((item.querySelector('.meta-val')?.textContent || '').replace(/[^0-9]/g,'')) || 0;
+    const title = item.querySelector('.font-bold.text-slate-900').textContent;
+    const value = qty * unit;
+    cart.push({ nsn:title.split(' · ')[0].trim(), name:(title.split(' · ')[1]||'').trim(), qty, unit, value });
+    quoted++; quotedValue += value; added++;
+    item.dataset.bulk = '1';
   });
   const btn = ev.target.closest('button');
-  if(added === 0){ btn.textContent = needPrice ? `${needPrice} need a price first` : 'Nothing in stock'; return; }
+  if(added === 0){ btn.textContent = needConfirm ? `${needConfirm} need part confirmation` : (needPrice ? `${needPrice} need a price first` : 'Nothing in stock'); return; }
   localStorage.setItem('quoteCart', JSON.stringify(cart));
-  btn.textContent = needPrice ? `✓ Added ${added} · ${needPrice} need a price` : `✓ Added ${added} to cart`;
-  btn.style.opacity = '0.85';
-  setTimeout(()=>{ window.location.href = 'suppliers-06-quote-cart.html'; }, 800);
+  document.querySelectorAll('#queue .q-item[data-bulk="1"]').forEach(item=> removeItem(item));   // reviewed++ each
+  refreshCart();
+  let msg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Added ${added}`;
+  if(needConfirm) msg += ` · ${needConfirm} need confirm`;
+  if(needPrice)   msg += ` · ${needPrice} need price`;
+  btn.textContent = msg; btn.style.opacity = '0.85';
 }
 
 // Load more matches → append a few, then end
@@ -607,10 +751,11 @@ function loadMore(btn){
       const el = document.createElement('div');
       el.className = 'q-item item-enter';
       el.dataset.val = price.replace(/[^0-9.]/g,'');
+      el.dataset.match = 'nsn';
       el.innerHTML = `
         <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold" style="color:var(--primary)">${stock} in stock ✓</span></div>
-          <p class="text-sm font-black text-slate-900">${nsn} · ${name}</p>
+          <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="badge-match bm-nsn">NSN match</span><span class="text-xs font-bold" style="color:var(--primary)">${stock} in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
+          <p class="text-sm font-bold text-slate-900">${nsn} · ${name}</p>
           <p class="text-xs text-slate-400">${pn}</p>
         </div>
         <div class="meta"><span class="meta-label">DLA needs</span><span class="meta-val">${need}</span></div>
@@ -622,6 +767,7 @@ function loadMore(btn){
         </div>`;
       queue.appendChild(el);
     });
+    addAdjustButtons();
     document.getElementById('loadMore').innerHTML = '<p class="text-sm text-slate-400">That\'s all of today\'s matches.</p>';
   }, 700);
 }
@@ -649,7 +795,7 @@ function confettiMini(el){
 
 updateProgress();
 
-// Cart bar — reflects quotes added from the detail builder
+// Cart bar, reflects quotes added from the detail builder
 function refreshCart(){
   const items = JSON.parse(localStorage.getItem('quoteCart') || '[]');
   const bar = document.getElementById('cartBar');
@@ -663,6 +809,7 @@ function refreshCart(){
   }
 }
 refreshCart();
+addAdjustButtons();
 
 // ---- State machine: live / loading / stale / empty / error -----------------
 function buildSkeletonRows(n){
@@ -741,6 +888,73 @@ document.addEventListener('click', ()=> document.querySelectorAll('.menu-pop').f
 function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSidebar(); });
+</script>
+
+<!-- ===================== Rai (AI assistant · supplier view) ===================== -->
+<div class="cp-fab" id="cpFab" onclick="cpOpen()">
+  <svg class="spark" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5L13 3z"/></svg>
+  Ask Rai
+</div>
+<div class="cp-bg" id="cpBg" onclick="cpClose()"></div>
+<div class="cp-panel" id="cpPanel">
+  <div class="cp-head hero-gradient" style="padding:18px 20px;flex-shrink:0">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div style="width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center">
+          <svg width="18" height="18" fill="none" stroke="#fff" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5L13 3z"/></svg>
+        </div>
+        <div><p class="font-bold text-white leading-tight">Rai <span class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">· ResupplyAI</span></p><p class="text-xs" style="color:rgba(255,255,255,0.72)">Your quoting assistant · learns from your wins</p></div>
+      </div>
+      <button onclick="cpClose()" aria-label="Close" style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+    </div>
+    <p class="text-xs mt-3" style="color:rgba(255,255,255,0.62)"><svg viewBox="0 0 24 24" fill="currentColor" style="width:0.95em;height:0.95em;display:inline-block;vertical-align:-0.15em;opacity:.85"><path d="M12 2l1.7 4.8L18.5 8l-4.8 1.2L12 14l-1.7-4.8L5.5 8l4.8-1.2z"/></svg> Learned from your 47 quotes · 9 wins · private to Hermes Technical</p>
+  </div>
+  <div class="cp-body" id="cpBody"></div>
+  <div style="padding:0 14px 8px;display:flex;gap:7px;overflow-x:auto" id="cpChips"></div>
+  <div class="cp-foot">
+    <div style="position:relative">
+      <input class="cp-input" id="cpInput" placeholder="Ask what to quote first, what's missing…" onkeydown="if(event.key==='Enter')cpSend()" autocomplete="off">
+      <button onclick="cpSend()" aria-label="Send" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--navy));color:#fff;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 12h14M13 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- Rai · supplier view (demo: canned, keyword-routed; never suggests a price) ---- */
+const CP_CHIPS = ['What should I quote first?','Why did I lose a quote?',"What's missing in my inventory?",'Any open traces?','How do I win more?'];
+let cpSeeded = false;
+function cpOpen(){ document.getElementById('cpBg').classList.add('show'); document.getElementById('cpPanel').classList.add('show'); if(!cpSeeded){ cpSeed(); cpSeeded=true; } setTimeout(()=>document.getElementById('cpInput').focus(),300); }
+function cpClose(){ document.getElementById('cpBg').classList.remove('show'); document.getElementById('cpPanel').classList.remove('show'); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') cpClose(); });
+function cpScroll(){ const b=document.getElementById('cpBody'); b.scrollTop=b.scrollHeight; }
+function cpAdd(html, cls){ const d=document.createElement('div'); d.className='cp-msg '+cls; d.innerHTML=html; document.getElementById('cpBody').appendChild(d); cpScroll(); return d; }
+function cpInsight(title, html){ const d=document.createElement('div'); d.className='cp-insight'; d.innerHTML='<span class="t">'+title+'</span>'+html; document.getElementById('cpBody').appendChild(d); cpScroll(); }
+function cpSeed(){
+  cpAdd("Morning, Hector. I looked over today's 47 matches for Hermes Technical, here's how I'd play it:", 'ai');
+  cpInsight('Quote first', 'Best win-odds from your history: <b>Brake Drum</b> (you win ~70% of brake parts) and <b>Bracket Mounting</b>. I ordered the rest of your queue by win-odds.');
+  cpInsight('Fix your inventory', '<b>12 items have no price</b>, so they can\'t be quoted, adding them could surface ~30 more matches. <b>3 are P/N-only</b>; an NSN or Alt P/N makes them match cleanly.');
+  cpInsight('Win more', 'Your quotes with a <b>photo + cert</b> and lead time <b>under 30 days</b> win about <b>2×</b> more. 4 of today\'s matches are missing a photo.');
+  cpAdd("Ask me anything. I'll never tell you what price to set, that's your call.", 'ai');
+  cpRenderChips();
+}
+function cpRenderChips(){ document.getElementById('cpChips').innerHTML = CP_CHIPS.map(c=>`<span class="cp-chip" onclick="cpChip('${c.replace(/'/g,"\\'")}')">${c}</span>`).join(''); }
+function cpChip(t){ document.getElementById('cpInput').value=t; cpSend(); }
+function cpAnswer(q){
+  q = q.toLowerCase();
+  if(/price|precio|how much|cu[aá]nto|charge|offer/.test(q)) return "I don't set prices, that's yours to decide. What I <i>can</i> tell you: this kind of part usually has several dealers in stock, and <b>short lead times and accurate listings tend to win</b>. Quote competitively and keep it exact.";
+  if(/first|priorit|quote first|empez|primero|what.*quote/.test(q)) return "Top 3 by win-odds from <b>your</b> history: <b>Brake Drum</b> (~70% win on brake parts), <b>Bracket Mounting</b>, <b>Hose Assembly</b>. Heads-up: the <b>rivet</b> match is P/N-only, confirm it's the right part before quoting so you don't have to cancel.";
+  if(/lose|lost|perd[ií]|why.*lose|awarded/.test(q)) return "When a quote shows <b>“awarded elsewhere”</b>, the DLA picked another offer, usually the OEM or an existing approved source. It doesn't mean your price was wrong, and they never saw it as such. Keep your stock listed; the next match is already on its way.";
+  if(/missing|inventory|falta|incompl|no price|sin precio|clean/.test(q)) return "Two things hold matches back: <b>12 items have no price</b> (can't be quoted) and <b>3 are P/N-only</b> (weak match, add an NSN or Alt P/N). Fixing those should surface ~30 more matches. Want me to list them?";
+  if(/trace|hot|open trace|trazab/.test(q)) return "<b>1 open trace:</b> Brake Drum Assembly. A trace request means the buyer is seriously considering you, upload the docs within <b>24h</b> to stay in the running. I can walk you through which document to attach.";
+  if(/win more|how.*win|c[oó]mo gano|better|improve|tips/.test(q)) return "From your wins: <b>photo + certificate</b>, <b>lead time under 30 days</b>, and <b>fast trace responses</b> are what separate your wins from your losses. 4 of today's matches are missing a photo, add one and your odds jump.";
+  return "I help you quote smarter, what to quote first, what's missing in your inventory, and how to win more. I never tell you what price to set. Try a chip below, or ask e.g. \"which matches am I most likely to win?\"";
+}
+function cpSend(){
+  const inp=document.getElementById('cpInput'); const q=inp.value.trim(); if(!q) return;
+  cpAdd(q, 'user'); inp.value='';
+  const typing=cpAdd('<span class="cp-typing"><span></span><span></span><span></span></span>', 'ai');
+  setTimeout(()=>{ typing.innerHTML = cpAnswer(q); cpScroll(); }, 650);
+}
 </script>
 </body>
 </html>

@@ -3,14 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Terms of Service</title>
+<title>ResupplyAI Suppliers · Terms of Service</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+  .bg-orb { display:none; }
   .float-card { background:#fff; border-radius:22px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
   .legal h2 { font-size:16px; font-weight:900; color:var(--navy); margin-top:26px; margin-bottom:8px; }
   .legal p { font-size:14px; color:#475569; line-height:1.7; margin-bottom:10px; }
@@ -23,14 +39,12 @@
 </head>
 <body>
 
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
-
 <div class="relative max-w-3xl mx-auto px-6 py-10" style="z-index:1">
 
   <div class="flex items-center justify-between mb-7">
     <a href="suppliers-01-landing.html" class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
     </a>
     <a href="suppliers-01-landing.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -39,9 +53,9 @@
   </div>
 
   <div class="float-card p-8 md:p-10 legal">
-    <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:var(--primary)">Legal</p>
-    <h1 class="text-3xl font-black text-slate-900 mb-1" style="letter-spacing:-0.02em">Supplier Terms of Service</h1>
-    <p class="text-sm text-slate-400 mb-2">Last updated: June 18, 2026 · This is a draft for partner review, not final legal language.</p>
+    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--primary)">Legal</p>
+    <h1 class="text-3xl font-bold text-slate-900 mb-1" style="letter-spacing:-0.02em">Supplier Terms of Service</h1>
+    <p class="text-sm text-slate-400 mb-2">Last updated: June 18, 2026 · <b>DRAFT, placeholder language pending legal counsel. Not final or enforceable.</b></p>
 
     <h2>1. What ResupplyAI does</h2>
     <p>ResupplyAI matches your inventory against open DLA solicitations and forwards your quotes to buyers. We act as an intermediary; we do not buy your goods ourselves. Using the supplier platform is free.</p>
@@ -52,7 +66,7 @@
     <h2>3. Quotes &amp; pricing</h2>
     <ul>
       <li>You set your own prices. ResupplyAI never sets or suggests a price on your behalf.</li>
-      <li>Quotes must cover the full quantity requested — partial quotes aren't accepted.</li>
+      <li>Quotes must cover the full quantity requested, partial quotes aren't accepted.</li>
       <li>A quote is an offer to sell at the stated price and terms; you're expected to honor it if selected.</li>
     </ul>
 
@@ -65,7 +79,33 @@
     <h2>6. Acceptable use</h2>
     <p>Don't scrape, reverse-engineer, overload, or attempt to access data that isn't yours. Automated access outside provided features is prohibited. We may suspend accounts that abuse the platform.</p>
 
-    <h2>7. Disclaimers &amp; changes</h2>
+    <h2>7. Your representations &amp; honest disclosure</h2>
+    <p>By using the platform, you represent and warrant, on behalf of your company, that:</p>
+    <ul>
+      <li>All inventory, pricing, certifications, and documents you submit are true, accurate, and belong to your company, or you have the right to supply them.</li>
+      <li>Every representation you make to ResupplyAI, or through us to a buyer or government end customer (including part matches, condition, traceability, and certifications), is honest and made in good faith.</li>
+      <li>You will not knowingly misstate the source, authenticity, or status of any item. Representations made in connection with a U.S. Government solicitation may carry legal consequences for which you are responsible. <span class="text-slate-400">[Counsel to align with False Claims Act language.]</span></li>
+    </ul>
+
+    <h2>8. Content you upload</h2>
+    <p>You keep ownership of what you upload. You grant ResupplyAI a limited license to store, process, and share it only as needed to operate the matching service and your quotes. By uploading, you confirm:</p>
+    <ul>
+      <li>You own or have the rights to the files, and they don't infringe any third party's intellectual property or confidentiality.</li>
+      <li>The content does not contain export-controlled technical data (ITAR/EAR) or Controlled Unclassified Information (CUI) you are not authorized to share through this platform. <span class="text-slate-400">[Counsel + security review.]</span></li>
+      <li>You are responsible for what you upload and, to the extent permitted by law, agree to indemnify ResupplyAI against claims arising from your content. <span class="text-slate-400">[Counsel to draft indemnification.]</span></li>
+    </ul>
+    <p>We respond to valid intellectual-property complaints and remove infringing material. A DMCA agent and takedown process will be designated here. <span class="text-slate-400">[Counsel, register DMCA agent.]</span></p>
+
+    <h2>9. How ResupplyAI uses AI</h2>
+    <p>ResupplyAI uses automated and machine-learning systems to match your inventory against DLA solicitations and to rank opportunities by factors such as deadline and quantity. These are decision-support tools, they don't guarantee an award, and a person on our operations team reviews and assigns quotes. You remain responsible for the prices and information you submit.</p>
+
+    <h2>10. Dispute resolution &amp; arbitration</h2>
+    <p class="text-slate-400"><b>[To be drafted by counsel.]</b> Intended to include binding arbitration, a class-action waiver, and governing law / venue. Nothing in this section is final or enforceable until reviewed by an attorney.</p>
+
+    <h2>11. Limitation of liability</h2>
+    <p class="text-slate-400"><b>[To be drafted by counsel.]</b> Intended to cap ResupplyAI's liability and disclaim indirect and consequential damages, to the extent permitted by law.</p>
+
+    <h2>12. Disclaimers &amp; changes</h2>
     <p>The service is provided "as is." We may update these terms; we'll notify the account's primary email of material changes. Continued use means acceptance.</p>
 
     <p class="text-sm text-slate-400 mt-6">Questions? <a href="suppliers-contact.html" class="font-bold" style="color:var(--primary)">Contact us</a>.</p>

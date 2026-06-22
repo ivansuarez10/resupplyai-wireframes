@@ -3,26 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Build Quote</title>
+<title>ResupplyAI Suppliers · Build Quote</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
 
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .bg-orb { display:none; }
   .float-card { background:#fff; border-radius:20px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
-
-  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
-  .hero-gradient { background-color:var(--primary);
-    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%);
-    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
   @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
 
   .label { display:block; font-size:12px; font-weight:800; color:#475569; margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em; }
@@ -34,7 +42,7 @@
   .dla-row { display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid rgba(255,255,255,0.12); }
   .dla-row:first-child { border-top:none; }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
@@ -72,11 +80,13 @@
   .notif-dot { width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:5px; flex-shrink:0; }
   .notif-dot.read { background:#cbd5e1; }
   *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+  .trace-opt { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:11px 14px; border:1px solid rgba(33,50,95,0.14); border-radius:12px; font-size:13px; font-weight:700; color:#64748b; background:#fff; cursor:pointer; transition:all .15s; }
+  .trace-opt svg { width:15px; height:15px; }
+  .trace-opt:hover { border-color:rgba(33,50,95,0.28); }
+  .trace-opt.sel { border-color:var(--primary); background:rgba(42,61,136,0.06); color:var(--primary); }
 </style>
 </head>
 <body>
-
-<div class="bg-orb" style="width:420px;height:420px;background:#c7d4f8;top:-140px;right:-100px"></div>
 
 <div class="relative" style="z-index:1">
 
@@ -84,7 +94,7 @@
   <div class="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
     <div class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
     </div>
     <div class="flex items-center gap-3 relative">
       <a href="suppliers-04-daily-matches.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mr-1">
@@ -97,13 +107,13 @@
       </button>
       <button class="avatar flex-shrink-0" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
       <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
-        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-black text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
+        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-bold text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
         <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
-        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
       </div>
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
-        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
           <div class="menu-item" onclick="location.href='suppliers-07-my-quotes.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> My quotes</div>
@@ -116,8 +126,26 @@
 
   <div class="max-w-5xl mx-auto px-6 pb-32 page-enter">
 
-    <h1 class="text-2xl font-black text-slate-900 mb-1">Build your quote</h1>
-    <p class="text-slate-500 text-sm mb-6">Confirm every detail — accurate quotes win more and protect you. Then add it to your cart.</p>
+    <h1 class="text-2xl font-bold text-slate-900 mb-1">Build your quote</h1>
+    <p class="text-slate-500 text-sm mb-6">Confirm every detail. Accurate quotes win more and protect you. Then add it to your cart.</p>
+
+    <!-- DESCRIPTION VALIDATION BANNER (shown for P/N & Alt P/N matches) -->
+    <div id="valBanner" class="float-card p-5 mb-5" style="display:none;border:1px solid rgba(42,61,136,0.25)">
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(42,61,136,0.1);color:var(--primary)">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-2.99l-6.93-12a2 2 0 00-3.48 0l-6.93 12A2 2 0 005.07 19z"/></svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-slate-900">Confirm this is the same part</p>
+          <p class="text-xs text-slate-500 mb-3">We matched on <span id="valOn">part number</span>, not NSN. Confirm before adding to cart, this prevents a quote you'd have to cancel.</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="rounded-xl p-3" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)"><p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-0.5">DLA asks</p><p class="font-bold text-slate-900" id="valDla">—</p><p class="text-xs text-slate-400" id="valDlaPn">—</p></div>
+            <div class="rounded-xl p-3" style="background:#fafbff;border:1px solid rgba(42,61,136,0.12)"><p class="text-xs font-bold uppercase tracking-wide mb-0.5" style="color:var(--primary)">You have</p><p class="font-bold text-slate-900" id="valSup">—</p><p class="text-xs text-slate-400" id="valSupPn">—</p></div>
+          </div>
+          <label class="flex items-center gap-2 mt-3 cursor-pointer text-sm font-bold text-slate-700"><input type="checkbox" id="valChk" onchange="updateGate()" style="accent-color:#2a3d88;width:16px;height:16px"> Yes, I confirm this is the exact part the DLA needs</label>
+        </div>
+      </div>
+    </div>
 
     <div class="grid lg:grid-cols-5 gap-5">
 
@@ -128,23 +156,23 @@
             <span class="badge-hot">HIGH VALUE</span>
             <span class="text-xs font-bold" style="color:rgba(255,255,255,0.7)">DLA Solicitation</span>
           </div>
-          <h2 class="text-white font-black text-lg leading-tight mb-1" id="itemName">Brake Drum Assembly</h2>
-          <p class="text-sm mb-5" style="color:rgba(255,255,255,0.7)" id="itemNsn">NSN 2530-01-687-4521 · P/N BD-44871</p>
+          <h2 class="text-white font-bold text-lg leading-tight mb-1" id="itemName">Brake Drum Assembly</h2>
+          <p class="mono text-sm mb-5" style="color:rgba(255,255,255,0.7)" id="itemNsn">NSN 2530-01-687-4521 · P/N BD-44871</p>
 
           <div class="rounded-xl p-3 mb-4" style="background:rgba(255,255,255,0.1)">
-            <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity needed</span><span class="text-sm font-black text-white">120 EA</span></div>
+            <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity needed</span><span class="text-sm font-bold text-white">120 EA</span></div>
             <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Required condition</span><span class="text-sm font-bold text-white">New</span></div>
             <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Delivery required</span><span class="text-sm font-bold text-white">≤ 30 days</span></div>
-            <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Solicitation deadline</span><span class="text-sm font-black text-white">Jun 19 · 2 days</span></div>
+            <div class="dla-row"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Solicitation deadline</span><span class="text-sm font-bold text-white">Jun 19 · 2 days</span></div>
           </div>
 
           <!-- Approved manufacturers -->
           <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.12)">
-            <p class="text-xs font-black text-white uppercase tracking-wide mb-2.5">Approved manufacturers</p>
+            <p class="text-xs font-bold text-white uppercase tracking-wide mb-2.5">Approved manufacturers</p>
             <div class="space-y-2">
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Meritor</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 0VGZ7</span></div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Bendix</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 81348</span></div>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Webb Wheel Products</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 1NQR4</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Meritor</span><span class="mono text-xs" style="color:rgba(255,255,255,0.55)">CAGE 0VGZ7</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Bendix</span><span class="mono text-xs" style="color:rgba(255,255,255,0.55)">CAGE 81348</span></div>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Webb Wheel Products</span><span class="mono text-xs" style="color:rgba(255,255,255,0.55)">CAGE 1NQR4</span></div>
             </div>
             <p class="text-xs mt-3" style="color:rgba(255,255,255,0.65)">Your item must trace back to one of these approved sources.</p>
           </div>
@@ -157,14 +185,14 @@
         <!-- Stock & price -->
         <div class="float-card p-6">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-black text-slate-900">Confirm stock & price</h3>
-            <span class="ai-badge">prefilled — please verify</span>
+            <h3 class="font-bold text-slate-900">Confirm stock & price</h3>
+            <span class="ai-badge">prefilled, please verify</span>
           </div>
           <div class="space-y-4">
             <div>
               <label class="label">Quantity you'll supply</label>
               <input class="field prefilled" value="120">
-              <p class="hint">Must cover the full <span class="font-bold" style="color:var(--primary)">120</span> the DLA requires — partial quotes aren't accepted. You have 340 in stock ✓</p>
+              <p class="hint">Must cover the full <span class="font-bold" style="color:var(--primary)">120</span> the DLA requires. Partial quotes aren't accepted. You have 340 in stock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></p>
             </div>
             <div>
               <label class="label">Your price</label>
@@ -218,7 +246,7 @@
 
         <!-- Compliance / docs -->
         <div class="float-card p-6">
-          <h3 class="font-black text-slate-900 mb-4">Compliance & documentation</h3>
+          <h3 class="font-bold text-slate-900 mb-4">Compliance & documentation</h3>
 
           <div class="space-y-3">
             <div class="flex items-center justify-between py-1">
@@ -230,17 +258,34 @@
             </div>
             <div class="flex items-center justify-between py-1">
               <div>
-                <p class="text-sm font-bold text-slate-800">Traceability available</p>
-                <p class="text-xs text-slate-400">Documentation tracing back to manufacturer</p>
-              </div>
-              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-            </div>
-            <div class="flex items-center justify-between py-1">
-              <div>
                 <p class="text-sm font-bold text-slate-800">Has shelf life / expiration</p>
                 <p class="text-xs text-slate-400">Toggle if this item expires</p>
               </div>
               <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+
+          <div class="mt-5 pt-5" style="border-top:1px solid rgba(33,50,95,0.06)">
+            <label class="label">Traceability</label>
+            <p class="text-xs text-slate-400 mb-2.5" style="margin-top:-3px;text-transform:none;letter-spacing:0;font-weight:400">Can you provide full traceability (cert of conformance / chain of custody) if the buyer requests it?</p>
+            <div class="flex gap-2.5">
+              <button type="button" class="trace-opt sel" data-trace="available" onclick="setTrace('available')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg> Trace available
+              </button>
+              <button type="button" class="trace-opt" data-trace="none" onclick="setTrace('none')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 6l12 12M18 6L6 18"/></svg> No trace available
+              </button>
+            </div>
+            <div id="traceReasonWrap" style="display:none" class="mt-3">
+              <label class="label">Reason <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+              <select id="traceReason" class="field">
+                <option value="">Select a reason…</option>
+                <option>Manufacturer discontinued</option>
+                <option>Bought without documentation</option>
+                <option>Distributor won't provide</option>
+                <option>Other</option>
+              </select>
+              <p class="text-xs text-slate-400 mt-2" style="line-height:1.5">You can still submit this quote. If the buyer requires traceability it won't proceed, but we'll log it so you can see what to source next.</p>
             </div>
           </div>
 
@@ -258,15 +303,20 @@
 
         <!-- Photos + comment -->
         <div class="float-card p-6">
-          <h3 class="font-black text-slate-900 mb-4">Photos & notes</h3>
-          <label class="label">Item photos <span class="text-slate-400 font-normal lowercase">(recommended — builds trust & wins more)</span></label>
-          <div class="upload mb-4">
+          <h3 class="font-bold text-slate-900 mb-4">Photos & notes</h3>
+          <label class="label">Item photos <span class="text-slate-400 font-normal lowercase">(recommended, builds trust & wins more)</span></label>
+          <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="onPhotos(this)">
+          <div class="upload mb-4" onclick="document.getElementById('photoInput').click()"
+               ondragover="event.preventDefault();this.style.borderColor='var(--primary)'" ondragleave="this.style.borderColor=''"
+               ondrop="event.preventDefault();this.style.borderColor='';onPhotos({files:event.dataTransfer.files})">
             <svg class="w-7 h-7 mx-auto mb-2" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             <p class="text-sm font-bold text-slate-600">Drag photos or <span style="color:var(--primary)">browse</span></p>
             <p class="text-xs text-slate-400 mt-1">JPG, PNG · up to 8 images</p>
+            <p id="photoMsg" class="text-xs font-bold mt-2" style="color:var(--primary);display:none"></p>
           </div>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed" style="margin-top:-6px">By attaching certs or photos, you confirm you have the right to share them and that they contain no export-controlled (ITAR/EAR) or restricted material. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
           <label class="label">Comment to ResupplyAI <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
-          <textarea class="field" rows="3" placeholder="Anything we should know — packaging, partial qty, alternate P/N, etc."></textarea>
+          <textarea class="field" rows="3" placeholder="Anything we should know, packaging, partial qty, alternate P/N, etc."></textarea>
         </div>
 
       </div>
@@ -278,11 +328,11 @@
     <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between gap-4">
       <div>
         <p class="text-xs text-slate-400">Quote total</p>
-        <p class="text-lg font-black text-slate-900">$220,800 <span class="text-xs font-bold text-slate-400">· 120 units × $1,840</span></p>
+        <p class="text-lg font-bold text-slate-900">$220,800 <span class="text-xs font-bold text-slate-400">· 120 units × $1,840</span></p>
       </div>
       <div class="flex items-center gap-2">
         <a href="suppliers-04-daily-matches.html" class="btn-ghost text-sm font-bold px-5 py-3 rounded-xl">Cancel</a>
-        <button onclick="addToCart()" class="btn-primary text-sm font-black px-6 py-3 rounded-xl flex items-center gap-2">
+        <button id="addBtn" onclick="addToCart()" class="btn-primary text-sm font-bold px-6 py-3 rounded-xl flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           Add to Quote Cart
         </button>
@@ -300,17 +350,62 @@ function checkAddOem(sel){
   else { add.style.display='none'; }
 }
 
-// Show which NSN we came from (if passed)
-const nsn = sessionStorage.getItem('quoteNSN');
-// (kept simple — demo always shows the Brake Drum example)
+// Carry context from the queue (Adjust). Falls back to the Brake Drum demo.
+const ctx = JSON.parse(sessionStorage.getItem('quoteCtx') || 'null');
+if(ctx){
+  if(ctx.name) document.getElementById('itemName').textContent = ctx.name;
+  const idline = [ctx.nsn?('NSN '+ctx.nsn):null, (ctx.supPn||ctx.dlaPn)?('P/N '+(ctx.supPn||ctx.dlaPn)):null, ctx.altPn?('Alt P/N '+ctx.altPn):null].filter(Boolean).join(' · ');
+  if(idline) document.getElementById('itemNsn').textContent = idline;
+  if(ctx.validate && !ctx.validated){
+    document.getElementById('valBanner').style.display = 'block';
+    document.getElementById('valOn').textContent = ctx.match==='altpn' ? 'an alternate part number' : 'part number';
+    document.getElementById('valDla').textContent = ctx.dlaDesc || ctx.name || '—';
+    document.getElementById('valDlaPn').textContent = 'P/N ' + (ctx.dlaPn||'—') + (ctx.dlaNsn?(' · NSN '+ctx.dlaNsn):'');
+    document.getElementById('valSup').textContent = ctx.supDesc || '—';
+    document.getElementById('valSupPn').textContent = 'P/N ' + (ctx.supPn||'—') + (ctx.altPn?(' · alt '+ctx.altPn):'');
+  }
+}
+function updateGate(){
+  const need = document.getElementById('valBanner').style.display === 'block';
+  const ok = !need || document.getElementById('valChk').checked;
+  const btn = document.getElementById('addBtn');
+  btn.style.opacity = ok ? '' : '0.45';
+  btn.style.pointerEvents = ok ? '' : 'none';
+}
+updateGate();
+
+function onPhotos(input){
+  const files = input.files || [];
+  const msg = document.getElementById('photoMsg');
+  if(!files.length){ msg.style.display='none'; return; }
+  const names = [...files].slice(0,3).map(f=>f.name).join(', ');
+  msg.textContent = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> ' + files.length + ' photo' + (files.length>1?'s':'') + ' selected, ' + names + (files.length>3?'…':'');
+  msg.style.display = 'block';
+}
+
+let traceStatus = 'available';
+function setTrace(v){
+  traceStatus = v;
+  document.querySelectorAll('.trace-opt').forEach(b=> b.classList.toggle('sel', b.dataset.trace===v));
+  document.getElementById('traceReasonWrap').style.display = (v==='none') ? 'block' : 'none';
+}
 
 function addToCart(){
+  const need = document.getElementById('valBanner').style.display === 'block';
+  if(need && !document.getElementById('valChk').checked){ document.getElementById('valBanner').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+  const reason = (traceStatus==='none') ? (document.getElementById('traceReason').value || '') : '';
   const cart = JSON.parse(localStorage.getItem('quoteCart') || '[]');
-  cart.push({ nsn: '2530-01-687-4521', name: 'Brake Drum Assembly', qty: 120, unit: 1840, value: 220800 });
+  const base = ctx ? { nsn: ctx.nsn||'', name: ctx.name||'', qty: ctx.qty||0, unit: ctx.unit||0, value: (ctx.qty||0)*(ctx.unit||0) }
+                   : { nsn:'2530-01-687-4521', name:'Brake Drum Assembly', qty:120, unit:1840, value:220800 };
+  const item = Object.assign(base, { trace: traceStatus, traceReason: reason });
+  cart.push(item);
   localStorage.setItem('quoteCart', JSON.stringify(cart));
-  // brief confirmation then back to queue
-  const btn = event.target.closest('button');
-  btn.innerHTML = '✓ Added to cart';
+  // remember the trace declaration per NSN so the trace-request flow & history can read it
+  const decl = JSON.parse(localStorage.getItem('traceDecl') || '{}');
+  decl[item.nsn] = { trace: traceStatus, reason: reason, name: item.name };
+  localStorage.setItem('traceDecl', JSON.stringify(decl));
+  const btn = document.getElementById('addBtn');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Added to cart';
   btn.style.opacity = '0.85';
   setTimeout(()=>{ window.location.href = 'suppliers-04-daily-matches.html'; }, 700);
 }

@@ -3,14 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Settings</title>
+<title>ResupplyAI Suppliers · Settings</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .bg-orb { display:none; }
 
   .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
   .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
@@ -24,7 +40,7 @@
   .label { display:block; font-size:12px; font-weight:800; color:#475569; margin-bottom:5px; text-transform:uppercase; letter-spacing:.03em; }
   .field { width:100%; border:1px solid rgba(33,50,95,0.14); border-radius:11px; padding:10px 13px; font-size:14px; font-weight:700; color:var(--navy); outline:none; }
   .field:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(42,61,136,0.1); }
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(33,50,95,0.3); }
 
   .toggle { width:44px; height:25px; border-radius:9999px; background:#cbd5e1; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
@@ -73,15 +89,13 @@
 </style>
 </head>
 <body class="flex">
-
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
 <div class="sb-overlay" id="overlay" aria-label="Close menu" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="px-5 mb-7 flex items-center gap-2">
     <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+    <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
   </div>
   <nav class="flex-1 space-y-0.5">
     <div class="nav-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Daily Matches</div>
@@ -98,7 +112,7 @@
       <button class="hamburger w-9 h-9 rounded-xl items-center justify-center text-slate-600 flex-shrink-0" style="background:rgba(42,61,136,0.06)" aria-label="Open menu" onclick="openSidebar()">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
-      <div><h1 class="text-lg font-black text-slate-900 leading-tight">Settings</h1><p class="text-xs text-slate-400 mt-0.5">Manage your profile and how we reach you</p></div>
+      <div><h1 class="text-lg font-bold text-slate-900 leading-tight">Settings</h1><p class="text-xs text-slate-400 mt-0.5">Manage your profile and how we reach you</p></div>
     </div>
     <div class="flex items-center gap-3 relative">
       <button class="tb-icon" id="bellBtn" onclick="toggleMenu('notifMenu', event)" aria-label="Notifications">
@@ -109,13 +123,13 @@
 
       <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
         <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)">
-          <p class="font-black text-slate-900 text-sm">Notifications</p>
+          <p class="font-bold text-slate-900 text-sm">Notifications</p>
           <span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span>
         </div>
         <div style="max-height:360px;overflow-y:auto">
           <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
             <span class="notif-dot"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability — upload to stay in the running · 2h ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability, upload to stay in the running · 2h ago</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
             <span class="notif-dot"></span>
@@ -123,7 +137,7 @@
           </div>
           <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-10-settings.html'">
             <span class="notif-dot read"></span>
@@ -139,7 +153,7 @@
           </div>
           <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-14-quote-status.html'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-400 mt-0.5">Assigned to a buyer — you're in the running · 4d ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-400 mt-0.5">Assigned to a buyer, you're in the running · 4d ago</p></div>
           </div>
         </div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><button id="seeMore" class="text-xs font-bold" style="color:var(--primary)" onclick="seeMore()">See more</button></div>
@@ -148,7 +162,7 @@
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
         <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
           <div class="avatar flex-shrink-0">HT</div>
-          <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
+          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
         </div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
@@ -166,7 +180,7 @@
 
       <!-- Company profile -->
       <div class="float-card p-6">
-        <h2 class="font-black text-slate-900 mb-4">Company profile</h2>
+        <h2 class="font-bold text-slate-900 mb-4">Company profile</h2>
         <div class="grid grid-cols-2 gap-4">
           <div><label class="label">Company name</label><input class="field" value="Hermes Technical LLC"></div>
           <div><label class="label">CAGE code</label><input class="field" value="" placeholder="Add CAGE (optional)"></div>
@@ -177,7 +191,7 @@
 
       <!-- Notifications -->
       <div class="float-card p-6">
-        <h2 class="font-black text-slate-900 mb-1">Notifications</h2>
+        <h2 class="font-bold text-slate-900 mb-1">Notifications</h2>
         <p class="text-sm text-slate-500 mb-4">Choose what reaches you, and where.</p>
 
         <!-- Daily digest is always on (info, not a choice) -->
@@ -186,7 +200,7 @@
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
           <div>
-            <p class="text-sm font-black text-slate-900">Daily match summary — every morning at 6 AM</p>
+            <p class="text-sm font-bold text-slate-900">Daily match summary, every morning at 6 AM</p>
             <p class="text-xs text-slate-500 mt-0.5">We always send your full list of matches so you never miss a sale. This one stays on.</p>
           </div>
         </div>
@@ -198,7 +212,7 @@
             <div class="toggle on" onclick="this.classList.toggle('on')"></div>
           </div>
           <div class="opt-row">
-            <div><p class="text-sm font-bold text-slate-800">Trace requests</p><p class="text-xs text-slate-400">When the DLA asks for traceability — your quote is being considered</p></div>
+            <div><p class="text-sm font-bold text-slate-800">Trace requests</p><p class="text-xs text-slate-400">When the DLA asks for traceability, your quote is being considered</p></div>
             <div class="toggle on" onclick="this.classList.toggle('on')"></div>
           </div>
           <div class="opt-row">
@@ -221,13 +235,13 @@
         <div class="mt-4">
           <label class="label" style="font-weight:700;text-transform:none;color:#64748b">SMS for urgent alerts <span class="text-slate-400">(optional)</span></label>
           <input class="field" placeholder="+1 …">
-          <p class="text-xs text-slate-400 mt-2">SMS is only used for trace requests and wins — the time-sensitive ones.</p>
+          <p class="text-xs text-slate-400 mt-2">SMS is only used for trace requests and wins, the time-sensitive ones.</p>
         </div>
       </div>
 
       <!-- Inventory source -->
       <div class="float-card p-6">
-        <h2 class="font-black text-slate-900 mb-1">Inventory source</h2>
+        <h2 class="font-bold text-slate-900 mb-1">Inventory source</h2>
         <p class="text-sm text-slate-500 mb-4">How your stock stays up to date for matching.</p>
         <div class="flex items-center justify-between p-4 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
           <div class="flex items-center gap-3">
@@ -235,7 +249,7 @@
               <svg class="w-5 h-5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
             <div>
-              <p class="text-sm font-black text-slate-900" id="pageSrcTitle">Google Sheet · connected</p>
+              <p class="text-sm font-bold text-slate-900" id="pageSrcTitle">Google Sheet · connected</p>
               <p class="text-xs text-slate-400" id="pageSrcMeta">1,284 items · auto-syncs nightly · last sync 4h ago</p>
             </div>
           </div>
@@ -246,14 +260,14 @@
       <!-- Team -->
       <div class="float-card p-6">
         <div class="flex items-center justify-between mb-1">
-          <h2 class="font-black text-slate-900">Team members</h2>
+          <h2 class="font-bold text-slate-900">Team members</h2>
           <button class="text-sm font-bold px-4 py-2 rounded-xl btn-primary" onclick="openInvite()">+ Invite</button>
         </div>
-        <p class="text-sm text-slate-500 mb-4">Invite teammates to your company account — each gets their own login, so every quote is tracked to the person who sent it.</p>
+        <p class="text-sm text-slate-500 mb-4">Invite teammates to your company account, each gets their own login, so every quote is tracked to the person who sent it.</p>
         <div class="space-y-2" id="teamList">
           <div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
             <div class="flex items-center gap-3"><div class="avatar">JH</div><div><p class="text-sm font-bold text-slate-800">John Hermes</p><p class="text-xs text-slate-400">john@hermestech.com</p></div></div>
-            <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">Owner</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">Owner</span>
           </div>
           <div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
             <div class="flex items-center gap-3"><div class="avatar" style="background:linear-gradient(135deg,#5e7ee8,#4a63c4)">MR</div><div><p class="text-sm font-bold text-slate-800">Maria Reyes</p><p class="text-xs text-slate-400">maria@hermestech.com</p></div></div>
@@ -264,7 +278,7 @@
 
       <!-- Security -->
       <div class="float-card p-6">
-        <h2 class="font-black text-slate-900 mb-4">Security</h2>
+        <h2 class="font-bold text-slate-900 mb-4">Security</h2>
         <div class="flex items-center justify-between">
           <div><p class="text-sm font-bold text-slate-800">Password</p><p class="text-xs text-slate-400">Last changed 3 months ago</p></div>
           <button class="text-sm font-bold px-4 py-2 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="openPwd()">Change password</button>
@@ -272,8 +286,8 @@
       </div>
 
       <div class="flex justify-end gap-2">
-        <button class="text-sm font-bold px-5 py-3 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)">Cancel</button>
-        <button class="btn-primary font-black px-6 py-3 rounded-xl text-sm" onclick="save()">Save changes</button>
+        <button class="text-sm font-bold px-5 py-3 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="location.reload()">Cancel</button>
+        <button class="btn-primary font-bold px-6 py-3 rounded-xl text-sm" onclick="save()">Save changes</button>
       </div>
     </div>
   </div>
@@ -284,15 +298,15 @@
 <!-- INVITE MODAL -->
 <div id="inviteBg" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,0.4);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeInvite()">
   <div style="background:#fff;border-radius:22px;max-width:440px;width:100%;box-shadow:0 40px 100px rgba(33,50,95,0.4)" class="p-7">
-    <h2 class="text-xl font-black text-slate-900 mb-1">Invite a teammate</h2>
+    <h2 class="text-xl font-bold text-slate-900 mb-1">Invite a teammate</h2>
     <p class="text-sm text-slate-500 mb-5">They'll get an email to set up their own login under Hermes Technical. Every quote stays tracked to who sent it.</p>
     <label class="label">Work email</label>
     <input class="field mb-3" id="inviteEmail" placeholder="teammate@hermestech.com">
     <label class="label">Role</label>
-    <select class="field mb-5" id="inviteRole"><option>Member — can quote</option><option>Admin — can quote & manage</option></select>
+    <select class="field mb-5" id="inviteRole"><option>Member, can quote</option><option>Admin, can quote & manage</option></select>
     <div class="flex gap-2">
       <button class="flex-1 text-sm font-bold py-3 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="closeInvite()">Cancel</button>
-      <button class="flex-1 btn-primary font-black py-3 rounded-xl text-sm" onclick="sendInvite()">Send invite →</button>
+      <button class="flex-1 btn-primary font-bold py-3 rounded-xl text-sm" onclick="sendInvite()">Send invite →</button>
     </div>
   </div>
 </div>
@@ -300,7 +314,7 @@
 <!-- CHANGE PASSWORD MODAL -->
 <div id="pwdBg" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,0.4);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closePwd()">
   <div style="background:#fff;border-radius:22px;max-width:440px;width:100%;box-shadow:0 40px 100px rgba(33,50,95,0.4)" class="p-7">
-    <h2 class="text-xl font-black text-slate-900 mb-5">Change password</h2>
+    <h2 class="text-xl font-bold text-slate-900 mb-5">Change password</h2>
     <label class="label">Current password</label>
     <input type="password" class="field mb-3" placeholder="••••••••">
     <label class="label">New password</label>
@@ -310,7 +324,7 @@
     <p id="pwdErr" class="text-xs mb-3" style="color:#ef4444;display:none">Passwords don't match.</p>
     <div class="flex gap-2 mt-3">
       <button class="flex-1 text-sm font-bold py-3 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="closePwd()">Cancel</button>
-      <button class="flex-1 btn-primary font-black py-3 rounded-xl text-sm" onclick="savePwd()">Update password</button>
+      <button class="flex-1 btn-primary font-bold py-3 rounded-xl text-sm" onclick="savePwd()">Update password</button>
     </div>
   </div>
 </div>
@@ -319,7 +333,7 @@
 <div id="sourceBg" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,0.4);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeSource()">
   <div style="background:#fff;border-radius:22px;max-width:500px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 40px 100px rgba(33,50,95,0.4)" class="p-7">
     <div class="flex items-center justify-between mb-1">
-      <h2 class="text-xl font-black text-slate-900">Inventory source</h2>
+      <h2 class="text-xl font-bold text-slate-900">Inventory source</h2>
       <button class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600" style="background:rgba(33,50,95,0.05)" onclick="closeSource()" aria-label="Close"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
     </div>
     <p class="text-sm text-slate-500 mb-5">Manage how your stock stays current for matching.</p>
@@ -330,10 +344,10 @@
         <svg class="w-5 h-5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-black text-slate-900" id="srcTitle">Google Sheet · connected</p>
+        <p class="text-sm font-bold text-slate-900" id="srcTitle">Google Sheet · connected</p>
         <p class="text-xs text-slate-400 truncate" id="srcMeta">HermesTechnical_Stock · 1,284 items · last sync 4h ago</p>
       </div>
-      <span id="srcBadge" class="text-xs font-black px-2.5 py-1 rounded-full flex-shrink-0" style="background:rgba(42,61,136,0.1);color:var(--primary)">Live</span>
+      <span id="srcBadge" class="text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0" style="background:rgba(42,61,136,0.1);color:var(--primary)">Live</span>
     </div>
 
     <!-- actions -->
@@ -343,7 +357,7 @@
         <button class="src-btn" id="syncBtn" onclick="syncNow()">Sync now</button>
       </div>
       <div class="src-action">
-        <div><p class="t">Replace file</p><p class="d">Switch to a new Excel/CSV — replaces the current source.</p></div>
+        <div><p class="t">Replace file</p><p class="d">Switch to a new Excel/CSV, replaces the current source.</p></div>
         <button class="src-btn" onclick="document.getElementById('replaceInput').click()">Upload new</button>
         <input type="file" id="replaceInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="replaceFile(this)">
       </div>
@@ -356,7 +370,7 @@
         <input id="sheetLink" class="field mb-2" placeholder="https://docs.google.com/spreadsheets/d/…">
         <div class="flex gap-2">
           <button class="flex-1 text-sm font-bold py-2.5 rounded-xl" style="border:1px solid rgba(33,50,95,0.12);color:var(--navy)" onclick="toggleReconnect()">Cancel</button>
-          <button class="flex-1 btn-primary font-black py-2.5 rounded-xl text-sm" onclick="saveReconnect()">Reconnect & sync</button>
+          <button class="flex-1 btn-primary font-bold py-2.5 rounded-xl text-sm" onclick="saveReconnect()">Reconnect & sync</button>
         </div>
         <p class="text-xs text-slate-400 mt-2">Share the sheet with <span class="font-bold" style="color:var(--navy)">sync@resupplyai.com</span> as Viewer so we can read it.</p>
       </div>
@@ -384,7 +398,7 @@ function renderTeam(){
                 : 'background:#f1f5f9;color:#64748b';
     return `<div class="flex items-center justify-between p-3 rounded-xl" style="background:#fafbff;border:1px solid rgba(33,50,95,0.08)">
       <div class="flex items-center gap-3"><div class="avatar" style="background:${colors[i%3]}">${ini}</div><div><p class="text-sm font-bold text-slate-800">${m.n}</p><p class="text-xs text-slate-400">${m.e}</p></div></div>
-      <span class="text-xs font-black px-2.5 py-1 rounded-full" style="${badge}">${m.role}</span>
+      <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="${badge}">${m.role}</span>
     </div>`;
   }).join('');
 }

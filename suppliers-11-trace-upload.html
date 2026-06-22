@@ -3,26 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Upload Traceability</title>
+<title>ResupplyAI Suppliers · Upload Traceability</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .bg-orb { display:none; }
   .float-card { background:#fff; border-radius:20px; box-shadow:0 16px 44px rgba(33,50,95,0.08), 0 4px 16px rgba(33,50,95,0.04); border:1px solid rgba(255,255,255,0.9); }
-
-  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
-  .hero-gradient { background-color:var(--primary); background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%); animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
   @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
@@ -64,14 +74,12 @@
 </head>
 <body>
 
-<div class="bg-orb" style="width:420px;height:420px;background:#c7d4f8;top:-140px;right:-100px"></div>
-
 <div class="relative max-w-3xl mx-auto px-6 pb-16" style="z-index:1">
 
   <div class="py-4 flex items-center justify-between">
     <div class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
     </div>
     <div class="flex items-center gap-3 relative">
       <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mr-1">
@@ -84,13 +92,13 @@
       </button>
       <button class="avatar flex-shrink-0" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
       <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
-        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-black text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
+        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-bold text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
         <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
-        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
       </div>
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
-        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
           <div class="menu-item" onclick="location.href='suppliers-07-my-quotes.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> My quotes</div>
@@ -109,20 +117,29 @@
       <span class="w-6 h-6 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,var(--primary),var(--navy))">
         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
       </span>
-      <span class="text-xs font-black" style="color:var(--primary)">DLA requested traceability — your quote is being seriously considered</span>
+      <span class="text-xs font-bold" style="color:var(--primary)">When the DLA requests a trace, your quote is being seriously considered</span>
     </div>
 
     <!-- Editorial heading -->
-    <h1 class="font-black text-slate-900 leading-[1.05] mb-3" style="font-size:2.6rem;letter-spacing:-0.03em">Prove the source.<br>Stay in the running.</h1>
+    <h1 class="font-bold text-slate-900 leading-[1.05] mb-3" style="font-size:2.6rem;letter-spacing:-0.03em">Prove the source.<br>Stay in the running.</h1>
     <p class="text-lg text-slate-500 mb-8" style="max-width:560px">Upload the documents that trace this item back to an approved manufacturer. The faster you respond, the stronger your position.</p>
 
-    <!-- Quote meta — horizontal, light, no box -->
+    <!-- Quote meta, horizontal, light, no box -->
     <div class="flex flex-wrap gap-x-10 gap-y-4 mb-9 pb-7" style="border-bottom:1px solid rgba(33,50,95,0.1)">
-      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Item</p><p class="text-sm font-black text-slate-900">Brake Drum Assembly</p></div>
-      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">NSN</p><p class="text-sm font-black text-slate-900">2530-01-687-4521</p></div>
-      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Approved mfr</p><p class="text-sm font-black text-slate-900">Canadian Commercial</p></div>
-      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Your price</p><p class="text-sm font-black text-slate-900">$1,840 / EA</p></div>
-      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Due</p><p class="text-sm font-black" style="color:var(--primary)">Jun 18 · 2 days</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Item</p><p class="text-sm font-bold text-slate-900">Brake Drum Assembly</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">NSN</p><p class="mono text-sm font-bold text-slate-900">2530-01-687-4521</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Approved mfr</p><p class="text-sm font-bold text-slate-900">Canadian Commercial</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Your price</p><p class="text-sm font-bold text-slate-900">$1,840 / EA</p></div>
+      <div><p class="text-xs text-slate-400 font-bold uppercase tracking-wide mb-0.5">Due</p><p class="text-sm font-bold" style="color:var(--primary)">Jun 18 · 2 days</p></div>
+    </div>
+
+    <!-- Declared "no trace" at quote time -->
+    <div id="declaredBanner" class="mb-6 rounded-2xl p-4 flex items-start gap-3" style="display:none;background:#fafbff;border:1px solid rgba(33,50,95,0.12)">
+      <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <div>
+        <p class="text-sm font-bold text-slate-800">You marked this item as <span style="color:var(--primary)">no trace</span> when you quoted.</p>
+        <p class="text-xs text-slate-500 mt-0.5">Uploading is disabled. Confirm below to log it, or <button onclick="unlockUpload()" class="font-bold underline" style="color:var(--primary)">I found the documents</button> to enable upload.</p>
+      </div>
     </div>
 
     <!-- What we need -->
@@ -141,7 +158,7 @@
       <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:linear-gradient(135deg,var(--primary),var(--navy));box-shadow:0 14px 34px rgba(33,50,95,0.35)">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
       </div>
-      <p class="text-lg font-black text-slate-900 mb-1">Drag your documents here</p>
+      <p class="text-lg font-bold text-slate-900 mb-1">Drag your documents here</p>
       <p class="text-sm text-slate-400">or <span class="font-bold" style="color:var(--primary)">browse your files</span> · PDF, JPG, PNG · up to 10</p>
     </div>
 
@@ -152,7 +169,26 @@
       <textarea class="field" rows="2" placeholder="e.g. CoC attached, OEM traceability confirmed by Canadian Commercial"></textarea>
     </div>
 
-    <button class="btn-primary w-full font-black py-4 rounded-2xl text-sm mt-6" onclick="submitTrace()">Submit traceability →</button>
+    <p class="text-xs text-slate-400 mt-6 leading-relaxed">By uploading, you confirm you have the right to share these files and that they contain no export-controlled (ITAR/EAR) or Controlled Unclassified Information you're not authorized to share. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
+    <button id="submitTraceBtn" class="btn-primary w-full font-bold py-4 rounded-2xl text-sm mt-3" onclick="submitTrace()">Submit traceability →</button>
+
+    <!-- No-trace path -->
+    <div class="mt-5 pt-5 text-center" style="border-top:1px solid rgba(33,50,95,0.08)">
+      <button id="noTraceToggle" onclick="toggleDecline()" class="text-sm font-bold" style="color:#64748b">Don't have traceability for this item? <span style="color:var(--primary)">Mark as no trace →</span></button>
+      <div id="declinePanel" class="mt-4 text-left rounded-2xl p-5" style="display:none;background:#fafbff;border:1px solid rgba(33,50,95,0.1)">
+        <p class="text-sm font-bold text-slate-800 mb-1">No traceability available</p>
+        <p class="text-xs text-slate-500 mb-3" style="line-height:1.5">We'll close this quote and keep it in your history, so you can see exactly which orders need documents you don't have yet.</p>
+        <label class="text-xs font-bold text-slate-600 mb-1.5 block uppercase tracking-wide">Reason <span class="font-normal normal-case text-slate-400">(optional)</span></label>
+        <select id="ntReason" class="field mb-3">
+          <option value="">Select a reason…</option>
+          <option>Manufacturer discontinued</option>
+          <option>Bought without documentation</option>
+          <option>Distributor won't provide</option>
+          <option>Other</option>
+        </select>
+        <button onclick="submitNoTrace()" class="w-full font-bold py-3 rounded-xl text-sm" style="background:#fff;border:1px solid rgba(33,50,95,0.2);color:var(--navy)">Confirm, no trace available</button>
+      </div>
+    </div>
   </div>
 
   <!-- SUCCESS -->
@@ -160,9 +196,20 @@
     <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy));box-shadow:0 20px 50px rgba(33,50,95,0.4)">
       <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
     </div>
-    <h2 class="text-2xl font-black text-slate-900 mb-2">Traceability submitted</h2>
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">Traceability submitted</h2>
     <p class="text-slate-500 mb-6">We've forwarded your documentation to the DLA review. We'll notify you the moment there's an update on this quote.</p>
-    <a href="suppliers-07-my-quotes.html" class="btn-primary inline-block font-black px-7 py-3 rounded-xl text-sm">Back to My Quotes →</a>
+    <a href="suppliers-07-my-quotes.html" class="btn-primary inline-block font-bold px-7 py-3 rounded-xl text-sm">Back to My Quotes →</a>
+  </div>
+
+  <!-- NO-TRACE RECORDED -->
+  <div id="noTraceState" class="float-card p-12 text-center mt-6" style="display:none">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:#eef1f8;border:1px solid rgba(33,50,95,0.12)">
+      <svg class="w-8 h-8" style="color:var(--navy)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m2 9H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    </div>
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">Marked as no trace</h2>
+    <p class="text-slate-500 mb-2" style="max-width:520px;margin-left:auto;margin-right:auto">This quote is closed for lack of traceability and saved to your history. We've noted the NSN so you can see what documentation to source next.</p>
+    <p class="mono text-sm font-bold mb-6" style="color:var(--primary)" id="ntSummary">2530-01-687-4521 · Brake Drum Assembly</p>
+    <a href="suppliers-07-my-quotes.html" class="inline-block font-bold px-7 py-3 rounded-xl text-sm" style="background:var(--navy);color:#fff">Back to My Quotes →</a>
   </div>
 
 </div>
@@ -185,18 +232,64 @@ function renderFiles(){
         <svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
       </div>
       <span class="flex-1 text-sm font-bold text-slate-800">${f}</span>
-      <span class="text-xs font-bold" style="color:var(--primary)">✓ uploaded</span>
+      <span class="text-xs font-bold" style="color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> uploaded</span>
       <button onclick="files.splice(${i},1);renderFiles()" class="text-slate-300 hover:text-red-400" aria-label="Remove"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>`;
     l.appendChild(row);
   });
 }
+// This trace request is for one item
+const TRACE_ITEM = { nsn:'2530-01-687-4521', name:'Brake Drum Assembly', buyer:'Pacific Turbine', qty:120, unit:1840, value:220800 };
+
+function recordTrace(result, reason){
+  const hist = JSON.parse(localStorage.getItem('traceHistory') || '[]');
+  hist.unshift({ nsn:TRACE_ITEM.nsn, name:TRACE_ITEM.name, buyer:TRACE_ITEM.buyer, qty:TRACE_ITEM.qty, unit:TRACE_ITEM.unit, value:TRACE_ITEM.value, result, reason:reason||'', date:'Jun 18, 2026' });
+  localStorage.setItem('traceHistory', JSON.stringify(hist));
+}
+
 function submitTrace(){
   if(files.length===0){ document.getElementById('fileInput').click(); return; }
+  recordTrace('provided');
   document.getElementById('mainState').style.display='none';
   document.getElementById('successState').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
   confettiBurst();
 }
+
+function toggleDecline(){
+  const p=document.getElementById('declinePanel');
+  p.style.display = p.style.display==='none' ? 'block' : 'none';
+  if(p.style.display==='block') p.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function submitNoTrace(){
+  const reason = document.getElementById('ntReason').value;
+  recordTrace('none', reason);
+  document.getElementById('ntSummary').textContent = TRACE_ITEM.nsn + ' · ' + TRACE_ITEM.name + (reason ? ' · ' + reason : '');
+  document.getElementById('mainState').style.display='none';
+  document.getElementById('noTraceState').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function lockUpload(declaredReason){
+  document.getElementById('declaredBanner').style.display='flex';
+  const drop=document.getElementById('drop'); drop.style.pointerEvents='none'; drop.style.opacity='0.45';
+  const btn=document.getElementById('submitTraceBtn'); btn.disabled=true; btn.style.opacity='0.4'; btn.style.pointerEvents='none';
+  document.getElementById('declinePanel').style.display='block';
+  document.getElementById('noTraceToggle').style.display='none';
+  if(declaredReason){ const sel=document.getElementById('ntReason'); [...sel.options].forEach(o=>{ if(o.value===declaredReason) sel.value=declaredReason; }); }
+}
+function unlockUpload(){
+  document.getElementById('declaredBanner').style.display='none';
+  const drop=document.getElementById('drop'); drop.style.pointerEvents=''; drop.style.opacity='';
+  const btn=document.getElementById('submitTraceBtn'); btn.disabled=false; btn.style.opacity=''; btn.style.pointerEvents='';
+  document.getElementById('declinePanel').style.display='none';
+  document.getElementById('noTraceToggle').style.display='';
+}
+// If this item was declared "no trace" when quoting, pre-lock the upload
+(function(){
+  try{
+    const decl = JSON.parse(localStorage.getItem('traceDecl') || '{}')[TRACE_ITEM.nsn];
+    if(decl && decl.trace==='none') lockUpload(decl.reason);
+  }catch(e){}
+})();
 function confettiBurst(){
   const colors=['#2a3d88','#21325f','#4a63c4','#5e7ee8','#9db4ff'];
   for(let i=0;i<45;i++){ const c=document.createElement('div'); c.className='confetti'; const s=6+Math.random()*7; c.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.8+Math.random()*1.5}s`; document.body.appendChild(c); setTimeout(()=>c.remove(),3600); }

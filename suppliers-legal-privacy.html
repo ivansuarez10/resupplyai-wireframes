@@ -3,14 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Privacy Policy</title>
+<title>ResupplyAI Suppliers · Privacy Policy</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+  .bg-orb { display:none; }
   .float-card { background:#fff; border-radius:22px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
   .legal h2 { font-size:16px; font-weight:900; color:var(--navy); margin-top:26px; margin-bottom:8px; }
   .legal p { font-size:14px; color:#475569; line-height:1.7; margin-bottom:10px; }
@@ -23,14 +39,12 @@
 </head>
 <body>
 
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
-
 <div class="relative max-w-3xl mx-auto px-6 py-10" style="z-index:1">
 
   <div class="flex items-center justify-between mb-7">
     <a href="suppliers-01-landing.html" class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
     </a>
     <a href="suppliers-01-landing.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
@@ -39,16 +53,19 @@
   </div>
 
   <div class="float-card p-8 md:p-10 legal">
-    <p class="text-xs font-black uppercase tracking-widest mb-2" style="color:var(--primary)">Legal</p>
-    <h1 class="text-3xl font-black text-slate-900 mb-1" style="letter-spacing:-0.02em">Privacy Policy</h1>
-    <p class="text-sm text-slate-400 mb-2">Last updated: June 18, 2026 · This is a draft for partner review, not final legal language.</p>
+    <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:var(--primary)">Legal</p>
+    <h1 class="text-3xl font-bold text-slate-900 mb-1" style="letter-spacing:-0.02em">Privacy Policy</h1>
+    <p class="text-sm text-slate-400 mb-2">Last updated: June 18, 2026 · <b>DRAFT, placeholder language pending legal counsel. Not final or enforceable.</b></p>
 
-    <h2>1. What we collect</h2>
+    <h2>1. Data we collect</h2>
     <ul>
-      <li><span class="font-bold" style="color:var(--navy)">Account info</span> — company name, CAGE, contact name, business email, team logins.</li>
-      <li><span class="font-bold" style="color:var(--navy)">Inventory &amp; quotes</span> — the stock you upload (NSN, P/N, quantity, price, condition, certifications) and the quotes you submit.</li>
-      <li><span class="font-bold" style="color:var(--navy)">Usage</span> — logins, device/IP, and activity needed to run and secure the service.</li>
+      <li><span class="font-bold" style="color:var(--navy)">Account &amp; identity</span>, company name, CAGE code, contact name, business email, team member logins, password (stored hashed).</li>
+      <li><span class="font-bold" style="color:var(--navy)">Business &amp; inventory data</span>, the stock you upload (NSN, P/N, quantity, condition, lead time, certifications) and the prices you set.</li>
+      <li><span class="font-bold" style="color:var(--navy)">Quotes &amp; activity</span>, quotes submitted, trace responses (provided, or no-trace with reason), awards, and purchase orders.</li>
+      <li><span class="font-bold" style="color:var(--navy)">Uploaded documents &amp; media</span>, files you attach: inventory sheets, certificates of conformance, traceability documents, item photos, and purchase orders.</li>
+      <li><span class="font-bold" style="color:var(--navy)">Technical &amp; usage</span>, logins, device and IP address, and activity logs needed to run and secure the service.</li>
     </ul>
+    <p class="text-sm text-slate-400">We do <b>not</b> collect special-category personal data, we do <b>not</b> sell your data, and we use no third-party advertising trackers. If we publish a mobile app, this list also drives the App Store / Google Play privacy labels. <span>[Counsel to confirm against CCPA/CPRA and, if EU users, GDPR.]</span></p>
 
     <h2>2. How we use it</h2>
     <p>To match your inventory to DLA solicitations, forward your quotes to buyers, notify you of trace requests and wins, and keep the platform secure. We never sell your data, and we never share your pricing with other suppliers.</p>
@@ -57,7 +74,7 @@
     <p>Suppliers never see other suppliers. You don't see the buyer until an award, and the buyer doesn't see you until then. Only ResupplyAI's internal operations team can see across both sides, and only to run the matching service.</p>
 
     <h2>4. Storage &amp; security</h2>
-    <p>Data is encrypted in transit (HTTPS) and access is restricted to your company account. We apply reasonable safeguards — access controls, audit logging, and validation of uploaded files. No system is perfectly secure, but we work to protect your data.</p>
+    <p>Data is encrypted in transit (HTTPS) and access is restricted to your company account. We apply reasonable safeguards, access controls, audit logging, and validation of uploaded files. No system is perfectly secure, but we work to protect your data.</p>
 
     <h2>5. Retention &amp; your choices</h2>
     <p>We keep your data while your account is active. You can update or remove inventory anytime, disconnect your data source, or request account deletion by contacting us. Notification preferences are managed in Settings.</p>

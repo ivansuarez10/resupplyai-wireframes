@@ -3,36 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Sign In</title>
+<title>ResupplyAI Suppliers · Sign In</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height: 100vh; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; animation: orbFloat 16s ease-in-out infinite; }
-  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.12)} }
-
-  @property --gx1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
-  @property --gy1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
-  @property --gx2 { syntax: '<percentage>'; inherits: false; initial-value: 90%; }
-  @property --gy2 { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
-  .hero-gradient { background-color: var(--primary);
-    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%);
-    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
-  @media (prefers-reduced-motion: reduce){ .hero-gradient,.bg-orb{animation:none} }
-  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 320px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.12), transparent 70%); opacity:0; transition: opacity .3s; }
-  .hero-gradient:hover .hero-spot { opacity:1; }
+  .bg-orb { display:none; }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
+  .hero-spot { display:none; }
+  
 
   .float-card { background:#fff; border-radius:24px; box-shadow:0 28px 70px rgba(33,50,95,0.12), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
   .input { width:100%; border:1px solid rgba(33,50,95,0.12); border-radius:12px; padding:11px 14px; font-size:14px; color:#0f172a; transition: all .18s; outline:none; background:#fff; }
   .input::placeholder { color:#94a3b8; }
   .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(42,61,136,0.1); }
   .label { display:block; font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; }
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; box-shadow: 0 12px 28px rgba(33,50,95,0.3); transition: all .2s cubic-bezier(.16,1,.3,1); }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(33,50,95,0.4); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
+  .btn-primary:hover { background:#0c142b; transform:translateY(-1px); }
   .page-enter { animation: pageIn .6s cubic-bezier(.16,1,.3,1) both; }
   @keyframes pageIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   .left-enter { animation: leftIn .7s cubic-bezier(.16,1,.3,1) both; }
@@ -45,15 +51,12 @@
 </head>
 <body class="flex items-stretch">
 
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-140px;right:-100px"></div>
-<div class="bg-orb" style="width:360px;height:360px;background:#dbe4fb;bottom:-100px;left:-100px;animation-delay:-8s"></div>
-
 <!-- Wireframe-only demo hint: explains the single-door, role-routing behavior. Not product chrome. -->
 <div id="demoHint" style="position:fixed;bottom:16px;left:16px;z-index:40;max-width:300px;background:#fff;border:1px solid rgba(33,50,95,0.1);border-radius:14px;box-shadow:0 16px 44px rgba(33,50,95,0.12);padding:12px 14px">
   <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
     <span style="font-size:9px;font-weight:900;letter-spacing:.06em;color:#fff;background:var(--navy);padding:2px 7px;border-radius:6px">WIREFRAME</span>
     <span style="font-size:11px;font-weight:900;color:var(--navy)">One door · routed by role</span>
-    <button onclick="document.getElementById('demoHint').remove()" aria-label="Dismiss" style="margin-left:auto;color:#94a3b8;line-height:1;font-size:15px">✕</button>
+    <button onclick="document.getElementById('demoHint').remove()" aria-label="Dismiss" style="margin-left:auto;color:#94a3b8;line-height:1;font-size:15px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1em;height:1em;display:inline-block;vertical-align:-0.12em"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <p style="font-size:11.5px;color:#64748b;line-height:1.5">A <b style="color:var(--navy)">@resupplyai.com</b> email signs in to the internal <b style="color:var(--navy)">Ops console</b>. Any other email lands on the supplier daily matches.</p>
 </div>
@@ -65,11 +68,11 @@
     <div class="relative flex flex-col h-full" style="z-index:1">
       <div class="flex items-center gap-3 mb-auto">
         <img src="logo-white-full.png" alt="ResupplyAI" style="height:44px;width:auto;object-fit:contain">
-        <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">SUPPLIERS</span>
+        <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">SUPPLIERS</span>
       </div>
       <div class="my-auto">
-        <h2 class="text-3xl font-black text-white leading-tight mb-4" style="letter-spacing:-0.02em">Welcome back.<br>Your matches are waiting.</h2>
-        <p class="text-base mb-8" style="color:rgba(255,255,255,0.75)">Sign in to see today's DLA solicitations matched to your stock — and quote the ones you want.</p>
+        <h2 class="text-3xl font-bold text-white leading-tight mb-4" style="letter-spacing:-0.02em">Welcome back.<br>Your matches are waiting.</h2>
+        <p class="text-base mb-8" style="color:rgba(255,255,255,0.75)">Sign in to see today's DLA solicitations matched to your stock, and quote the ones you want.</p>
         <div class="space-y-4">
           <div class="trust-item"><div class="trust-ico"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><p class="text-sm text-white font-bold">Fresh matches every morning at 6 AM</p></div>
           <div class="trust-item"><div class="trust-ico"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 13l4 4L19 7"/></svg></div><p class="text-sm text-white font-bold">Track every quote you've submitted</p></div>
@@ -85,10 +88,10 @@
   <div class="w-full max-w-md page-enter">
     <div class="md:hidden flex items-center gap-2 mb-6 justify-center">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:26px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
     </div>
     <div class="float-card p-8">
-      <h1 class="text-2xl font-black text-slate-900 mb-1">Sign in</h1>
+      <h1 class="text-2xl font-bold text-slate-900 mb-1">Sign in</h1>
       <p class="text-sm text-slate-500 mb-6">Welcome back to ResupplyAI Suppliers.</p>
       <form id="form" class="space-y-4" novalidate>
         <div>
@@ -107,7 +110,7 @@
         <label class="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
           <input type="checkbox" checked style="accent-color:#2a3d88"> Keep me signed in
         </label>
-        <button type="submit" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm mt-2">Sign in →</button>
+        <button type="submit" class="btn-primary w-full font-bold py-3.5 rounded-xl text-sm mt-2">Sign in →</button>
       </form>
       <div class="flex items-center gap-3 my-5">
         <div class="flex-1 h-px bg-slate-100"></div><span class="text-xs text-slate-400">new here?</span><div class="flex-1 h-px bg-slate-100"></div>

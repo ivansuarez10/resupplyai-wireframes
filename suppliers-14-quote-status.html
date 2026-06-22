@@ -3,28 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Quote Detail</title>
+<title>ResupplyAI Suppliers · Quote Detail</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
 
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .bg-orb { display:none; }
   .float-card { background:#fff; border-radius:20px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
-
-  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
-  .hero-gradient { background-color:var(--primary);
-    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%);
-    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
-  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 360px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.10), transparent 70%); opacity:0; transition:opacity .3s; }
-  .hero-gradient:hover .hero-spot { opacity:1; }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
+  .hero-spot { display:none; }
+  
   @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
 
   /* Status pill */
@@ -68,7 +76,7 @@
   .feed-item::after { content:''; position:absolute; left:0; top:5px; width:12px; height:12px; border-radius:50%; background:#fff; border:2px solid rgba(33,50,95,0.2); }
   .feed-item.hl::after { background:var(--primary); border-color:var(--primary); }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
@@ -105,16 +113,13 @@
 </head>
 <body>
 
-<div class="bg-orb" style="width:460px;height:460px;background:#c7d4f8;top:-160px;right:-120px"></div>
-<div class="bg-orb" style="width:340px;height:340px;background:#dbe4fb;bottom:-120px;left:-120px"></div>
-
 <div class="relative" style="z-index:1">
 
   <!-- Top bar -->
   <div class="px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
     <div class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
     </div>
     <div class="flex items-center gap-3 relative">
       <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mr-1">
@@ -127,13 +132,13 @@
       </button>
       <button class="avatar flex-shrink-0" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
       <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
-        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-black text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
+        <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-bold text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
         <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
-        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
       </div>
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
-        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
           <div class="menu-item" onclick="location.href='suppliers-07-my-quotes.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> My quotes</div>
@@ -146,27 +151,27 @@
 
   <div class="max-w-6xl mx-auto px-6 pb-24 page-enter">
 
-    <!-- HEADER — editorial, asymmetric -->
+    <!-- HEADER, editorial, asymmetric -->
     <div class="flex flex-wrap items-end justify-between gap-6 mt-2 mb-9">
       <div style="max-width:640px">
         <div class="flex items-center gap-3 mb-3">
           <span class="st" id="statusPill"><span class="dot"></span> Trace requested</span>
           <span class="text-xs font-bold text-slate-400" id="submittedLine">Submitted Jun 12, 2026 · by Hector T.</span>
         </div>
-        <h1 class="font-black text-slate-900 leading-tight" style="font-size:34px;letter-spacing:-0.02em" id="itemName">Brake Drum Assembly</h1>
-        <p class="text-slate-500 text-sm mt-1.5" id="itemNsn">NSN 2530-01-687-4521 · P/N BD-44871 · Quote #RS-10428</p>
+        <h1 class="font-bold text-slate-900 leading-tight" style="font-size:34px;letter-spacing:-0.02em" id="itemName">Brake Drum Assembly</h1>
+        <p class="mono text-slate-500 text-sm mt-1.5" id="itemNsn">NSN 2530-01-687-4521 · P/N BD-44871 · Quote #RS-10428</p>
       </div>
       <div class="text-right">
         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Your quote total</p>
-        <p class="font-black text-slate-900 leading-none" style="font-size:40px" id="quoteTotal">$220,800</p>
+        <p class="font-bold text-slate-900 leading-none" style="font-size:40px" id="quoteTotal">$220,800</p>
         <p class="text-sm font-bold text-slate-400 mt-1.5" id="quoteBreak">120 units × $1,840</p>
       </div>
     </div>
 
-    <!-- STATUS TIMELINE — full width band -->
+    <!-- STATUS TIMELINE, full width band -->
     <div class="float-card rise p-7 mb-6">
       <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
-        <h2 class="font-black text-slate-900 text-base">Where this quote stands</h2>
+        <h2 class="font-bold text-slate-900 text-base">Where this quote stands</h2>
         <p class="text-xs text-slate-400">Statuses update daily as we assign quotes to buyers · last sync 4 hours ago</p>
       </div>
       <div class="track" id="track">
@@ -180,15 +185,15 @@
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           </div>
           <div>
-            <p class="text-white font-black text-base" id="bannerTitle">The DLA requested traceability — your quote is being seriously considered</p>
+            <p class="text-white font-bold text-base" id="bannerTitle">When the DLA requests a trace, your quote is being seriously considered</p>
             <p class="text-sm" style="color:rgba(255,255,255,0.78)" id="bannerSub">Upload your trace docs fast to stay in the running. This is a strong buying signal.</p>
           </div>
         </div>
-        <a id="bannerBtn" href="suppliers-11-trace-upload.html" class="bg-white font-black text-sm px-5 py-2.5 rounded-xl whitespace-nowrap relative" style="color:var(--navy);z-index:1">Upload trace →</a>
+        <a id="bannerBtn" href="suppliers-11-trace-upload.html" class="bg-white font-bold text-sm px-5 py-2.5 rounded-xl whitespace-nowrap relative" style="color:var(--navy);z-index:1">Upload trace →</a>
       </div>
     </div>
 
-    <!-- BODY GRID — asymmetric: wide left, narrow right rail -->
+    <!-- BODY GRID, asymmetric: wide left, narrow right rail -->
     <div class="grid lg:grid-cols-3 gap-6 items-start">
 
       <!-- LEFT (spans 2) -->
@@ -196,25 +201,25 @@
 
         <!-- What you quoted -->
         <div class="float-card rise p-7" style="animation-delay:.06s">
-          <h2 class="font-black text-slate-900 text-base mb-5">What you quoted</h2>
+          <h2 class="font-bold text-slate-900 text-base mb-5">What you quoted</h2>
           <div class="grid sm:grid-cols-3 gap-y-6 gap-x-4">
             <div class="spec"><span class="k">Quantity supplied</span><span class="v">120 EA</span></div>
             <div class="spec"><span class="k">Your unit price</span><span class="v">$1,840.00</span></div>
             <div class="spec"><span class="k">Condition</span><span class="v">New</span></div>
             <div class="spec"><span class="k">Lead time</span><span class="v">14 days</span></div>
             <div class="spec"><span class="k">Manufacturer / OEM</span><span class="v">Meritor</span></div>
-            <div class="spec"><span class="k">CAGE</span><span class="v">0VGZ7</span></div>
+            <div class="spec"><span class="k">CAGE</span><span class="v mono">0VGZ7</span></div>
           </div>
           <div class="mt-6 pt-5" style="border-top:1px solid rgba(33,50,95,0.07)">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Your note to ResupplyAI</p>
-            <p class="text-sm text-slate-600 leading-relaxed">Stock is on the shelf in our Tampa warehouse, OEM-boxed. Can ship within 10 days if needed — flagged 14 to be safe.</p>
+            <p class="text-sm text-slate-600 leading-relaxed">Stock is on the shelf in our Tampa warehouse, OEM-boxed. Can ship within 10 days if needed, flagged 14 to be safe.</p>
           </div>
         </div>
 
         <!-- Documents -->
         <div class="float-card rise p-7" style="animation-delay:.12s">
           <div class="flex items-center justify-between mb-5">
-            <h2 class="font-black text-slate-900 text-base">Documents you submitted</h2>
+            <h2 class="font-bold text-slate-900 text-base">Documents you submitted</h2>
             <span class="text-xs font-bold text-slate-400">3 files</span>
           </div>
           <div class="grid sm:grid-cols-2 gap-3">
@@ -232,14 +237,14 @@
             </div>
           </div>
           <div id="traceDocSlot" class="mt-3 rounded-xl p-3.5 flex items-center justify-between gap-3" style="background:rgba(42,61,136,0.05);border:1px dashed rgba(42,61,136,0.28)">
-            <p class="text-xs text-slate-500"><span class="font-bold" style="color:var(--navy)">Trace documentation</span> requested by the DLA — not yet uploaded.</p>
-            <a href="suppliers-11-trace-upload.html" class="text-xs font-black whitespace-nowrap" style="color:var(--primary)">Upload now →</a>
+            <p class="text-xs text-slate-500"><span class="font-bold" style="color:var(--navy)">Trace documentation</span> requested by the DLA, not yet uploaded.</p>
+            <a href="suppliers-11-trace-upload.html" class="text-xs font-bold whitespace-nowrap" style="color:var(--primary)">Upload now →</a>
           </div>
         </div>
 
         <!-- Activity feed -->
         <div class="float-card rise p-7" style="animation-delay:.18s">
-          <h2 class="font-black text-slate-900 text-base mb-5">Activity</h2>
+          <h2 class="font-bold text-slate-900 text-base mb-5">Activity</h2>
           <div id="feed">
             <!-- injected by JS -->
           </div>
@@ -247,31 +252,31 @@
 
       </div>
 
-      <!-- RIGHT RAIL — DLA solicitation (navy) -->
+      <!-- RIGHT RAIL. DLA solicitation (navy) -->
       <div class="rise" style="animation-delay:.1s">
         <div class="hero-gradient rounded-2xl p-6 sticky top-5 relative overflow-hidden" id="hero" style="box-shadow:0 24px 60px rgba(33,50,95,0.28)">
           <div class="hero-spot"></div>
           <div class="relative" style="z-index:1">
             <div class="flex items-center gap-2 mb-4">
-              <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:linear-gradient(135deg,#fff,rgba(255,255,255,0.85));color:var(--navy)">HIGH VALUE</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:linear-gradient(135deg,#fff,rgba(255,255,255,0.85));color:var(--navy)">HIGH VALUE</span>
               <span class="text-xs font-bold" style="color:rgba(255,255,255,0.7)">DLA Solicitation</span>
             </div>
-            <h3 class="text-white font-black text-lg leading-tight mb-1">Brake Drum Assembly</h3>
-            <p class="text-sm mb-5" style="color:rgba(255,255,255,0.7)">NSN 2530-01-687-4521 · SPE7M3-26-T-0142</p>
+            <h3 class="text-white font-bold text-lg leading-tight mb-1">Brake Drum Assembly</h3>
+            <p class="mono text-sm mb-5" style="color:rgba(255,255,255,0.7)">NSN 2530-01-687-4521 · SPE7M3-26-T-0142</p>
 
             <div class="rounded-xl p-3 mb-4" style="background:rgba(255,255,255,0.1)">
-              <div class="flex justify-between py-2"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity needed</span><span class="text-sm font-black text-white">120 EA</span></div>
+              <div class="flex justify-between py-2"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity needed</span><span class="text-sm font-bold text-white">120 EA</span></div>
               <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Required condition</span><span class="text-sm font-bold text-white">New</span></div>
               <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Delivery required</span><span class="text-sm font-bold text-white">≤ 30 days</span></div>
               <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Solicitation closed</span><span class="text-sm font-bold text-white">Jun 19, 2026</span></div>
             </div>
 
             <div class="rounded-xl p-4" style="background:rgba(255,255,255,0.12)">
-              <p class="text-xs font-black text-white uppercase tracking-wide mb-1.5">You quoted as</p>
-              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Meritor</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE 0VGZ7 · approved ✓</span></div>
+              <p class="text-xs font-bold text-white uppercase tracking-wide mb-1.5">You quoted as</p>
+              <div class="flex items-center justify-between"><span class="text-sm font-bold text-white">Meritor</span><span class="text-xs" style="color:rgba(255,255,255,0.55)">CAGE <span class="mono">0VGZ7</span> · approved <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
             </div>
 
-            <p class="text-xs mt-4" style="color:rgba(255,255,255,0.55)">You can't see the buyer, and the buyer can't see you — ResupplyAI matches both sides.</p>
+            <p class="text-xs mt-4" style="color:rgba(255,255,255,0.55)">You can't see the buyer, and the buyer can't see you. ResupplyAI matches both sides.</p>
           </div>
         </div>
 
@@ -281,7 +286,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             See today's matches
           </a>
-          <button class="w-full text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors py-1.5">Need help with this quote? Contact ResupplyAI</button>
+          <button onclick="location.href='suppliers-contact.html'" class="w-full text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors py-1.5">Need help with this quote? Contact ResupplyAI</button>
         </div>
       </div>
 
@@ -303,33 +308,33 @@ const STAGES = [
 const CONFIG = {
   pending: {
     pill:'st-pending', pillText:'Pending assignment', reach:0, lost:false,
-    banner:{ title:"We've received your quote — it's in tonight's assignment run",
+    banner:{ title:"We've received your quote, it's in tonight's assignment run",
              sub:"Every morning we match quotes to buyers. We'll let you know the moment yours is picked up.",
              btn:null }, traceSlot:false, outcomeSub:'Pending'
   },
   assigned: {
     pill:'st-assigned', pillText:'Assigned to buyer', reach:1, lost:false,
-    banner:{ title:"Assigned to a buyer — you're in the running",
+    banner:{ title:"Assigned to a buyer, you're in the running",
              sub:"A buyer is preparing their DLA submission with your quote included. No action needed right now.",
              btn:null }, traceSlot:false, outcomeSub:'Pending'
   },
   trace: {
     pill:'st-trace', pillText:'Trace requested', reach:2, lost:false,
-    banner:{ title:"The DLA requested traceability — your quote is being seriously considered",
+    banner:{ title:"When the DLA requests a trace, your quote is being seriously considered",
              sub:"Upload your trace docs fast to stay in the running. This is a strong buying signal.",
              btn:{ text:'Upload trace →', href:'suppliers-11-trace-upload.html' } },
     traceSlot:true, outcomeSub:'Pending'
   },
   won: {
-    pill:'st-won', pillText:'Won — buyer purchasing', reach:3, lost:false,
-    banner:{ title:"You won this one — the buyer is purchasing your stock",
+    pill:'st-won', pillText:'Won, buyer purchasing', reach:3, lost:false,
+    banner:{ title:"You won this one, the buyer is purchasing your stock",
              sub:"We'll share the PO and delivery details here. Congratulations.",
-             btn:{ text:'View PO & finish →', href:'suppliers-15-purchase-order.html' } }, traceSlot:false, outcomeSub:'Won ✓'
+             btn:{ text:'View PO & finish →', href:'suppliers-15-purchase-order.html' } }, traceSlot:false, outcomeSub:'Won <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
   },
   closed: {
     pill:'st-closed', pillText:'Awarded elsewhere', reach:3, lost:true,
     banner:{ title:"The DLA awarded this solicitation to another company",
-             sub:"On most solicitations the award goes elsewhere — the DLA weighs every bid and often prioritizes the OEM or an existing approved source. It's a normal part of bidding and not a reflection of you or your stock. Your inventory stays listed for the next match.",
+             sub:"On most solicitations the award goes elsewhere, the DLA weighs every bid and often prioritizes the OEM or an existing approved source. It's a normal part of bidding and not a reflection of you or your stock. Your inventory stays listed for the next match.",
              btn:{ text:'See today’s matches →', href:'suppliers-04-daily-matches.html' } },
     traceSlot:false, outcomeSub:'Awarded elsewhere'
   }
@@ -354,7 +359,7 @@ const FEEDS = {
     ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',false],
     ['Assigned to a buyer','Jun 13, 2026 · 6:02 AM',false],
     ['Trace documentation accepted','Jun 14, 2026 · 4:20 PM',false],
-    ['Won — buyer issued a purchase order','Jun 16, 2026 · 10:05 AM',true],
+    ['Won, buyer issued a purchase order','Jun 16, 2026 · 10:05 AM',true],
   ],
   closed: [
     ['You submitted this quote','Jun 12, 2026 · 9:14 AM · by Hector T.',false],
@@ -369,7 +374,7 @@ function render(status){
   // status pill
   const pill = document.getElementById('statusPill');
   pill.className = 'st ' + cfg.pill;
-  pill.innerHTML = (status==='won'?'✓ ':status==='closed'?'':'<span class="dot"></span> ') + cfg.pillText;
+  pill.innerHTML = (status==='won'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> ':status==='closed'?'':'<span class="dot"></span> ') + cfg.pillText;
 
   // timeline
   const track = document.getElementById('track');

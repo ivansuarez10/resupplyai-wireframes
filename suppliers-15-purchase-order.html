@@ -3,28 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Purchase Order</title>
+<title>ResupplyAI Suppliers · Purchase Order</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height:100vh; }
 
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; }
+  .bg-orb { display:none; }
   .float-card { background:#fff; border-radius:20px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
-
-  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
-  .hero-gradient { background-color:var(--primary);
-    background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%);
-    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
-  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 360px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.10), transparent 70%); opacity:0; transition:opacity .3s; }
-  .hero-gradient:hover .hero-spot { opacity:1; }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
+  .hero-spot { display:none; }
+  
   @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
 
   .st { font-size:11px; font-weight:900; padding:5px 13px; border-radius:9999px; letter-spacing:.03em; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; }
@@ -53,7 +61,7 @@
   .upload { border:1.6px dashed rgba(42,61,136,0.28); border-radius:14px; padding:26px; text-align:center; cursor:pointer; transition:all .18s; background:rgba(42,61,136,0.02); }
   .upload:hover { border-color:var(--primary); background:rgba(42,61,136,0.05); }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-2px); box-shadow:0 14px 30px rgba(33,50,95,0.35); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
@@ -93,16 +101,13 @@
 </head>
 <body>
 
-<div class="bg-orb" style="width:460px;height:460px;background:#c7d4f8;top:-160px;right:-120px"></div>
-<div class="bg-orb" style="width:340px;height:340px;background:#dbe4fb;bottom:-120px;left:-120px"></div>
-
 <div class="relative" style="z-index:1">
 
   <!-- Top bar -->
   <div class="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
     <div class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span>
     </div>
     <div class="flex items-center gap-3 relative">
       <a href="suppliers-07-my-quotes.html" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors mr-1">
@@ -117,17 +122,17 @@
 
       <div class="menu-pop" id="notifMenu" style="width:320px" onclick="event.stopPropagation()">
         <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)">
-          <p class="font-black text-slate-900 text-sm">Notifications</p>
+          <p class="font-bold text-slate-900 text-sm">Notifications</p>
           <span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span>
         </div>
         <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
-        <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won — Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
       </div>
       <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
         <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
           <div class="avatar flex-shrink-0">HT</div>
-          <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
+          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
         </div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
@@ -146,22 +151,22 @@
     <div class="flex flex-wrap items-end justify-between gap-6 mt-2 mb-8">
       <div style="max-width:640px">
         <div class="flex items-center gap-3 mb-3">
-          <span class="st">✓ Won — close it out</span>
+          <span class="st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Won, close it out</span>
           <span class="text-xs font-bold text-slate-400">Awarded Jun 16, 2026</span>
         </div>
-        <h1 class="font-black text-slate-900 leading-tight" style="font-size:34px;letter-spacing:-0.02em">Bracket, Support</h1>
-        <p class="text-slate-500 text-sm mt-1.5">NSN 5340-01-201-9988 · P/N BRK-118 · Quote #RS-10455</p>
+        <h1 class="font-bold text-slate-900 leading-tight" style="font-size:34px;letter-spacing:-0.02em">Bracket, Support</h1>
+        <p class="mono text-slate-500 text-sm mt-1.5">NSN 5340-01-201-9988 · P/N BRK-118 · Quote #RS-10455</p>
       </div>
       <div class="text-right">
         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Order value</p>
-        <p class="font-black text-slate-900 leading-none" style="font-size:40px">$17,200</p>
+        <p class="font-bold text-slate-900 leading-none" style="font-size:40px">$17,200</p>
         <p class="text-sm font-bold text-slate-400 mt-1.5">200 units × $86</p>
       </div>
     </div>
 
     <!-- WHAT HAPPENS NEXT -->
     <div class="float-card rise p-7 mb-6">
-      <h2 class="font-black text-slate-900 text-base mb-5">What happens next</h2>
+      <h2 class="font-bold text-slate-900 text-base mb-5">What happens next</h2>
       <div class="track">
         <div class="step done"><span class="node"></span><div class="s-label">DLA awarded</div><div class="s-sub">Jun 16</div></div>
         <div class="step current"><span class="node"></span><div class="s-label">Upload your PO</div><div class="s-sub">Your turn</div></div>
@@ -169,7 +174,7 @@
       </div>
       <div class="mt-6 rounded-2xl p-4 flex items-start gap-3" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
         <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <p class="text-sm text-slate-600 leading-relaxed">We've sent you the billing details below so you can raise your Purchase Order. <span class="font-bold" style="color:var(--navy)">Upload the PO here and we hand it to the buyer.</span> From there, shipping, invoicing and payment happen directly between you and the buyer — that's the last step inside ResupplyAI.</p>
+        <p class="text-sm text-slate-600 leading-relaxed">We've sent you the billing details below so you can raise your Purchase Order. <span class="font-bold" style="color:var(--navy)">Upload the PO here and we hand it to the buyer.</span> From there, shipping, invoicing and payment happen directly between you and the buyer. That's the last step inside ResupplyAI.</p>
       </div>
     </div>
 
@@ -179,14 +184,14 @@
       <div class="lg:col-span-2 space-y-6">
         <div class="float-card rise p-7" style="animation-delay:.06s">
           <div class="flex items-center justify-between mb-5">
-            <h2 class="font-black text-slate-900 text-base">Billing & shipping details</h2>
+            <h2 class="font-bold text-slate-900 text-base">Billing & shipping details</h2>
             <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">From ResupplyAI</span>
           </div>
           <div class="grid sm:grid-cols-2 gap-x-8">
             <div>
               <div class="bd-row"><span class="bd-k">Bill to</span><span class="bd-v">Apex Federal Logistics</span></div>
-              <div class="bd-row"><span class="bd-k">CAGE</span><span class="bd-v">7X2Q1</span></div>
-              <div class="bd-row"><span class="bd-k">PO reference</span><span class="bd-v">RS-PO-10455</span></div>
+              <div class="bd-row"><span class="bd-k">CAGE</span><span class="bd-v mono">7X2Q1</span></div>
+              <div class="bd-row"><span class="bd-k">PO reference</span><span class="bd-v mono">RS-PO-10455</span></div>
               <div class="bd-row"><span class="bd-k">Payment terms</span><span class="bd-v">Net 30</span></div>
             </div>
             <div>
@@ -201,7 +206,7 @@
 
         <!-- Upload PO -->
         <div class="float-card rise p-7" style="animation-delay:.12s" id="uploadCard">
-          <h2 class="font-black text-slate-900 text-base mb-1">Upload your Purchase Order</h2>
+          <h2 class="font-bold text-slate-900 text-base mb-1">Upload your Purchase Order</h2>
           <p class="text-sm text-slate-500 mb-4">Attach the signed PO (or your invoice referencing it). This is the final step on our side.</p>
           <div class="upload" id="dropzone" onclick="document.getElementById('poInput').click()">
             <svg class="w-8 h-8 mx-auto mb-2" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
@@ -210,7 +215,8 @@
           </div>
           <input type="file" id="poInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" style="display:none" onchange="uploadPO(this)">
           <div id="poFile" style="display:none" class="mt-3 rounded-xl p-3.5 flex items-center justify-between" style="background:#fafbff;border:1px solid rgba(33,50,95,0.06)"></div>
-          <button id="poSubmit" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm mt-4" style="display:none" onclick="submitPO()">Submit PO & finish →</button>
+          <p class="text-xs text-slate-400 mt-3 leading-relaxed">By uploading, you confirm you have the right to share this document and that it contains no export-controlled (ITAR/EAR) or restricted material. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
+          <button id="poSubmit" class="btn-primary w-full font-bold py-3.5 rounded-xl text-sm mt-3" style="display:none" onclick="submitPO()">Submit PO & finish →</button>
         </div>
       </div>
 
@@ -219,15 +225,15 @@
         <div class="hero-gradient rounded-2xl p-6 sticky top-5 relative overflow-hidden" id="hero" style="box-shadow:0 24px 60px rgba(33,50,95,0.28)">
           <div class="hero-spot"></div>
           <div class="relative" style="z-index:1">
-            <p class="text-xs font-black text-white uppercase tracking-wide mb-3" style="color:rgba(255,255,255,0.7)">Order summary</p>
-            <h3 class="text-white font-black text-lg leading-tight mb-1">Bracket, Support</h3>
-            <p class="text-sm mb-5" style="color:rgba(255,255,255,0.7)">NSN 5340-01-201-9988</p>
+            <p class="text-xs font-bold text-white uppercase tracking-wide mb-3" style="color:rgba(255,255,255,0.7)">Order summary</p>
+            <h3 class="text-white font-bold text-lg leading-tight mb-1">Bracket, Support</h3>
+            <p class="mono text-sm mb-5" style="color:rgba(255,255,255,0.7)">NSN 5340-01-201-9988</p>
             <div class="rounded-xl p-3" style="background:rgba(255,255,255,0.1)">
-              <div class="flex justify-between py-2"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity</span><span class="text-sm font-black text-white">200 EA</span></div>
+              <div class="flex justify-between py-2"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Quantity</span><span class="text-sm font-bold text-white">200 EA</span></div>
               <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Your unit price</span><span class="text-sm font-bold text-white">$86.00</span></div>
-              <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Order total</span><span class="text-sm font-black text-white">$17,200</span></div>
+              <div class="flex justify-between py-2" style="border-top:1px solid rgba(255,255,255,0.12)"><span class="text-xs" style="color:rgba(255,255,255,0.65)">Order total</span><span class="text-sm font-bold text-white">$17,200</span></div>
             </div>
-            <p class="text-xs mt-4" style="color:rgba(255,255,255,0.55)">Once your PO is uploaded, ResupplyAI's role is complete — the sale is yours.</p>
+            <p class="text-xs mt-4" style="color:rgba(255,255,255,0.55)">Once your PO is uploaded, ResupplyAI's role is complete, the sale is yours.</p>
           </div>
         </div>
       </div>
@@ -240,9 +246,9 @@
       <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
       </div>
-      <h2 class="text-2xl font-black text-slate-900 mb-2">PO received — you're all set</h2>
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">PO received, you're all set</h2>
       <p class="text-slate-500 mb-6 leading-relaxed">We've passed your PO to the buyer. Shipping, invoicing and payment now happen directly between you and them. Congratulations on the win.</p>
-      <a href="suppliers-07-my-quotes.html" class="btn-primary inline-block font-black px-7 py-3 rounded-xl text-sm">Back to My Quotes →</a>
+      <a href="suppliers-07-my-quotes.html" class="btn-primary inline-block font-bold px-7 py-3 rounded-xl text-sm">Back to My Quotes →</a>
     </div>
   </div>
 </div>
@@ -259,7 +265,7 @@ function uploadPO(input){
   slot.innerHTML = `<div class="flex items-center gap-3 min-w-0">
       <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(42,61,136,0.1)"><svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
       <span class="text-sm font-bold text-slate-800 truncate">${f.name}</span></div>
-    <span class="text-xs font-bold" style="color:var(--primary)">✓ ready</span>`;
+    <span class="text-xs font-bold" style="color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> ready</span>`;
   document.getElementById('poSubmit').style.display = 'block';
 }
 function submitPO(){

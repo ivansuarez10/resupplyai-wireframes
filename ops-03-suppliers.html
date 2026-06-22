@@ -3,14 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI — Suppliers (Internal)</title>
+<title>ResupplyAI · Suppliers (Internal)</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.35; }
+  .bg-orb { display:none; }
 
   .sidebar { width: 210px; flex-shrink: 0; background:#fff; border-right:1px solid rgba(33,50,95,0.06); display:flex; flex-direction:column; padding:20px 0; position:sticky; top:0; height:100vh; z-index:2; box-shadow:4px 0 24px rgba(33,50,95,0.04); }
   .nav-item { display:flex; align-items:center; gap:9px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; color:#64748b; cursor:pointer; transition:all .18s; margin:1px 10px; position:relative; }
@@ -47,24 +63,18 @@
   .perf { height:7px; border-radius:9999px; background:rgba(33,50,95,0.08); overflow:hidden; }
   .perf-fill { height:100%; border-radius:9999px; background:linear-gradient(90deg,var(--primary),var(--navy)); }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; transition: all .2s cubic-bezier(.16,1,.3,1); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(33,50,95,0.3); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition:all .18s; }
   .btn-ghost:hover { border-color:var(--primary); color:var(--primary); }
 
   .tab { font-size:12px; font-weight:800; padding:7px 13px; border-radius:10px; cursor:pointer; transition:all .15s; color:#64748b; white-space:nowrap; }
   .tab.active { background:#fff; color:var(--primary); box-shadow:0 2px 10px rgba(33,50,95,0.08); }
-
-  @property --gx1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gy1 { syntax:'<percentage>'; inherits:false; initial-value:10%; }
-  @property --gx2 { syntax:'<percentage>'; inherits:false; initial-value:90%; }
-  @property --gy2 { syntax:'<percentage>'; inherits:false; initial-value:20%; }
-  .hero-gradient { background-color:var(--primary); background-image: radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent 55%), radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent 55%); animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite; }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 50%{--gx1:35%;--gy1:50%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
+  .hero-gradient { position:relative; background:var(--navy); overflow:hidden; }
+  .hero-gradient::before{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%), radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); }
   @media (prefers-reduced-motion: reduce){ .hero-gradient{animation:none} }
-  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 360px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.12), transparent 70%); opacity:0; transition: opacity .3s; }
-  .hero-gradient:hover .hero-spot { opacity:1; }
+  .hero-spot { display:none; }
+  
 
   /* facility photo placeholder tiles */
   .photo { position:relative; border-radius:14px; overflow:hidden; aspect-ratio:4/3; background:linear-gradient(135deg,#2a3d88,#1a2850); display:flex; align-items:flex-end; box-shadow:0 8px 22px rgba(33,50,95,0.14); }
@@ -104,13 +114,11 @@
 </head>
 <body class="flex">
 
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-160px;right:-120px"></div>
-
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="px-5 mb-6 flex items-center gap-2">
     <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:var(--navy);color:#fff">OPS</span>
+    <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:var(--navy);color:#fff">OPS</span>
   </div>
   <nav class="flex-1 space-y-0.5">
     <div class="nav-item" onclick="location.href='ops-00-dashboard.html'">
@@ -146,8 +154,8 @@
   <!-- Topbar -->
   <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
     <div id="topTitle">
-      <h1 class="text-lg font-black text-slate-900 leading-tight">Suppliers</h1>
-      <p class="text-xs text-slate-400 mt-0.5">The dealers behind your quotes — certs, facilities and quoting history</p>
+      <h1 class="text-lg font-bold text-slate-900 leading-tight">Suppliers</h1>
+      <p class="text-xs text-slate-400 mt-0.5">The dealers behind your quotes: certs, facilities and quoting history</p>
     </div>
     <div class="flex items-center gap-3">
       <div class="relative">
@@ -155,7 +163,7 @@
         <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
           <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
             <div class="avatar" style="cursor:default">IS</div>
-            <div class="min-w-0"><p class="font-black text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
           </div>
           <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
             <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
@@ -170,10 +178,10 @@
 
     <!-- KPI strip -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="float-card card-enter p-4"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Suppliers</p><p class="text-2xl font-black text-slate-900" id="kSup">0</p></div>
-      <div class="float-card card-enter p-4" style="animation-delay:.06s"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Active this cycle</p><p class="text-2xl font-black" style="color:var(--primary)" id="kAct">0</p></div>
-      <div class="float-card card-enter p-4" style="animation-delay:.12s"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Manufacturers</p><p class="text-2xl font-black text-slate-900" id="kMfr">0</p></div>
-      <div class="float-card card-enter p-4" style="animation-delay:.18s"><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Quotes (90 days)</p><p class="text-2xl font-black text-slate-900" id="kQ">0</p></div>
+      <div class="field card-enter"><span class="cap">Suppliers</span><p class="text-2xl font-bold text-slate-900" id="kSup">0</p></div>
+      <div class="field card-enter" style="animation-delay:.06s"><span class="cap">Active this cycle</span><p class="text-2xl font-bold" style="color:var(--primary)" id="kAct">0</p></div>
+      <div class="field card-enter" style="animation-delay:.12s"><span class="cap">Manufacturers</span><p class="text-2xl font-bold text-slate-900" id="kMfr">0</p></div>
+      <div class="field card-enter" style="animation-delay:.18s"><span class="cap">Quotes (90 days)</span><p class="text-2xl font-bold text-slate-900" id="kQ">0</p></div>
     </div>
 
     <!-- Filters + search -->
@@ -219,13 +227,13 @@ const SUPPLIERS = [
     email:'sales@pacificturbineusa.com', phone:'+1 (619) 555-0142', joined:'2024-08', status:'active',
     commodities:['Turbine components','Bearings','Shafts','Aviation 28xx'],
     certs:[{n:'SAM.gov Active',v:true},{n:'CAGE Verified',v:true},{n:'ISO 9001:2015',v:true},{n:'AS9100D',v:false},{n:'ITAR Registered',v:true}],
-    photos:['Receiving dock','Warehouse — Aisle 12','QC inspection bench','Outbound staging'],
+    photos:['Receiving dock','Warehouse, Aisle 12','QC inspection bench','Outbound staging'],
     stats:{ submitted:34, assigned:19, won:7, onTime:96, avgLT:78 },
     history:[
-      {d:'Jun 18, 2026', t:'trace', x:'DLA trace request on SPE4A526Q0573 — buyer is checking references'},
+      {d:'Jun 18, 2026', t:'trace', x:'DLA trace request on SPE4A526Q0573. Buyer is checking references'},
       {d:'Jun 17, 2026', t:'assigned', x:'2 quotes assigned to a client batch'},
-      {d:'Jun 10, 2026', t:'won', x:'Awarded — SHAFT TURBINE AIRC (NSN 2840-00-837-2071)'},
-      {d:'Jun 02, 2026', t:'elsewhere', x:'SPE4A526Q0571 — DLA awarded elsewhere'},
+      {d:'Jun 10, 2026', t:'won', x:'Awarded: SHAFT TURBINE AIRC (NSN 2840-00-837-2071)'},
+      {d:'Jun 02, 2026', t:'elsewhere', x:'SPE4A526Q0571: DLA awarded elsewhere'},
       {d:'May 28, 2026', t:'submitted', x:'Quoted 6 lines from morning matches'},
     ],
     quotes:[
@@ -242,7 +250,7 @@ const SUPPLIERS = [
     photos:['CNC floor','Assembly line','Coordinate-measuring lab','Finished-goods cage'],
     stats:{ submitted:41, assigned:24, won:13, onTime:98, avgLT:120 },
     history:[
-      {d:'Jun 16, 2026', t:'won', x:'Awarded — ARMATURE ASSY (FMS line)'},
+      {d:'Jun 16, 2026', t:'won', x:'Awarded: ARMATURE ASSY (FMS line)'},
       {d:'Jun 12, 2026', t:'assigned', x:'3 quotes assigned to a client batch'},
       {d:'Jun 05, 2026', t:'po', x:'Purchase order uploaded for awarded line'},
       {d:'May 30, 2026', t:'submitted', x:'Quoted 8 manufactured lines'},
@@ -261,7 +269,7 @@ const SUPPLIERS = [
     stats:{ submitted:22, assigned:11, won:3, onTime:91, avgLT:402 },
     history:[
       {d:'Jun 15, 2026', t:'assigned', x:'1 quote assigned to a client batch'},
-      {d:'Jun 08, 2026', t:'elsewhere', x:'SPE4A526Q0576 — DLA awarded elsewhere'},
+      {d:'Jun 08, 2026', t:'elsewhere', x:'SPE4A526Q0576: DLA awarded elsewhere'},
       {d:'May 22, 2026', t:'submitted', x:'Quoted 5 aviation lines'},
     ],
     quotes:[
@@ -276,7 +284,7 @@ const SUPPLIERS = [
     photos:['Automated retrieval','Component reels','Kitting station','Loading bay'],
     stats:{ submitted:58, assigned:30, won:11, onTime:99, avgLT:5 },
     history:[
-      {d:'Jun 14, 2026', t:'won', x:'Awarded — RELAY ELECTROMAGNETIC'},
+      {d:'Jun 14, 2026', t:'won', x:'Awarded: RELAY ELECTROMAGNETIC'},
       {d:'Jun 09, 2026', t:'sync', x:'Inventory feed synced (1.2M lines)'},
       {d:'Jun 01, 2026', t:'submitted', x:'Quoted 14 electronic lines'},
     ],
@@ -309,7 +317,7 @@ const SUPPLIERS = [
     stats:{ submitted:29, assigned:16, won:6, onTime:95, avgLT:60 },
     history:[
       {d:'Jun 11, 2026', t:'assigned', x:'2 quotes assigned to a HUBZone client batch'},
-      {d:'Jun 04, 2026', t:'won', x:'Awarded — PACKING PREFORMED'},
+      {d:'Jun 04, 2026', t:'won', x:'Awarded: PACKING PREFORMED'},
       {d:'May 26, 2026', t:'submitted', x:'Quoted 9 sealing lines'},
     ],
     quotes:[
@@ -325,7 +333,7 @@ const SUPPLIERS = [
     stats:{ submitted:6, assigned:2, won:0, onTime:0, avgLT:120 },
     history:[
       {d:'Jun 12, 2026', t:'assigned', x:'1 quote assigned to a client batch'},
-      {d:'Jun 06, 2026', t:'joined', x:'Joined ResupplyAI — first inventory uploaded'},
+      {d:'Jun 06, 2026', t:'joined', x:'Joined ResupplyAI, first inventory uploaded'},
     ],
     quotes:[
       {solic:'SPE4A626T95R5', part:'SK-2290', nsn:'1620-00-114-2230', qty:3, price:'$640.00', status:'asg'},
@@ -340,7 +348,7 @@ const SUPPLIERS = [
     stats:{ submitted:47, assigned:26, won:9, onTime:94, avgLT:30 },
     history:[
       {d:'Jun 17, 2026', t:'submitted', x:'Hector T. quoted 11 hardware lines'},
-      {d:'Jun 10, 2026', t:'won', x:'Awarded — BRACKET MOUNTING'},
+      {d:'Jun 10, 2026', t:'won', x:'Awarded: BRACKET MOUNTING'},
       {d:'Jun 02, 2026', t:'assigned', x:'3 quotes assigned to a WOSB client batch'},
     ],
     quotes:[
@@ -356,7 +364,7 @@ const SUPPLIERS = [
     photos:['Storefront','Bins'],
     stats:{ submitted:9, assigned:3, won:1, onTime:90, avgLT:14 },
     history:[
-      {d:'May 18, 2026', t:'elsewhere', x:'SPE1C126T220A — DLA awarded elsewhere'},
+      {d:'May 18, 2026', t:'elsewhere', x:'SPE1C126T220A: DLA awarded elsewhere'},
       {d:'May 02, 2026', t:'submitted', x:'Quoted 3 fastener lines'},
       {d:'Apr 20, 2026', t:'joined', x:'Joined ResupplyAI'},
     ],
@@ -409,7 +417,7 @@ function render(){
         <div class="flex items-center gap-3 min-w-0">
           <div class="avatar-sq">${initials(s.name)}</div>
           <div class="min-w-0">
-            <p class="font-black text-slate-900 leading-tight truncate">${s.name}</p>
+            <p class="font-bold text-slate-900 leading-tight truncate">${s.name}</p>
             <p class="text-xs text-slate-400 truncate">${s.city}, ${s.state} · CAGE ${s.cage}</p>
           </div>
         </div>
@@ -423,13 +431,13 @@ function render(){
       <div class="mb-3">
         <div class="flex items-center justify-between text-xs mb-1">
           <span class="font-bold text-slate-400 uppercase tracking-wide" style="font-size:10px">Win rate</span>
-          <span class="font-black" style="color:var(--primary)">${wr}% · ${s.stats.won}/${s.stats.submitted}</span>
+          <span class="font-bold" style="color:var(--primary)">${wr}% · ${s.stats.won}/${s.stats.submitted}</span>
         </div>
         <div class="perf"><div class="perf-fill" style="width:${wr}%"></div></div>
       </div>
 
       <div class="flex items-center justify-between pt-3 mt-auto" style="border-top:1px solid rgba(33,50,95,0.06)">
-        <p class="text-xs text-slate-400"><span class="font-black text-slate-700">${s.stats.assigned}</span> assigned · <span class="font-black text-slate-700">${s.stats.submitted}</span> quotes</p>
+        <p class="text-xs text-slate-400"><span class="font-bold text-slate-700">${s.stats.assigned}</span> assigned · <span class="font-bold text-slate-700">${s.stats.submitted}</span> quotes</p>
         <span class="st-c ${stt.cls}">${stt.label}</span>
       </div>`;
     g.appendChild(card);
@@ -493,7 +501,7 @@ function openProfile(i){
     const m = QMETA[q.status];
     return `<tr>
       <td><p class="font-bold text-slate-800">${q.solic}</p></td>
-      <td><p class="font-bold text-slate-700">${q.part}</p><p class="text-slate-400" style="font-size:10.5px">${q.nsn}</p></td>
+      <td><p class="font-bold text-slate-700">${q.part}</p><p class="mono text-slate-400" style="font-size:10.5px">${q.nsn}</p></td>
       <td class="text-slate-600">${q.qty}</td>
       <td class="font-bold text-slate-800">${q.price}</td>
       <td><span class="qbadge ${m.cls}">${m.label}</span></td>
@@ -513,9 +521,9 @@ function openProfile(i){
           <div class="avatar-sq" style="width:64px;height:64px;border-radius:18px;font-size:22px;background:rgba(255,255,255,0.16)">${initials(s.name)}</div>
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2 flex-wrap mb-1">
-              <h2 class="text-2xl font-black text-white leading-tight">${s.name}</h2>
+              <h2 class="text-2xl font-bold text-white leading-tight">${s.name}</h2>
               <span class="ty ${ty.cls}">${ty.short}</span>
-              <span class="text-xs font-black px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">${stt.label}</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,0.16);color:#fff">${stt.label}</span>
             </div>
             <p class="text-sm" style="color:rgba(255,255,255,0.72)">${s.city}, ${s.state}, ${s.country} · CAGE ${s.cage} · with ResupplyAI since ${joined}</p>
             <div class="flex flex-wrap gap-2 mt-3">
@@ -527,11 +535,11 @@ function openProfile(i){
 
         <!-- inline KPIs -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-6">
-          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Quotes</p><p class="text-xl font-black text-white">${s.stats.submitted}</p></div>
-          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Assigned</p><p class="text-xl font-black text-white">${s.stats.assigned}</p></div>
-          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Awarded</p><p class="text-xl font-black text-white">${s.stats.won}</p></div>
-          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Win rate</p><p class="text-xl font-black text-white">${wr}%</p></div>
-          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">On-time</p><p class="text-xl font-black text-white">${s.stats.onTime?s.stats.onTime+'%':'—'}</p></div>
+          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Quotes</p><p class="text-xl font-bold text-white">${s.stats.submitted}</p></div>
+          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Assigned</p><p class="text-xl font-bold text-white">${s.stats.assigned}</p></div>
+          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Awarded</p><p class="text-xl font-bold text-white">${s.stats.won}</p></div>
+          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">Win rate</p><p class="text-xl font-bold text-white">${wr}%</p></div>
+          <div class="rounded-2xl px-4 py-3" style="background:rgba(255,255,255,0.1)"><p class="text-xs font-bold" style="color:rgba(255,255,255,0.6)">On-time</p><p class="text-xl font-bold text-white">${s.stats.onTime?s.stats.onTime+'%':'—'}</p></div>
         </div>
       </div>
     </div>
@@ -541,13 +549,13 @@ function openProfile(i){
       <!-- LEFT RAIL -->
       <div class="lg:col-span-5 space-y-6">
         <div class="float-card p-6">
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide mb-1">Certifications &amp; registrations</h3>
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-1">Certifications &amp; registrations</h3>
           <p class="text-xs text-slate-400 mb-2">Verified against SAM.gov / documents on file</p>
           ${certRows}
         </div>
 
         <div class="float-card p-6">
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide mb-3">Facility</h3>
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3">Facility</h3>
           <div class="grid grid-cols-2 gap-3">${photoTiles}</div>
           <p class="text-xs text-slate-400 mt-3 italic">Reference photos supplied during onboarding.</p>
         </div>
@@ -556,17 +564,17 @@ function openProfile(i){
       <!-- RIGHT MAIN -->
       <div class="lg:col-span-7 space-y-6">
         <div class="float-card p-6">
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide mb-3">Commodities they stock</h3>
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3">Commodities they stock</h3>
           <div class="flex flex-wrap gap-2">${s.commodities.map(c=>`<span class="chip" style="font-size:12px;padding:6px 13px">${c}</span>`).join('')}</div>
           <div class="grid grid-cols-2 gap-4 mt-5 pt-5" style="border-top:1px solid rgba(33,50,95,0.06)">
-            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Avg lead time</p><p class="text-lg font-black text-slate-900">${s.stats.avgLT} days</p></div>
-            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wide">On-time delivery</p><p class="text-lg font-black text-slate-900">${s.stats.onTime?s.stats.onTime+'%':'No deliveries yet'}</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Avg lead time</p><p class="text-lg font-bold text-slate-900">${s.stats.avgLT} days</p></div>
+            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wide">On-time delivery</p><p class="text-lg font-bold text-slate-900">${s.stats.onTime?s.stats.onTime+'%':'No deliveries yet'}</p></div>
           </div>
         </div>
 
         <div class="float-card p-6">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Recent quotes</h3>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Recent quotes</h3>
             <button class="text-xs font-bold" style="color:var(--primary)" onclick="location.href='ops-01-assignment.html'">Open in assignment queue →</button>
           </div>
           <div style="overflow-x:auto">
@@ -575,11 +583,11 @@ function openProfile(i){
               <tbody>${qrows}</tbody>
             </table>
           </div>
-          <p class="text-xs text-slate-400 mt-3">“Their price” is what the supplier quoted — never the price the government awarded.</p>
+          <p class="text-xs text-slate-400 mt-3">“Their price” is what the supplier quoted, never the price the government awarded.</p>
         </div>
 
         <div class="float-card p-6">
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide mb-4">Activity history</h3>
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">Activity history</h3>
           <div class="tl">${timeline}</div>
         </div>
       </div>
@@ -588,7 +596,7 @@ function openProfile(i){
 
   document.getElementById('directoryView').style.display='none';
   document.getElementById('profileView').style.display='block';
-  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-black text-slate-900 leading-tight">${s.name}</h1><p class="text-xs text-slate-400 mt-0.5">Supplier profile · internal view</p>`;
+  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-bold text-slate-900 leading-tight">${s.name}</h1><p class="text-xs text-slate-400 mt-0.5">Supplier profile · internal view</p>`;
   attachHeroSpot();
   window.scrollTo(0,0);
   document.getElementById('profileView').scrollTop = 0;
@@ -597,7 +605,7 @@ function openProfile(i){
 function closeProfile(){
   document.getElementById('profileView').style.display='none';
   document.getElementById('directoryView').style.display='block';
-  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-black text-slate-900 leading-tight">Suppliers</h1><p class="text-xs text-slate-400 mt-0.5">The dealers behind your quotes — certs, facilities and quoting history</p>`;
+  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-bold text-slate-900 leading-tight">Suppliers</h1><p class="text-xs text-slate-400 mt-0.5">The dealers behind your quotes: certs, facilities and quoting history</p>`;
 }
 
 function attachHeroSpot(){

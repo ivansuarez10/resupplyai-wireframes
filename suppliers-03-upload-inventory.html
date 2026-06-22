@@ -3,16 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI Suppliers — Add Your Inventory</title>
+<title>ResupplyAI Suppliers · Add Your Inventory</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; min-height: 100vh; }
 
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.4; animation: orbFloat 16s ease-in-out infinite; }
-  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.12)} }
+  .bg-orb { display:none; }
 
   .float-card { background:#fff; border-radius:22px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); }
 
@@ -24,8 +39,8 @@
 
   .method-ico { width:46px; height:46px; border-radius:13px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10)); color:var(--primary); margin-bottom:14px; }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; box-shadow: 0 12px 28px rgba(33,50,95,0.3); transition: all .2s cubic-bezier(.16,1,.3,1); }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 38px rgba(33,50,95,0.4); }
+  .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
+  .btn-primary:hover { background:#0c142b; transform:translateY(-1px); }
   .btn-ghost { background:#fff; border:1px solid rgba(33,50,95,0.12); color:var(--navy); transition: all .18s; }
   .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
 
@@ -68,27 +83,24 @@
 </head>
 <body>
 
-<div class="bg-orb" style="width:440px;height:440px;background:#c7d4f8;top:-140px;right:-100px"></div>
-<div class="bg-orb" style="width:360px;height:360px;background:#dbe4fb;bottom:-100px;left:-100px;animation-delay:-8s"></div>
-
 <div class="relative" style="z-index:1">
 
   <!-- Top bar -->
   <div class="px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
     <div class="flex items-center gap-2">
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+      <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
     </div>
-    <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5" title="We match your stock to live DLA solicitations — there's nothing to show until it's in.">
+    <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5" title="We match your stock to live DLA solicitations, there's nothing to show until it's in.">
       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-      Required — your inventory powers your matches
+      Required, your inventory powers your matches
     </span>
   </div>
 
   <!-- Steps -->
   <div class="max-w-5xl mx-auto px-6 mb-6">
     <div class="flex items-center gap-3">
-      <div class="step-pill"><div class="step-dot done">✓</div><span class="text-xs font-bold text-slate-700 hidden sm:inline">Account</span></div>
+      <div class="step-pill"><div class="step-dot done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><span class="text-xs font-bold text-slate-700 hidden sm:inline">Account</span></div>
       <div class="flex-1 h-0.5 rounded" style="background:var(--primary)"></div>
       <div class="step-pill"><div class="step-dot active">2</div><span class="text-xs font-bold text-slate-700 hidden sm:inline">Add inventory</span></div>
       <div class="flex-1 h-0.5 rounded bg-slate-200"></div>
@@ -101,8 +113,8 @@
     <!-- ===== STEP A: choose method ===== -->
     <div id="stepA" class="page-enter">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-black text-slate-900 mb-2">Add your inventory</h1>
-        <p class="text-slate-500">Do it once — we keep it matched to DLA solicitations every day. Choose how you'd like to bring your stock in.</p>
+        <h1 class="text-3xl font-bold text-slate-900 mb-2">Add your inventory</h1>
+        <p class="text-slate-500">Do it once, we keep it matched to DLA solicitations every day. Choose how you'd like to bring your stock in.</p>
       </div>
 
       <!-- Required fields banner -->
@@ -112,24 +124,24 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           </div>
           <div>
-            <h3 class="font-black text-slate-900 text-sm">Before you upload — your file must include these</h3>
+            <h3 class="font-bold text-slate-900 text-sm">Before you upload, your file must include these</h3>
             <p class="text-xs text-slate-500 mt-0.5">No matter what tool you use (Excel, SAP, QuickBooks…), each item needs these fields. We'll help you map your columns.</p>
           </div>
         </div>
         <div class="mb-3">
           <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Required</p>
           <div class="flex flex-wrap gap-2">
-            <span class="req-chip">✓ Description</span>
-            <span class="req-chip">✓ Part Number (P/N)</span>
-            <span class="req-chip">✓ NSN</span>
-            <span class="req-chip">✓ Quantity in stock</span>
-            <span class="req-chip">✓ Lead time</span>
-            <span class="req-chip">✓ Condition</span>
-            <span class="req-chip">✓ Unit of measure</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Description</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Part Number (P/N)</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> NSN</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Quantity in stock</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Lead time</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Condition</span>
+            <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Unit of measure</span>
           </div>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Optional — add now or per match later</p>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Optional, add now or per match later</p>
           <div class="flex flex-wrap gap-2">
             <span class="opt-chip">OEM / Manufacturer</span>
             <span class="opt-chip">CoC</span>
@@ -146,12 +158,15 @@
       </div>
 
       <!-- Primary: big dropzone -->
-      <div class="dropzone mb-5" onclick="goMap('Excel / CSV file')">
+      <input type="file" id="invInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="if(this.files[0]) goMap(this.files[0].name)">
+      <div class="dropzone mb-5" onclick="document.getElementById('invInput').click()"
+           ondragover="event.preventDefault();this.style.borderColor='var(--primary)'" ondragleave="this.style.borderColor=''"
+           ondrop="event.preventDefault();this.style.borderColor='';if(event.dataTransfer.files[0])goMap(event.dataTransfer.files[0].name)">
         <div class="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center" style="background:linear-gradient(135deg, var(--primary), var(--navy))">
           <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
         </div>
-        <p class="text-lg font-black text-slate-900 mb-1">Drag your Excel or CSV here</p>
-        <p class="text-sm text-slate-500 mb-4">or <span class="font-bold" style="color:var(--primary)">browse your files</span> — export from any system, we'll map the columns</p>
+        <p class="text-lg font-bold text-slate-900 mb-1">Drag your Excel or CSV here</p>
+        <p class="text-sm text-slate-500 mb-4">or <span class="font-bold" style="color:var(--primary)">browse your files</span>, export from any system, we'll map the columns</p>
         <div class="flex items-center justify-center gap-3 text-xs text-slate-400">
           <span>.xlsx</span><span>·</span><span>.csv</span><span>·</span><span>.xls</span><span>·</span><span>up to 50MB</span>
         </div>
@@ -165,7 +180,7 @@
           <button onclick="goSheet()" class="connector">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             Google Sheet
-            <span class="ml-1 text-xs font-black" style="color:var(--primary)">Connect</span>
+            <span class="ml-1 text-xs font-bold" style="color:var(--primary)">Connect</span>
           </button>
 
           <button onclick="requestInt('SAP', event)" class="connector soon-c">
@@ -184,7 +199,7 @@
           </button>
 
           <div class="ml-auto">
-            <button onclick="alert('Our team will reach out to set up a custom import.')" class="text-sm font-bold transition-colors" style="color:var(--primary)">Different system? Talk to us →</button>
+            <button onclick="location.href='suppliers-contact.html'" class="text-sm font-bold transition-colors" style="color:var(--primary)">Different system? Talk to us →</button>
           </div>
         </div>
       </div>
@@ -201,8 +216,8 @@
         <div class="w-12 h-12 rounded-xl mb-4 flex items-center justify-center" style="background:linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10))">
           <svg class="w-6 h-6" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         </div>
-        <h1 class="text-2xl font-black text-slate-900 mb-1">Connect your Google Sheet</h1>
-        <p class="text-sm text-slate-500 mb-6">Paste the link to the sheet where you keep your stock. We'll read its columns and re-sync it <span class="font-bold text-slate-700">automatically every night</span> — you never have to re-upload.</p>
+        <h1 class="text-2xl font-bold text-slate-900 mb-1">Connect your Google Sheet</h1>
+        <p class="text-sm text-slate-500 mb-6">Paste the link to the sheet where you keep your stock. We'll read its columns and re-sync it <span class="font-bold text-slate-700">automatically every night</span>, you never have to re-upload.</p>
 
         <label class="text-sm font-bold text-slate-700 mb-1.5 block">Google Sheet link</label>
         <input id="sheetUrl" class="map-select mb-2" style="padding:11px 14px;font-weight:400" placeholder="https://docs.google.com/spreadsheets/d/…">
@@ -210,10 +225,10 @@
 
         <div class="rounded-xl p-3 mb-5 flex items-start gap-2.5" style="background:rgba(42,61,136,0.04);border:1px solid rgba(42,61,136,0.1)">
           <svg class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <p class="text-xs text-slate-600 leading-relaxed">We only read the columns you map — anything else in your sheet (costs, notes, internal data) is ignored and never stored.</p>
+          <p class="text-xs text-slate-600 leading-relaxed">We only read the columns you map, anything else in your sheet (costs, notes, internal data) is ignored and never stored.</p>
         </div>
 
-        <button onclick="goMap('Google Sheet')" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+        <button onclick="goMap('Google Sheet')" class="btn-primary w-full font-bold py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
           Connect & read columns →
         </button>
@@ -228,7 +243,7 @@
       </button>
 
       <div class="text-center mb-6">
-        <h1 class="text-2xl font-black text-slate-900 mb-1">Map your columns</h1>
+        <h1 class="text-2xl font-bold text-slate-900 mb-1">Map your columns</h1>
         <p class="text-slate-500 text-sm">Source: <span id="srcName" class="font-bold" style="color:var(--primary)">Excel / CSV file</span> · <span id="srcMeta"><span class="text-slate-700 font-bold">inventory_hermes.xlsx</span> · 1,284 rows detected</span></p>
       </div>
 
@@ -239,46 +254,46 @@
           <p class="text-xs text-slate-500 mb-3">We auto-detected most. Confirm the required ones.</p>
 
           <div class="grid grid-cols-[1fr_24px_1fr] gap-2.5 pb-2 mb-1">
-            <p class="text-xs font-black text-slate-400">YOUR COLUMN</p><span></span><p class="text-xs font-black text-slate-400">RESUPPLYAI FIELD</p>
+            <p class="text-xs font-bold text-slate-400">YOUR COLUMN</p><span></span><p class="text-xs font-bold text-slate-400">RESUPPLYAI FIELD</p>
           </div>
 
           <div class="map-row" style="border-top:none">
             <select class="map-select"><option>Item Description</option><option>Desc</option></select>
             <span class="text-center text-slate-300">→</span>
-            <div class="flex items-center gap-2"><span class="req-chip">Description ✓</span></div>
+            <div class="flex items-center gap-2"><span class="req-chip">Description <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></div>
           </div>
           <div class="map-row">
             <select class="map-select"><option>Part No</option><option>PN</option></select>
             <span class="text-center text-slate-300">→</span>
-            <span class="req-chip">Part Number ✓</span>
+            <span class="req-chip">Part Number <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
           </div>
           <div class="map-row">
             <select class="map-select"><option>NSN</option><option>Nat. Stock Num</option></select>
             <span class="text-center text-slate-300">→</span>
-            <span class="req-chip">NSN ✓</span>
+            <span class="req-chip">NSN <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
           </div>
           <div class="map-row">
             <select class="map-select"><option>Qty Available</option><option>Stock</option></select>
             <span class="text-center text-slate-300">→</span>
-            <span class="req-chip">Quantity ✓</span>
+            <span class="req-chip">Quantity <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
           </div>
           <div class="map-row">
             <select class="map-select"><option>Lead Days</option><option>Lead time</option></select>
             <span class="text-center text-slate-300">→</span>
-            <span class="req-chip">Lead time ✓</span>
+            <span class="req-chip">Lead time <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
           </div>
           <div class="map-row">
             <select class="map-select"><option>Cond.</option><option>Condition</option></select>
             <span class="text-center text-slate-300">→</span>
-            <span class="req-chip">Condition ✓</span>
+            <span class="req-chip">Condition <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
           </div>
           <div class="map-row">
             <select class="map-select"><option>UoM</option><option>Unit</option></select>
             <span class="text-center text-slate-300">→</span>
-            <span class="req-chip">Unit of measure ✓</span>
+            <span class="req-chip">Unit of measure <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
           </div>
           <div class="map-row">
-            <select class="map-select"><option>— not in my file —</option><option>OEM</option><option>Manufacturer</option></select>
+            <select class="map-select"><option>(not in my file)</option><option>OEM</option><option>Manufacturer</option></select>
             <span class="text-center text-slate-300">→</span>
             <span class="opt-chip">OEM (optional)</span>
           </div>
@@ -291,7 +306,7 @@
             <div class="space-y-2">
               <div class="flex justify-between text-xs"><span class="text-slate-400">Description</span><span class="font-bold text-slate-800">Brake Drum Assy</span></div>
               <div class="flex justify-between text-xs"><span class="text-slate-400">P/N</span><span class="font-bold text-slate-800">BD-44871</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">NSN</span><span class="font-bold text-slate-800">2530-01-687-4521</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-400">NSN</span><span class="mono font-bold text-slate-800">2530-01-687-4521</span></div>
               <div class="flex justify-between text-xs"><span class="text-slate-400">Qty</span><span class="font-bold text-slate-800">340</span></div>
               <div class="flex justify-between text-xs"><span class="text-slate-400">Lead time</span><span class="font-bold text-slate-800">14 days</span></div>
               <div class="flex justify-between text-xs"><span class="text-slate-400">Condition</span><span class="font-bold text-slate-800">New</span></div>
@@ -302,12 +317,13 @@
           <div class="float-card p-5" style="background:linear-gradient(135deg, rgba(42,61,136,0.05), rgba(94,126,232,0.03))">
             <div class="flex items-center gap-2 mb-1">
               <svg class="w-4 h-4" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              <p class="text-sm font-black text-slate-900">All required fields mapped</p>
+              <p class="text-sm font-bold text-slate-900">All required fields mapped</p>
             </div>
             <p class="text-xs text-slate-500">1,284 items ready to import. We'll start matching them against today's DLA solicitations immediately.</p>
           </div>
 
-          <button onclick="finish()" class="btn-primary w-full font-black py-3.5 rounded-xl text-sm">Import 1,284 items →</button>
+          <p class="text-xs text-slate-400 mt-4 mb-3 leading-relaxed">By importing, you confirm this inventory is accurate, belongs to your company, and contains no export-controlled (ITAR/EAR) or restricted data. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
+          <button onclick="finish()" class="btn-primary w-full font-bold py-3.5 rounded-xl text-sm">Import 1,284 items →</button>
         </div>
       </div>
     </div>
@@ -323,23 +339,23 @@
             <svg class="w-11 h-11 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
           </div>
 
-          <p class="text-sm font-black uppercase tracking-widest mb-2" style="color:var(--primary)">You're live</p>
-          <h1 class="text-3xl font-black text-slate-900 mb-3" style="letter-spacing:-0.02em">Your inventory is working for you.</h1>
-          <p class="text-slate-500 mb-7 leading-relaxed"><span class="font-black text-slate-700" id="impCount">0</span> items are now matched against the DLA in real time, 24/7.</p>
+          <p class="text-sm font-bold uppercase tracking-widest mb-2" style="color:var(--primary)">You're live</p>
+          <h1 class="text-3xl font-bold text-slate-900 mb-3" style="letter-spacing:-0.02em">Your inventory is working for you.</h1>
+          <p class="text-slate-500 mb-7 leading-relaxed"><span class="font-bold text-slate-700" id="impCount">0</span> items are now matched against the DLA in real time, 24/7.</p>
 
           <!-- STATE A: has matches -->
           <div id="hasMatches">
             <div class="grid grid-cols-3 gap-3 mb-8">
               <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.1)">
-                <p class="text-3xl font-black" style="color:var(--primary)" id="tMatch">0</p>
+                <p class="text-3xl font-bold" style="color:var(--primary)" id="tMatch">0</p>
                 <p class="text-xs font-bold text-slate-500 mt-1">matches found<br>today</p>
               </div>
               <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.1), rgba(94,126,232,0.05));border:1px solid rgba(42,61,136,0.18)">
-                <p class="text-3xl font-black" style="color:var(--primary)" id="tHot">0</p>
+                <p class="text-3xl font-bold" style="color:var(--primary)" id="tHot">0</p>
                 <p class="text-xs font-bold text-slate-500 mt-1">high-value<br>matches</p>
               </div>
               <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.1)">
-                <p class="text-3xl font-black" style="color:var(--primary)" id="tVal">$0</p>
+                <p class="text-3xl font-bold" style="color:var(--primary)" id="tVal">$0</p>
                 <p class="text-xs font-bold text-slate-500 mt-1">potential<br>sales value</p>
               </div>
             </div>
@@ -352,13 +368,13 @@
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
               </div>
               <div>
-                <p class="font-black text-slate-900 mb-1">We're now watching the DLA for you — around the clock.</p>
+                <p class="font-bold text-slate-900 mb-1">We're now watching the DLA for you, around the clock.</p>
                 <p class="text-sm text-slate-500 leading-relaxed">No matches in today's solicitations yet, but the DLA posts thousands of new requests daily. The moment one fits your stock, you'll get an instant alert and it'll appear on your dashboard.</p>
               </div>
             </div>
           </div>
 
-          <a href="suppliers-04-daily-matches.html" class="btn-primary inline-block font-black px-9 py-4 rounded-xl text-sm">Go to Dashboard →</a>
+          <a href="suppliers-04-daily-matches.html" class="btn-primary inline-block font-bold px-9 py-4 rounded-xl text-sm">Go to Dashboard →</a>
           <p class="text-xs text-slate-400 mt-4">Your matches refresh automatically every morning at 6 AM.</p>
         </div>
       </div>
@@ -379,7 +395,7 @@ function goMap(name){
   const srcMeta = document.getElementById('srcMeta');
   if(srcMeta){
     srcMeta.innerHTML = name === 'Google Sheet'
-      ? 'Stock Sheet — Hermes · <span class="text-slate-700 font-bold">1,284 rows · auto-syncs nightly</span>'
+      ? 'Stock Sheet. Hermes · <span class="text-slate-700 font-bold">1,284 rows · auto-syncs nightly</span>'
       : '<span class="text-slate-700 font-bold">inventory_hermes.xlsx</span> · 1,284 rows detected';
   }
   document.getElementById('stepA').style.display = 'none';
@@ -429,14 +445,14 @@ function finish(){
   } else {
     document.getElementById('hasMatches').style.display = 'none';
     document.getElementById('noMatches').style.display = 'block';
-    // softer celebration — still a win, no confetti overkill on a zero
+    // softer celebration, still a win, no confetti overkill on a zero
     setTimeout(confettiBurst, 250);
   }
 }
 function requestInt(name, e){
   e.stopPropagation();
   const btn = e.target;
-  btn.textContent = '✓ Requested';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Requested';
   btn.style.background = 'rgba(42,61,136,0.1)';
   btn.style.color = '#2a3d88';
   btn.style.borderColor = 'transparent';
@@ -445,9 +461,9 @@ function requestInt(name, e){
 // Download a real CSV inventory template with the columns we expect
 function downloadTemplate(e){
   if(e) e.preventDefault();
-  const headers = ['NSN','Part Number','Manufacturer','CAGE','Description','Quantity','UOM','Condition','Unit Price (USD)','Lead Time (days)'];
-  const example = ['5330-00-505-1693','721J8MT160AT','Greene Tweed','1GT55','Packing, Preformed','64','EA','NE','47.88','60'];
-  const note   = ['# Fill one row per item. Condition: NE=New, OH=Overhauled, NS=New Surplus. Leave Unit Price blank if you want us to ask.','','','','','','','','',''];
+  const headers = ['NSN','Part Number','Alt Part Number','Manufacturer','CAGE','Description','Alt Description','Quantity','UOM','Condition','Unit Price (USD)','Lead Time (days)'];
+  const example = ['5330-00-505-1693','721J8MT160AT','GT-160AT','Greene Tweed','1GT55','Packing, Preformed','Preformed Packing Ring','64','EA','NE','47.88','60'];
+  const note   = ['# One row per item. NSN best; if none, Part Number is matched (we ask you to confirm the description). Alt Part Number / Alt Description are extra match keys, optional but recommended. Condition: NE=New, OH=Overhauled, NS=New Surplus. Blank Unit Price = ask me.','','','','','','','','','','',''];
   const csv = [headers, example, note].map(r => r.map(c => /[",\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c).join(',')).join('\r\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);

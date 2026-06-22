@@ -3,310 +3,700 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ResupplyAI for Suppliers — Sell Your Inventory to the DLA</title>
+<title>ResupplyAI for Suppliers · Sell your inventory to the DLA</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * { font-family: 'Lato', sans-serif; }
-  :root { --navy: #21325f; --primary: #2a3d88; }
-  html { scroll-behavior: smooth; }
-  body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  html{ scroll-behavior:smooth; }
+  body{ background:#fff; color:#0e1220; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
 
-  /* Ambient orbs */
-  .bg-orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(90px); opacity: 0.45; animation: orbFloat 16s ease-in-out infinite; }
-  @keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-50px) scale(1.12)} }
+  .container{ max-width:1120px; margin:0 auto; }
+  .nav{ position:fixed; top:0; left:0; right:0; z-index:50; background:rgba(255,255,255,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+  .navlink{ font-size:14px; font-weight:500; color:#475067; transition:color .15s; }
+  .navlink:hover{ color:#0e1220; }
 
-  /* Animated gradient (brand navy blobs) */
-  @property --gx1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
-  @property --gy1 { syntax: '<percentage>'; inherits: false; initial-value: 10%; }
-  @property --gx2 { syntax: '<percentage>'; inherits: false; initial-value: 90%; }
-  @property --gy2 { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
-  @property --gx3 { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
-  @property --gy3 { syntax: '<percentage>'; inherits: false; initial-value: 90%; }
-  @property --gs1 { syntax: '<percentage>'; inherits: false; initial-value: 55%; }
-  @property --gs2 { syntax: '<percentage>'; inherits: false; initial-value: 55%; }
-  @property --gs3 { syntax: '<percentage>'; inherits: false; initial-value: 60%; }
-  .hero-gradient {
-    background-color: var(--primary);
-    background-image:
-      radial-gradient(circle at var(--gx1) var(--gy1), #4a63c4 0px, transparent var(--gs1)),
-      radial-gradient(circle at var(--gx2) var(--gy2), #1a2850 0px, transparent var(--gs2)),
-      radial-gradient(circle at var(--gx3) var(--gy3), #5e7ee8 0px, transparent var(--gs3));
-    animation: blob1 7s ease-in-out infinite, blob2 8s ease-in-out infinite, blob3 6s ease-in-out infinite,
-      size1 5s ease-in-out infinite, size2 5.8s ease-in-out infinite, size3 4.6s ease-in-out infinite;
+  .btn-primary{ background:var(--navy); color:#fff; font-weight:600; transition:background .18s, transform .18s; }
+  .btn-primary:hover{ background:#0c142b; transform:translateY(-1px); }
+  .btn-line{ background:#fff; color:#0e1220; border:1px solid var(--line); font-weight:600; transition:border-color .18s, background .18s; }
+  .btn-line:hover{ border-color:#c5cce0; background:#fafbff; }
+  .btn-onnavy{ background:#fff; color:var(--navy); font-weight:600; transition:transform .18s, box-shadow .18s; }
+  .btn-onnavy:hover{ transform:translateY(-1px); box-shadow:0 12px 30px rgba(0,0,0,0.25); }
+  .btn-ghost-navy{ background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.16); font-weight:600; transition:background .18s; }
+  .btn-ghost-navy:hover{ background:rgba(255,255,255,0.14); }
+
+  /* Deep navy surface, static, no animated blobs */
+  .surface-navy{ position:relative; background:var(--navy); border-radius:24px; overflow:hidden; }
+  .surface-navy::before{ content:''; position:absolute; inset:0; background:
+      radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%),
+      radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); pointer-events:none; }
+  /* fine grain for a premium, non-flat feel */
+  .grain::after{ content:''; position:absolute; inset:0; opacity:.05; pointer-events:none; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  /* manifest grid: faint warehouse-floor grid on navy surfaces */
+  .surface-navy::after, .showcase::after, .hero-gradient::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  /* field-framed block: a labelled manifest-form field */
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  /* dock-edge ruler: ticked rule marking section edges */
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
+
+  .card{ background:#fff; border:1px solid var(--line); border-radius:16px; transition:border-color .2s, box-shadow .2s; }
+  .card.hoverable:hover{ border-color:#d3d9ea; box-shadow:0 18px 40px rgba(20,28,56,0.07); }
+
+  .eel{ width:38px; height:38px; border-radius:10px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--primary); background:#f7f8fc; }
+  .stepno{ font-family:'Manrope',sans-serif; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:.06em; }
+
+  .mini-row{ border-top:1px solid rgba(255,255,255,0.07); }
+  .tag{ font-size:10px; font-weight:600; letter-spacing:.02em; padding:3px 8px; border-radius:6px; }
+
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){ .reveal{ transition:none; opacity:1; transform:none; } }
+
+  /* How-it-works sequential reveal */
+  .steps-track{ position:relative; height:2px; background:var(--line); border-radius:2px; margin-bottom:30px; overflow:hidden; }
+  .steps-track .fill{ position:absolute; top:0; left:0; bottom:0; width:0; background:var(--accent); border-radius:2px; transition:width 1.4s cubic-bezier(.16,1,.3,1); }
+  .steps-track.go .fill{ width:100%; }
+  .step-card{ opacity:0; transform:translateY(28px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+  .step-card.go{ opacity:1; transform:translateY(0); }
+  .step-card .stepno{ color:#c3cbe4; transition:color .5s ease; }
+  .step-card.go .stepno{ color:var(--accent); }
+  .step-card:nth-child(2), .step-card:nth-child(2) .stepno{ transition-delay:.18s; }
+  .step-card:nth-child(3), .step-card:nth-child(3) .stepno{ transition-delay:.36s; }
+  @media (prefers-reduced-motion: reduce){ .step-card{ transition:none; opacity:1; transform:none; } .step-card .stepno{ color:var(--accent); } .steps-track .fill{ transition:none; width:100%; } }
+
+  /* Rotating word in the WHY heading */
+  .rot{ display:inline-block; color:var(--primary); white-space:nowrap; overflow:hidden; vertical-align:bottom; text-align:left; transition:opacity .34s cubic-bezier(.16,1,.3,1), transform .34s cubic-bezier(.16,1,.3,1); will-change:opacity, transform; }
+  .rot.swap{ opacity:0; transform:translateY(-10px); }
+  @media (prefers-reduced-motion: reduce){ .rot{ transition:none; } }
+
+  /* Hero card: multi-screen quote demo */
+  .demo-stage{ position:relative; height:352px; }
+  .demo-screen{ position:absolute; inset:0; background:#fff; opacity:0; z-index:1; transform:translateX(16px); transition:opacity .26s ease, transform .44s cubic-bezier(.16,1,.3,1); pointer-events:none; }
+  .demo-screen.active{ opacity:1; transform:none; z-index:2; }
+  .demo-screen.leaving{ opacity:0; transform:translateX(-16px); z-index:1; }
+  .qbtn{ display:inline-flex; align-items:center; gap:5px; transition:transform .16s ease, background .25s ease; }
+  .qbtn.pressing{ transform:scale(.95); }
+  .qbtn svg{ width:13px; height:13px; }
+  .qstep{ width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; background:#eef1f8; color:var(--primary); font-weight:700; font-size:13px; transition:background .25s ease, transform .25s ease; }
+  .qstep.hot{ background:var(--primary); color:#fff; transform:scale(1.1); }
+  .demo-screen[data-s="3"].active .s3badge{ animation:pop .5s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes pop{ from{ opacity:0; transform:scale(.4); } to{ opacity:1; transform:scale(1); } }
+  .qspin{ width:12px; height:12px; animation:qspin .7s linear infinite; }
+  @keyframes qspin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .qspin{ animation:none; } .demo-screen{ transition:none; } .demo-screen[data-s="3"].active .s3badge{ animation:none; } }
+  *:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  .rule{ height:1px; background:var(--line); }
+
+  /* ===== How-it-works mini-demos (looping, CSS-only) ===== */
+  .step-demo{ height:120px; border-radius:12px; background:#f6f8fd; border:1px solid #e7eaf6; padding:12px 13px; overflow:hidden; position:relative; margin-bottom:18px; }
+  .sd-h{ font-size:10px; font-weight:700; letter-spacing:.05em; color:#9aa6c0; text-transform:uppercase; margin-bottom:10px; }
+  /* demo 1 · upload */
+  .sd-file{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--primary); background:#fff; border:1px solid #e7eaf6; border-radius:7px; padding:5px 9px; }
+  .sd-file svg{ width:13px; height:13px; }
+  .sd-bar{ height:7px; border-radius:5px; background:#e7eaf6; margin-top:13px; overflow:hidden; }
+  .sd-bar i{ display:block; height:100%; width:0; background:var(--accent); border-radius:5px; animation:sdFill 3.8s cubic-bezier(.16,1,.3,1) infinite; }
+  @keyframes sdFill{ 0%,6%{width:0} 56%{width:100%} 94%,100%{width:100%} }
+  .sd-imp{ display:flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--muted); margin-top:10px; }
+  .sd-imp svg{ width:13px; height:13px; color:var(--primary); opacity:0; animation:sdDone 3.8s steps(1,end) infinite; }
+  @keyframes sdDone{ 0%,54%{opacity:0} 60%,100%{opacity:1} }
+  /* demo 2 · matches populating */
+  .sd-m{ display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid #e7eaf6; border-radius:8px; padding:6px 9px; margin-top:7px; opacity:0; transform:translateY(6px); animation:sdMatch 3.9s ease infinite; }
+  .sd-m:nth-child(3){ animation-delay:.45s } .sd-m:nth-child(4){ animation-delay:.9s }
+  @keyframes sdMatch{ 0%,4%{opacity:0;transform:translateY(7px)} 16%,84%{opacity:1;transform:translateY(0)} 96%,100%{opacity:0;transform:translateY(-4px)} }
+  .sd-nsn{ font-size:11px; font-weight:600; color:#334155; }
+  .sd-tag{ font-size:9px; font-weight:700; color:var(--primary); background:rgba(42,61,136,0.1); padding:2px 6px; border-radius:5px; }
+  /* demo 3 · quote → quoted */
+  .sd-q{ display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid #e7eaf6; border-radius:8px; padding:9px 11px; margin-top:14px; }
+  .sd-qi{ font-size:11px; } .sd-qi b{ color:#334155; } .sd-qi span{ color:#94a3b8; }
+  .sd-qbtn{ position:relative; font-size:10px; font-weight:700; color:#fff; background:var(--navy); border-radius:7px; padding:6px 0; width:74px; text-align:center; animation:sdPress 3.4s ease infinite; }
+  .sd-qbtn .l{ display:inline-flex; align-items:center; gap:4px; justify-content:center; }
+  .sd-qbtn .l svg{ width:11px; height:11px; }
+  .sd-qbtn .l2{ position:absolute; inset:0; opacity:0; animation:sdFade2 3.4s steps(1,end) infinite; }
+  .sd-qbtn .l1{ animation:sdFade1 3.4s steps(1,end) infinite; }
+  @keyframes sdFade1{ 0%,46%{opacity:1} 50%,96%{opacity:0} 100%{opacity:1} }
+  @keyframes sdFade2{ 0%,46%{opacity:0} 50%,96%{opacity:1} 100%{opacity:0} }
+  @keyframes sdPress{ 0%,44%{transform:scale(1)} 48%{transform:scale(.92)} 56%,100%{transform:scale(1)} }
+  @media (prefers-reduced-motion: reduce){
+    .sd-bar i{ animation:none; width:100% } .sd-imp svg{ animation:none; opacity:1 }
+    .sd-m{ animation:none; opacity:1; transform:none } .sd-qbtn,.sd-qbtn .l1,.sd-qbtn .l2{ animation:none }
+    .sd-qbtn .l1{ opacity:0 } .sd-qbtn .l2{ opacity:1 }
   }
-  @keyframes blob1 { 0%,100%{--gx1:5%;--gy1:10%} 33%{--gx1:40%;--gy1:40%} 66%{--gx1:15%;--gy1:70%} }
-  @keyframes blob2 { 0%,100%{--gx2:95%;--gy2:15%} 50%{--gx2:65%;--gy2:60%} }
-  @keyframes blob3 { 0%,100%{--gx3:50%;--gy3:95%} 40%{--gx3:75%;--gy3:55%} 75%{--gx3:30%;--gy3:75%} }
-  @keyframes size1 { 0%,100%{--gs1:45%} 50%{--gs1:75%} }
-  @keyframes size2 { 0%,100%{--gs2:45%} 50%{--gs2:80%} }
-  @keyframes size3 { 0%,100%{--gs3:50%} 50%{--gs3:82%} }
-  @media (prefers-reduced-motion: reduce) { .hero-gradient, .bg-orb { animation: none; } }
 
-  /* Floating cards */
-  .float-card { background:#fff; border-radius:22px; box-shadow:0 24px 60px rgba(33,50,95,0.10), 0 4px 16px rgba(33,50,95,0.05); border:1px solid rgba(255,255,255,0.9); transition: box-shadow .3s, transform .3s; }
-  .float-card.hoverable:hover { box-shadow:0 36px 90px rgba(33,50,95,0.16), 0 8px 24px rgba(33,50,95,0.08); transform: translateY(-4px); }
+  /* ===== Custom 2-tone monoline icon set (signature: navy line + accent detail) ===== */
+  .ico{ width:23px; height:23px; }
+  .ico-main{ fill:none; stroke:var(--primary); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .ico-ac{ fill:var(--accent); stroke:none; }
+  .ico-acs{ fill:none; stroke:var(--accent); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 
-  /* Nav */
-  .nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 50; width: calc(100% - 32px); max-width: 1140px;
-    background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.9); border-radius: 16px; box-shadow: 0 8px 32px rgba(33,50,95,0.08); }
+  /* ===== New sections: differentiation, trust, FAQ ===== */
+  .diff-n{ font-family:'Manrope',sans-serif; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:.06em; flex-shrink:0; padding-top:2px; }
+  .trust-item{ padding-top:16px; border-top:2px solid var(--primary); }
+  .faq details{ border-bottom:1px solid var(--line); }
+  .faq details:first-child{ border-top:1px solid var(--line); }
+  .faq summary{ list-style:none; cursor:pointer; padding:19px 2px; display:flex; align-items:center; justify-content:space-between; gap:18px;
+    font-family:'Manrope',sans-serif; font-weight:600; font-size:17px; letter-spacing:-0.01em; color:#0e1220; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary .chev{ width:18px; height:18px; flex-shrink:0; color:var(--muted); transition:transform .25s ease; }
+  .faq details[open] summary .chev{ transform:rotate(180deg); }
+  .faq .ans{ padding:0 2px 20px; font-size:15px; line-height:1.65; color:var(--muted); max-width:46rem; }
 
-  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; box-shadow: 0 10px 24px rgba(33,50,95,0.28); transition: all .2s cubic-bezier(.16,1,.3,1); }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(33,50,95,0.36); }
-  .btn-light { background:#fff; color: var(--navy); box-shadow: 0 10px 24px rgba(0,0,0,0.12); transition: all .2s; }
-  .btn-light:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(0,0,0,0.18); }
-
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  .magnetic { transition: transform .18s cubic-bezier(.34,1.56,.64,1); }
-  .hero-spot { position:absolute; inset:0; border-radius:inherit; pointer-events:none; background: radial-gradient(circle 320px at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.13), transparent 70%); opacity:0; transition: opacity .3s; }
-  .hero-gradient:hover .hero-spot { opacity:1; }
-
-  /* Preview dashboard mini */
-  .mini-row { border-top: 1px solid rgba(33,50,95,0.06); }
-  .badge-hot { background: linear-gradient(135deg, var(--primary), var(--navy)); color:#fff; font-size:9px; font-weight:900; padding:2px 7px; border-radius:9999px; letter-spacing:.04em; }
-
-  .step-num { width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, rgba(42,61,136,0.12), rgba(94,126,232,0.10)); color: var(--primary); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; }
-
-  .float-anim { animation: floaty 6s ease-in-out infinite; }
-  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-  *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+  /* ===== Product showcase (navy band) ===== */
+  .showcase{ position:relative; background:var(--navy); border-radius:26px; overflow:hidden; }
+  .showcase::before{ content:''; position:absolute; inset:0; pointer-events:none; background:
+    radial-gradient(120% 130% at 85% -15%, rgba(94,126,232,0.22), transparent 48%),
+    radial-gradient(90% 90% at -5% 110%, rgba(42,61,136,0.40), transparent 52%); }
+  .app-win{ background:#fff; border-radius:14px; box-shadow:0 50px 110px rgba(0,0,0,0.5); overflow:hidden; border:1px solid rgba(255,255,255,0.08); }
+  .app-bar{ height:38px; background:#f1f3f9; display:flex; align-items:center; padding:0 14px; border-bottom:1px solid #e5e8f0; }
+  .app-dot{ width:10px; height:10px; border-radius:50%; background:#d2d7e2; margin-right:7px; }
+  .app-url{ flex:1; margin-left:8px; height:22px; background:#fff; border:1px solid #e5e8f0; border-radius:7px; font-size:11px; color:#8a93a8; display:flex; align-items:center; padding:0 11px; }
+  .app-body{ display:flex; height:402px; background:#f5f7fc; }
+  .app-side{ width:188px; background:#fff; border-right:1px solid #eef1f8; padding:16px 0; flex-shrink:0; }
+  .app-side .brand{ display:flex; align-items:center; gap:7px; padding:0 16px 18px; }
+  .app-nav{ display:flex; align-items:center; gap:9px; margin:2px 10px; padding:8px 12px; border-radius:9px; font-size:12.5px; font-weight:600; color:#64748b; }
+  .app-nav.on{ background:rgba(42,61,136,0.09); color:var(--primary); }
+  .app-nav svg{ width:15px; height:15px; flex-shrink:0; }
+  .app-main{ flex:1; padding:18px 20px; overflow:hidden; }
+  .app-q{ background:var(--navy); border-radius:14px; padding:15px 18px; display:flex; align-items:center; justify-content:space-between; color:#fff; }
+  .app-row{ background:#fff; border:1px solid #eef1f8; border-radius:11px; padding:11px 14px; display:flex; align-items:center; gap:14px; margin-top:9px; }
+  .app-badge{ font-size:9px; font-weight:700; letter-spacing:.03em; padding:2px 7px; border-radius:5px; white-space:nowrap; }
+  .app-qbtn{ font-size:11px; font-weight:600; color:#fff; background:var(--navy); padding:6px 15px; border-radius:8px; white-space:nowrap; }
+  @media (max-width:760px){ .app-side{ display:none; } .app-body{ height:auto; } .app-row{ flex-wrap:wrap; } }
 </style>
 </head>
 <body>
 
-<div class="bg-orb" style="width:480px;height:480px;background:#c7d4f8;top:-160px;right:-120px"></div>
-<div class="bg-orb" style="width:380px;height:380px;background:#dbe4fb;top:60%;left:-120px;animation-delay:-8s"></div>
-
 <!-- NAV -->
-<nav class="nav px-5 py-3 flex items-center justify-between">
-  <div class="flex items-center gap-2">
-    <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
-    <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
-  </div>
-  <div class="hidden md:flex items-center gap-7 text-sm font-bold text-slate-600">
-    <a href="#how" class="hover:text-slate-900 transition-colors">How it works</a>
-    <a href="#why" class="hover:text-slate-900 transition-colors">Why join</a>
-    <a href="#faq" class="hover:text-slate-900 transition-colors">FAQ</a>
-  </div>
-  <div class="flex items-center gap-2">
-    <a href="suppliers-09-login.html" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors px-3 py-2">Sign In</a>
-    <a href="suppliers-02-signup.html" class="btn-primary magnetic text-sm font-black px-5 py-2.5 rounded-xl">Join Free →</a>
+<nav class="nav">
+  <div class="container px-5 h-16 flex items-center justify-between">
+    <a href="suppliers-01-landing.html" class="flex items-baseline gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:22px;width:auto;object-fit:contain">
+      <span class="text-sm font-medium" style="color:var(--muted)">Suppliers</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#how" class="navlink">How it works</a>
+      <a href="#why" class="navlink">Why ResupplyAI</a>
+      <a href="suppliers-contact.html" class="navlink">Contact</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="suppliers-09-login.html" class="navlink px-3 py-2">Sign in</a>
+      <a href="suppliers-02-signup.html" class="btn-primary text-sm px-4 py-2 rounded-lg">Get started</a>
+    </div>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="px-4 pt-28 pb-12 relative" style="z-index:1">
-  <div class="max-w-6xl mx-auto">
-    <div class="hero-gradient rounded-3xl p-8 md:p-14 relative overflow-hidden" id="hero" style="box-shadow:0 40px 100px rgba(33,50,95,0.34)">
-      <div class="hero-spot"></div>
-
-      <div class="grid md:grid-cols-2 gap-10 items-center relative" style="z-index:1">
-        <!-- Left copy -->
+<section class="px-4 pt-28 pb-14">
+  <div class="container">
+    <div class="surface-navy p-8 md:p-14">
+      <div class="grid lg:grid-cols-2 gap-12 items-center relative" style="z-index:1">
         <div>
-          <span class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full mb-5" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.18)">
-            <span style="width:7px;height:7px;border-radius:50%;background:#9db4ff;display:inline-block"></span>
-            Free for dealers & distributors
-          </span>
-          <h1 class="text-4xl md:text-5xl font-black text-white leading-[1.05] mb-5" style="letter-spacing:-0.03em">
-            Your inventory is what<br>the DLA is buying.
+          <h1 class="text-white text-4xl md:text-[3.4rem] leading-[1.04] font-bold mb-5">
+            Your inventory is what the DLA is buying.
           </h1>
-          <p class="text-base md:text-lg mb-8 leading-relaxed" style="color:rgba(255,255,255,0.78)">
-            We match your stock against thousands of daily DLA solicitations — and tell you exactly which items to quote. You sell more. We do the rest. <span class="text-white font-bold">Zero cost.</span>
+          <p class="text-lg leading-relaxed mb-8" style="color:rgba(255,255,255,0.72); max-width:30rem">
+            ResupplyAI matches your stock against the day's DLA solicitations and shows you exactly which items are worth quoting. You sell more of what you already have. It costs you nothing.
           </p>
-          <div class="flex flex-wrap gap-3">
-            <a href="suppliers-02-signup.html" class="btn-light magnetic text-sm font-black px-7 py-3.5 rounded-xl">Upload My Inventory →</a>
-            <a href="#how" class="magnetic text-sm font-bold px-7 py-3.5 rounded-xl text-white transition-colors" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25)">See how it works</a>
+          <div class="flex flex-wrap gap-3 mb-10">
+            <a href="suppliers-02-signup.html" class="btn-onnavy text-sm px-6 py-3.5 rounded-xl">Upload your inventory</a>
+            <a href="#how" class="btn-ghost-navy text-sm px-6 py-3.5 rounded-xl">See how it works</a>
           </div>
-          <div class="flex items-center gap-6 mt-8">
-            <div><p class="text-2xl font-black text-white" id="s1">0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">daily matches/supplier</p></div>
-            <div class="w-px h-9" style="background:rgba(255,255,255,0.18)"></div>
-            <div><p class="text-2xl font-black text-white">$0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">to join & quote</p></div>
-            <div class="w-px h-9" style="background:rgba(255,255,255,0.18)"></div>
-            <div><p class="text-2xl font-black text-white" id="s3">0</p><p class="text-xs" style="color:rgba(255,255,255,0.6)">active buyers</p></div>
+          <div class="flex items-stretch gap-4">
+            <div class="field on-navy" style="flex:1"><span class="cap">Daily matches</span>
+              <p class="display text-3xl font-bold text-white" id="s1">0</p>
+              <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.5)">per supplier, average</p></div>
+            <div class="field on-navy" style="flex:1"><span class="cap">Cost to you</span>
+              <p class="display text-3xl font-bold text-white">$0</p>
+              <p class="text-xs mt-0.5" style="color:rgba(255,255,255,0.5)">to join and to quote</p></div>
           </div>
         </div>
 
-        <!-- Right: dashboard preview -->
-        <div class="float-anim">
-          <div class="float-card p-4" style="box-shadow:0 30px 70px rgba(0,0,0,0.3)">
-            <div class="flex items-center justify-between mb-3 px-1">
-              <p class="text-xs font-black text-slate-900">Today's Matches</p>
-              <span class="badge-hot">3 HOT</span>
-            </div>
-            <!-- hot match -->
-            <div class="rounded-xl p-3 mb-2" style="background:linear-gradient(135deg, rgba(42,61,136,0.07), rgba(94,126,232,0.05));border:1px solid rgba(42,61,136,0.12)">
-              <div class="flex items-center justify-between mb-1">
-                <p class="text-xs font-black text-slate-900">2530-01-687-4521</p>
-                <span class="badge-hot">HIGH VALUE</span>
+        <!-- Product preview (static) -->
+        <div>
+          <div class="bg-white rounded-2xl p-4" style="box-shadow:0 30px 70px rgba(0,0,0,0.32); overflow:hidden">
+            <div class="demo-stage" id="demoStage">
+
+              <!-- SCREEN 1 · matches -->
+              <div class="demo-screen active" data-s="1">
+                <div class="flex items-center justify-between mb-3 px-1">
+                  <p class="text-sm font-semibold text-slate-900">Today's matches</p>
+                  <span class="tag" style="background:rgba(42,61,136,0.10); color:var(--primary)">3 high value</span>
+                </div>
+                <div class="rounded-xl p-3 mb-2" style="background:#f6f8fd; border:1px solid #e7eaf6">
+                  <div class="flex items-center justify-between mb-1">
+                    <p class="mono text-sm font-semibold text-slate-900">2530-01-687-4521</p>
+                    <span class="tag" style="background:var(--navy); color:#fff">High value</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mb-2.5">Brake Drum Assembly · DLA needs 120</p>
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-500">Your price <span class="font-semibold text-slate-900">$1,840</span></span>
+                    <span id="s1btn" class="qbtn text-xs font-semibold px-3 py-1.5 rounded-lg text-white" style="background:var(--navy)">Quote</span>
+                  </div>
+                </div>
+                <div class="px-1">
+                  <div class="border-t border-slate-100 py-2.5 flex items-center justify-between">
+                    <div><p class="mono text-sm font-medium text-slate-800">5340-01-234-8823</p><p class="text-xs text-slate-400">Bracket · needs 500</p></div>
+                    <span class="text-sm font-semibold text-slate-700">$92</span>
+                  </div>
+                  <div class="border-t border-slate-100 py-2.5 flex items-center justify-between">
+                    <div><p class="mono text-sm font-medium text-slate-800">5305-01-112-3344</p><p class="text-xs text-slate-400">Screw, Machine · needs 1,200</p></div>
+                    <span class="text-sm font-semibold text-slate-700">$14</span>
+                  </div>
+                  <div class="border-t border-slate-100 py-2.5 flex items-center justify-between opacity-55">
+                    <div><p class="mono text-sm font-medium text-slate-800">4730-01-556-1243</p><p class="text-xs text-slate-400">Hose Assembly · needs 80</p></div>
+                    <span class="text-sm font-semibold text-slate-700">$210</span>
+                  </div>
+                </div>
               </div>
-              <p class="text-xs text-slate-400 mb-2">Brake Drum Assembly · DLA needs 120</p>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-500">Suggested: <span class="font-black" style="color:var(--primary)">$1,840</span></span>
-                <span class="text-xs font-black px-2 py-1 rounded-lg text-white" style="background:linear-gradient(135deg,var(--primary),var(--navy))">Quote</span>
+
+              <!-- SCREEN 2 · quote + adjust -->
+              <div class="demo-screen" data-s="2">
+                <div class="flex items-center gap-2 mb-3 px-1">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                  <p class="text-sm font-semibold text-slate-900">Quote</p>
+                  <span class="mono text-xs text-slate-400 ml-auto">2530-01-687-4521</span>
+                </div>
+                <div class="rounded-xl p-3 mb-3" style="background:#f6f8fd; border:1px solid #e7eaf6">
+                  <p class="text-sm font-semibold text-slate-900">Brake Drum Assembly</p>
+                  <p class="text-xs text-slate-500">DLA needs 120 · deadline Jun 19</p>
+                </div>
+                <div class="px-1 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-500">Quantity</span>
+                    <span class="text-sm font-semibold text-slate-900">120 EA</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-500">Price / unit</span>
+                    <span class="inline-flex items-center gap-2">
+                      <span id="s2step" class="qstep">&minus;</span>
+                      <span id="s2price" class="text-sm font-semibold text-slate-900" style="min-width:62px; text-align:center">$1,840</span>
+                      <span class="qstep">+</span>
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between pt-2.5" style="border-top:1px solid #eef1f8">
+                    <span class="text-xs text-slate-500">Total</span>
+                    <span id="s2total" class="text-sm font-bold text-slate-900">$220,800</span>
+                  </div>
+                </div>
+                <span id="s2btn" class="qbtn mt-4 w-full justify-center text-xs font-semibold px-3 py-2.5 rounded-lg text-white" style="background:var(--navy)">Submit quote</span>
               </div>
-            </div>
-            <!-- normal rows -->
-            <div class="mini-row py-2.5 flex items-center justify-between">
-              <div><p class="text-xs font-bold text-slate-800">5340-01-234-8823</p><p class="text-xs text-slate-400">Bracket · needs 500</p></div>
-              <span class="text-xs font-black" style="color:var(--primary)">$92</span>
-            </div>
-            <div class="mini-row py-2.5 flex items-center justify-between">
-              <div><p class="text-xs font-bold text-slate-800">5305-01-112-3344</p><p class="text-xs text-slate-400">Screw · needs 1,200</p></div>
-              <span class="text-xs font-black" style="color:var(--primary)">$14</span>
-            </div>
-            <div class="mini-row py-2.5 flex items-center justify-between opacity-60">
-              <div><p class="text-xs font-bold text-slate-800">4730-01-556-1243</p><p class="text-xs text-slate-400">Hose Assy · needs 80</p></div>
-              <span class="text-xs font-black" style="color:var(--primary)">$210</span>
+
+              <!-- SCREEN 3 · submitted -->
+              <div class="demo-screen" data-s="3">
+                <div class="flex flex-col items-center justify-center text-center h-full px-4">
+                  <div class="s3badge w-14 h-14 rounded-full flex items-center justify-center mb-4" style="background:var(--navy)">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.4" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <p class="text-base font-semibold text-slate-900 mb-1.5">Quote submitted</p>
+                  <p class="text-xs text-slate-500 leading-relaxed" style="max-width:16rem">Assigned to an active buyer. We'll let you know if it wins the award.</p>
+                  <span class="tag mt-4" style="background:rgba(42,61,136,0.10); color:var(--primary)">Ref Q-2530 · 120 EA · $1,820</span>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
     </div>
+    <p class="text-sm mt-5 text-center" style="color:var(--muted)">For dealers, distributors and manufacturers registered to sell to the DLA.</p>
+    <div class="ruler mt-12"></div>
   </div>
 </section>
 
 <!-- PROBLEM -->
-<section class="px-4 py-16 relative" style="z-index:1">
-  <div class="max-w-4xl mx-auto text-center reveal">
-    <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:var(--primary)">The problem</p>
-    <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-5 leading-tight">You're already selling to the DLA.<br>But you're leaving money on the table.</h2>
-    <p class="text-lg text-slate-500 leading-relaxed">
-      Every day the DLA posts thousands of solicitations. Some match your stock perfectly — but finding them by hand, one email at a time, is impossible. So opportunities slip by, and your inventory sits.
-    </p>
+<section class="px-4 py-20">
+  <div class="container">
+    <div class="grid lg:grid-cols-12 gap-10 items-start reveal">
+      <div class="lg:col-span-5">
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-[1.1]">You already sell to the DLA. You just can't see every order that fits your shelf.</h2>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <p class="text-lg leading-relaxed" style="color:var(--muted)">
+          The DLA posts thousands of solicitations a day. A handful match your stock exactly, but finding them by hand, one email at a time, isn't realistic. So the right orders pass you by and good inventory sits on the shelf.
+        </p>
+        <p class="text-lg leading-relaxed mt-4" style="color:var(--muted)">
+          ResupplyAI does the matching for you, every morning, against everything you carry.
+        </p>
+      </div>
+    </div>
   </div>
 </section>
+
+<div class="container px-4"><div class="rule"></div></div>
+
+<!-- DIFFERENTIATION -->
+<section class="px-4 py-20">
+  <div class="container">
+    <div class="grid lg:grid-cols-12 gap-10 items-start">
+      <div class="lg:col-span-5 reveal">
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-[1.1]">Most tools help you chase contracts. We bring the orders to your shelf.</h2>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7 reveal" style="display:flex;flex-direction:column;gap:22px">
+        <div class="flex gap-4">
+          <span class="diff-n">01</span>
+          <div><h3 class="text-base font-semibold text-slate-900 mb-1">Inventory-first, not bid-first</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">You don't hunt solicitations. We match the DLA's daily demand against the stock you already carry.</p></div>
+        </div>
+        <div class="flex gap-4">
+          <span class="diff-n">02</span>
+          <div><h3 class="text-base font-semibold text-slate-900 mb-1">Free, you only earn with a sale</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">No subscription, no per-bid fees. You make money when a buyer wins an award with your quote and buys from you.</p></div>
+        </div>
+        <div class="flex gap-4">
+          <span class="diff-n">03</span>
+          <div><h3 class="text-base font-semibold text-slate-900 mb-1">Done-for-you matching</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">Reading thousands of solicitations is our job. Yours is to quote the few that fit, or skip them.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="rule"></div></div>
 
 <!-- HOW IT WORKS -->
-<section id="how" class="px-4 py-16 relative" style="z-index:1">
-  <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-12 reveal">
-      <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:var(--primary)">How it works</p>
-      <h2 class="text-3xl md:text-4xl font-black text-slate-900">Three steps. That's it.</h2>
+<section id="how" class="px-4 py-20">
+  <div class="container">
+    <div class="max-w-2xl mb-12 reveal">
+      <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">From your shelf to a DLA quote in three steps.</h2>
     </div>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="float-card hoverable p-7 reveal">
-        <div class="step-num mb-5">1</div>
-        <h3 class="text-lg font-black text-slate-900 mb-2">Upload your inventory</h3>
-        <p class="text-sm text-slate-500 leading-relaxed">Excel, Google Drive, or connect your stock system. Do it once — we keep it synced. NSN, part number, condition, stock, photos.</p>
+    <div class="steps-track" aria-hidden="true"><span class="fill"></span></div>
+    <div class="grid md:grid-cols-3 gap-6" id="stepsGrid">
+      <div class="card hoverable p-6 step-card">
+        <div class="step-demo">
+          <p class="sd-h">Importing</p>
+          <span class="sd-file"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-6 4h6m2 4H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg> inventory.xlsx</span>
+          <div class="sd-bar"><i></i></div>
+          <div class="sd-imp"><svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> 1,284 items synced</div>
+        </div>
+        <p class="stepno mb-3">STEP 01</p>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">Upload your inventory</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Drop in an Excel or CSV, or connect your stock system. NSN, part number, condition, quantity, lead time. Do it once, we keep it in sync.</p>
       </div>
-      <div class="float-card hoverable p-7 reveal" style="transition-delay:.1s">
-        <div class="step-num mb-5">2</div>
-        <h3 class="text-lg font-black text-slate-900 mb-2">Get your daily matches</h3>
-        <p class="text-sm text-slate-500 leading-relaxed">Every morning, see exactly which DLA solicitations match your stock — sorted by urgency, volume and value. With an AI-suggested price for each.</p>
+      <div class="card hoverable p-6 step-card">
+        <div class="step-demo">
+          <p class="sd-h">Today's matches</p>
+          <div class="sd-m"><span class="mono sd-nsn">2530-01-687-4521</span><span class="sd-tag">Match</span></div>
+          <div class="sd-m"><span class="mono sd-nsn">5340-01-234-8823</span><span class="sd-tag">Match</span></div>
+          <div class="sd-m"><span class="mono sd-nsn">5305-01-112-3344</span><span class="sd-tag">Match</span></div>
+        </div>
+        <p class="stepno mb-3">STEP 02</p>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">Get your daily matches</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Each morning, see the DLA solicitations that line up with your stock, ranked by urgency and volume, priced from your own sheet.</p>
       </div>
-      <div class="float-card hoverable p-7 reveal" style="transition-delay:.2s">
-        <div class="step-num mb-5">3</div>
-        <h3 class="text-lg font-black text-slate-900 mb-2">Quote what you want</h3>
-        <p class="text-sm text-slate-500 leading-relaxed">Two clicks to confirm stock and price. We assign your quote to an active buyer. If they win — they buy from you.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHY / VALUE -->
-<section id="why" class="px-4 py-16 relative" style="z-index:1">
-  <div class="max-w-6xl mx-auto">
-    <div class="text-center mb-12 reveal">
-      <p class="text-xs font-black uppercase tracking-widest mb-3" style="color:var(--primary)">Why join</p>
-      <h2 class="text-3xl md:text-4xl font-black text-slate-900">Built to move your inventory.</h2>
-    </div>
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="float-card hoverable p-7 reveal flex gap-4">
-        <div class="step-num flex-shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <div class="card hoverable p-6 step-card">
+        <div class="step-demo">
+          <p class="sd-h">Brake Drum Assembly</p>
+          <div class="sd-q">
+            <span class="sd-qi"><b>120 EA</b> <span>· $1,840</span></span>
+            <span class="sd-qbtn">
+              <span class="l l1">Quote</span>
+              <span class="l l2"><svg fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Quoted</span>
+            </span>
+          </div>
+          <p class="sd-h" style="margin:11px 0 0">Assigned to an active buyer</p>
         </div>
-        <div>
-          <h3 class="text-lg font-black text-slate-900 mb-2">High-Value Alerts</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">When the DLA needs an item it has historically paid top dollar for — and you have it in stock — we ping you. Don't miss the big ones.</p>
-        </div>
-      </div>
-      <div class="float-card hoverable p-7 reveal flex gap-4" style="transition-delay:.1s">
-        <div class="step-num flex-shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        </div>
-        <div>
-          <h3 class="text-lg font-black text-slate-900 mb-2">Quote in two clicks</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">Confirm stock, set your price, attach docs — done. No more digging through hundreds of emails to find what matches your stock.</p>
-        </div>
-      </div>
-      <div class="float-card hoverable p-7 reveal flex gap-4" style="transition-delay:.15s">
-        <div class="step-num flex-shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <div>
-          <h3 class="text-lg font-black text-slate-900 mb-2">Completely free</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">No subscription, no listing fees. You only ever sell — when a buyer wins with your quote, they purchase from you. That's the whole deal.</p>
-        </div>
-      </div>
-      <div class="float-card hoverable p-7 reveal flex gap-4" style="transition-delay:.2s">
-        <div class="step-num flex-shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        </div>
-        <div>
-          <h3 class="text-lg font-black text-slate-900 mb-2">Your buyers stay private</h3>
-          <p class="text-sm text-slate-500 leading-relaxed">You quote to ResupplyAI — we handle assignment. No bidding wars, no exposing your pricing to competitors. Just sales.</p>
-        </div>
+        <p class="stepno mb-3">STEP 03</p>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">Quote what you want</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Confirm the stock and the price, and we assign your quote to an active buyer. If they win the award, they buy from you.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="px-4 py-16 relative" style="z-index:1">
-  <div class="max-w-5xl mx-auto">
-    <div class="hero-gradient rounded-3xl p-10 md:p-14 text-center relative overflow-hidden reveal" id="hero2" style="box-shadow:0 40px 100px rgba(33,50,95,0.32)">
-      <div class="hero-spot"></div>
-      <div class="relative" style="z-index:1">
-        <h2 class="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">Stop emailing quotes one by one.<br>Start selling at scale.</h2>
-        <p class="text-base md:text-lg mb-8" style="color:rgba(255,255,255,0.78)">Upload your inventory today. See your first matches tomorrow morning.</p>
-        <a href="suppliers-02-signup.html" class="btn-light magnetic inline-block text-sm font-black px-8 py-4 rounded-xl">Join ResupplyAI Suppliers — Free →</a>
+<!-- PRODUCT SHOWCASE (navy band) -->
+<section class="px-4 pt-8 pb-20">
+  <div class="container">
+    <div class="showcase p-7 md:p-14 reveal">
+      <div class="relative max-w-2xl mb-9" style="z-index:1">
+        <h2 class="text-3xl md:text-4xl font-bold text-white leading-tight mb-3">Your whole day, in one screen.</h2>
+        <p class="text-lg" style="color:rgba(255,255,255,0.72)">Every match ranked and ready, priced from your own sheet. Quote what fits, skip the rest. A few minutes a day.</p>
+      </div>
+      <div class="relative app-win" style="z-index:1">
+        <div class="app-bar"><span class="app-dot"></span><span class="app-dot"></span><span class="app-dot"></span><span class="app-url">app.resupply.ai/matches</span></div>
+        <div class="app-body">
+          <div class="app-side">
+            <div class="brand"><img src="logo-normal.png" alt="" style="height:18px;width:auto;object-fit:contain"><span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span></div>
+            <div class="app-nav on"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Daily Matches</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Quotes</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>My Inventory</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3c.4-1.8 2.9-1.8 3.4 0a1.7 1.7 0 002.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 001 2.5c1.8.5 1.8 3 0 3.4a1.7 1.7 0 00-1 2.6c.9 1.5-.8 3.3-2.4 2.4a1.7 1.7 0 00-2.6 1c-.4 1.8-2.9 1.8-3.4 0a1.7 1.7 0 00-2.5-1c-1.6.9-3.3-.9-2.4-2.4a1.7 1.7 0 00-1-2.6c-1.8-.4-1.8-2.9 0-3.4a1.7 1.7 0 001-2.5c-.9-1.6.9-3.3 2.4-2.4 1 .6 2.3.1 2.5-1z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
+          </div>
+          <div class="app-main">
+            <p class="text-[11px] font-bold uppercase tracking-widest mb-2.5" style="color:#9aa6c0">Today's quote queue</p>
+            <div class="app-q">
+              <div><p class="text-xl font-bold leading-none mb-1.5">0 of 47 reviewed</p><p class="text-xs" style="color:rgba(255,255,255,0.62)">3 high-value left · $0 quoted</p></div>
+              <span class="text-xs font-semibold px-4 py-2.5 rounded-lg" style="background:#fff;color:var(--navy)">Quote all in-stock</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:var(--navy);color:#fff">HIGH VALUE</span><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">2530-01-687-4521 · Brake Drum Assembly</p>
+              </div>
+              <div class="text-xs text-slate-400 flex-shrink-0 hidden sm:block">DLA needs 120 · Jun 19</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$1,840</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:var(--navy);color:#fff">HIGH VALUE</span><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">1560-01-445-8821 · Structural Panel</p>
+              </div>
+              <div class="text-xs text-slate-400 flex-shrink-0 hidden sm:block">DLA needs 45 · Jun 20</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$4,210</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+            <div class="app-row" style="opacity:.62">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">P/N match · confirm part</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">5320-01-119-8876 · Rivet, Solid</p>
+              </div>
+              <div class="text-xs text-slate-400 flex-shrink-0 hidden sm:block">DLA needs 5,000 · Jun 27</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$0.85</span>
+              <span class="app-qbtn flex-shrink-0" style="background:#fff;color:var(--navy);border:1px solid #e7eaf6">Adjust</span>
+            </div>
+            <div class="app-row" style="opacity:.32">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">4730-01-556-1243 · Hose Assembly</p>
+              </div>
+              <div class="text-xs text-slate-400 flex-shrink-0 hidden sm:block">DLA needs 80 · Jul 1</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$210</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why" class="px-4 py-20">
+  <div class="container">
+    <div class="max-w-2xl mb-12 reveal">
+      <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">Built to <span class="rot" id="rotWord">move</span> the inventory you already hold.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-x-12 gap-y-10">
+      <div class="reveal flex gap-4">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><path class="ico-main" d="M4.5 13a8 8 0 0 1 8-8M8.5 13a4 4 0 0 1 4-4"/><circle class="ico-ac" cx="12.5" cy="13" r="2.1"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">High-value alerts</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">When the DLA needs something it has paid well for in the past and you carry it, we flag it. You don't miss the orders that matter most.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-4" style="transition-delay:.08s">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><path class="ico-main" d="M6.3 4.4l9.7 5.7-4.3 1.2-1.8 4.2-3.6-11.1z"/><path class="ico-acs" d="M16 5.6a4.2 4.2 0 0 1 2.7 3"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">Quote in two clicks</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">Confirm stock, set your price, attach docs, done. No more reading through hundreds of solicitations to find the few that fit.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-4" style="transition-delay:.12s">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><circle class="ico-main" cx="12" cy="12" r="8.4"/><path class="ico-acs" d="M6.5 6.5l11 11"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">No fees, ever</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">No subscription, no listing fees. You only ever make a sale when a buyer wins an award with your quote and purchases from you.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-4" style="transition-delay:.16s">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><path class="ico-main" d="M12 3.2l7 2.6v5.2c0 4.2-3 7.4-7 8.6-4-1.2-7-4.4-7-8.6V5.8L12 3.2z"/><circle class="ico-ac" cx="12" cy="10.6" r="1.5"/><path class="ico-acs" d="M12 12.1v2.3"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">Your buyers stay private</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">You quote to ResupplyAI and we handle the assignment. No bidding wars, no exposing your pricing to competitors. Just the sale.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="rule"></div></div>
+
+<!-- TRUST & SECURITY -->
+<section class="px-4 py-20">
+  <div class="container">
+    <div class="max-w-2xl mb-12 reveal">
+      <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">Built for the way the government handles data.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+      <div class="trust-item reveal"><h3 class="text-base font-semibold text-slate-900 mb-1.5">Your pricing stays private</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">You quote to ResupplyAI, never into an open board. Competitors never see your numbers.</p></div>
+      <div class="trust-item reveal" style="transition-delay:.06s"><h3 class="text-base font-semibold text-slate-900 mb-1.5">You control your buyers</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">We route your quote to an active buyer and handle the assignment, no bidding wars, no exposure.</p></div>
+      <div class="trust-item reveal" style="transition-delay:.12s"><h3 class="text-base font-semibold text-slate-900 mb-1.5">Export-control aware</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">At every upload you confirm your files carry no export-controlled (ITAR/EAR) or restricted material.</p></div>
+      <div class="trust-item reveal" style="transition-delay:.18s"><h3 class="text-base font-semibold text-slate-900 mb-1.5">Encrypted &amp; access-controlled</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">Data is encrypted in transit and scoped to your company account.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="rule"></div></div>
+
+<!-- FAQ -->
+<section class="px-4 py-20">
+  <div class="container" style="max-width:48rem">
+    <div class="mb-8 reveal">
+      <h2 class="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">Questions suppliers ask.</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>Is ResupplyAI really free? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Yes, no subscription and no listing fees. We only make money when a buyer wins an award with your quote and purchases from you.</p>
+      </details>
+      <details>
+        <summary>Do you see or share my pricing? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Your pricing stays private. You quote to ResupplyAI and we assign it to a buyer. Your competitors never see your numbers, and there's no open bidding war.</p>
+      </details>
+      <details>
+        <summary>Who are the buyers? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Companies actively bidding on DLA solicitations. We route your quote to one that fits, and you only sell if they win the award.</p>
+      </details>
+      <details>
+        <summary>What about export-controlled (ITAR/EAR) parts? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">At every upload you confirm your files contain no export-controlled or otherwise restricted material. Only share what you're authorized to share through the platform.</p>
+      </details>
+      <details>
+        <summary>How fast will I see matches? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Upload your inventory today and see your first matches tomorrow morning, refreshed every day against the latest solicitations.</p>
+      </details>
+      <details>
+        <summary>Do I have to quote everything? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">No. Quote the matches you want and skip the rest. Most suppliers spend just a few minutes a day in the queue.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-4 pt-6 pb-20">
+  <div class="container">
+    <div class="surface-navy grain p-10 md:p-16 reveal">
+      <div class="relative max-w-2xl" style="z-index:1">
+        <h2 class="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">Stop sending quotes one at a time.</h2>
+        <p class="text-lg mb-8" style="color:rgba(255,255,255,0.72)">Upload your inventory today and see your first matches tomorrow morning. Free to join.</p>
+        <a href="suppliers-02-signup.html" class="btn-onnavy inline-block text-sm px-7 py-4 rounded-xl">Create a free supplier account</a>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer class="px-4 py-10 relative" style="z-index:1">
-  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 pt-8" style="border-top:1px solid rgba(33,50,95,0.08)">
-    <div class="flex items-center gap-2">
-      <img src="logo-normal.png" alt="ResupplyAI" style="height:22px;width:auto;object-fit:contain">
-      <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
+<footer class="px-4 py-10">
+  <div class="container flex flex-col md:flex-row items-center justify-between gap-4 pt-8" style="border-top:1px solid var(--line)">
+    <div class="flex items-baseline gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:20px;width:auto;object-fit:contain">
+      <span class="text-sm font-medium" style="color:var(--muted)">Suppliers</span>
     </div>
-    <div class="flex items-center gap-5 text-xs font-bold text-slate-500">
-      <a href="suppliers-legal-terms.html" class="hover:text-slate-700 transition-colors">Terms</a>
-      <a href="suppliers-legal-privacy.html" class="hover:text-slate-700 transition-colors">Privacy</a>
-      <a href="suppliers-contact.html" class="hover:text-slate-700 transition-colors">Contact</a>
+    <div class="flex items-center gap-6 text-sm font-medium" style="color:var(--muted)">
+      <a href="suppliers-legal-terms.html" class="hover:text-slate-900 transition-colors">Terms</a>
+      <a href="suppliers-legal-privacy.html" class="hover:text-slate-900 transition-colors">Privacy</a>
+      <a href="suppliers-contact.html" class="hover:text-slate-900 transition-colors">Contact</a>
     </div>
-    <p class="text-xs text-slate-400">© 2026 ResupplyAI. Helping dealers sell to the DLA.</p>
+    <p class="text-sm" style="color:#9aa3b8">© 2026 ResupplyAI</p>
   </div>
+  <p class="container text-xs text-center mt-6" style="color:#aab2c5;max-width:760px">ResupplyAI uses automated matching (AI) to surface opportunities and rank them; a person on our team reviews and assigns every quote. It's decision support, it doesn't guarantee an award.</p>
 </footer>
 
 <script>
-// Counters
-function counter(id, target, suffix) {
-  const el = document.getElementById(id); if (!el) return;
-  const dur = 1600, start = performance.now();
-  function tick(now){ const p=Math.min((now-start)/dur,1); el.textContent=Math.round((1-Math.pow(1-p,3))*target)+(suffix||''); if(p<1) requestAnimationFrame(tick);}
+function counter(id, target, suffix){
+  const el = document.getElementById(id); if(!el) return;
+  const dur = 1400, start = performance.now();
+  function tick(now){ const p=Math.min((now-start)/dur,1); el.textContent=Math.round((1-Math.pow(1-p,3))*target)+(suffix||''); if(p<1) requestAnimationFrame(tick); }
   requestAnimationFrame(tick);
 }
-setTimeout(()=>{ counter('s1',180,'+'); counter('s3',11); }, 400);
+setTimeout(()=> counter('s1',180,'+'), 350);
 
-// Reveal on scroll
-const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}})},{threshold:.12});
+const obs = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } }); }, {threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// Cursor interactivity
-if (window.matchMedia('(pointer: fine)').matches) {
-  document.querySelectorAll('#hero, #hero2').forEach(el=>{
-    el.addEventListener('mousemove', e=>{ const r=el.getBoundingClientRect(); el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%'); el.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%'); });
-  });
-  document.querySelectorAll('.magnetic').forEach(btn=>{
-    btn.addEventListener('mousemove', e=>{ const r=btn.getBoundingClientRect(); const x=e.clientX-r.left-r.width/2, y=e.clientY-r.top-r.height/2; btn.style.transform=`translate(${x*0.15}px, ${y*0.28}px)`; });
-    btn.addEventListener('mouseleave', ()=>{ btn.style.transform=''; });
-  });
+// How-it-works step cascade
+const stepsGrid = document.getElementById('stepsGrid');
+const stepsTrack = document.querySelector('.steps-track');
+let stepsDone = false;
+function revealSteps(){ if(stepsDone) return; stepsDone = true; if(stepsTrack) stepsTrack.classList.add('go'); if(stepsGrid) stepsGrid.querySelectorAll('.step-card').forEach(c=>c.classList.add('go')); }
+if(stepsGrid){
+  const so = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ revealSteps(); so.disconnect(); } }); }, {threshold:.2});
+  so.observe(stepsGrid);
+}
+
+// Safety net: fast scroll or anchor jumps can skip an IntersectionObserver. On scroll,
+// reveal anything that has reached the viewport so nothing is ever left blank.
+let revTicking = false;
+function revealCheck(){
+  revTicking = false; const vh = window.innerHeight;
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>{ if(el.getBoundingClientRect().top < vh*0.92) el.classList.add('visible'); });
+  if(!stepsDone && stepsGrid && stepsGrid.getBoundingClientRect().top < vh*0.85) revealSteps();
+}
+window.addEventListener('scroll', ()=>{ if(!revTicking){ revTicking = true; requestAnimationFrame(revealCheck); } }, {passive:true});
+window.addEventListener('resize', revealCheck, {passive:true});
+revealCheck();
+
+// Rotating word: move → quote → sell, every 3s
+const rotWord = document.getElementById('rotWord');
+if(rotWord && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const words = ['move','quote','sell'];
+  let widths = [], i = 0, started = false;
+  // measure each word's exact width so the span fits it precisely (no trailing gap, no jump)
+  function measure(){
+    const prev = rotWord.style.width; rotWord.style.width = 'auto';
+    widths = words.map(word=>{ rotWord.textContent = word; return Math.ceil(rotWord.getBoundingClientRect().width); });
+    rotWord.textContent = words[i];
+    rotWord.style.width = widths[i] + 'px';
+  }
+  function start(){ if(started) return; started = true; measure();
+    setInterval(()=>{
+      rotWord.classList.add('swap');
+      setTimeout(()=>{ i = (i+1) % words.length; rotWord.textContent = words[i]; rotWord.style.width = widths[i] + 'px'; rotWord.classList.remove('swap'); }, 340);
+    }, 3000);
+  }
+  // measure only after the heading font (Manrope) has loaded — measuring with the
+  // fallback font gives wider numbers and leaves an extra gap before "the".
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(start); }
+  setTimeout(start, 1200);                                   // fallback if fonts.ready stalls
+  let rtm; window.addEventListener('resize', ()=>{ clearTimeout(rtm); rtm = setTimeout(()=>{ if(started) measure(); }, 200); }, {passive:true});
+}
+
+// Hero card: auto-play the quote flow across screens (matches → quote/adjust → submit → done)
+const demoStage = document.getElementById('demoStage');
+if(demoStage && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const screens = demoStage.querySelectorAll('.demo-screen');
+  const s1btn = document.getElementById('s1btn');
+  const s2btn = document.getElementById('s2btn');
+  const s2step = document.getElementById('s2step');
+  const s2price = document.getElementById('s2price');
+  const s2total = document.getElementById('s2total');
+  const spin = '<svg class="qspin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" d="M12 3a9 9 0 1 0 9 9"/></svg>';
+  const T = [];
+  function show(n){
+    screens.forEach(s=>{
+      if(+s.dataset.s === n){ s.classList.remove('leaving'); s.classList.add('active'); }
+      else if(s.classList.contains('active')){ s.classList.remove('active'); s.classList.add('leaving'); setTimeout(()=>s.classList.remove('leaving'), 460); }
+    });
+  }
+  function resetS2(){ s2price.textContent = '$1,840'; s2total.textContent = '$220,800'; s2step.classList.remove('hot'); s2btn.innerHTML = 'Submit quote'; s2btn.classList.remove('pressing'); }
+  function loop(){
+    T.forEach(clearTimeout); T.length = 0;
+    show(1); s1btn.innerHTML = 'Quote'; resetS2();
+    T.push(setTimeout(()=> s1btn.classList.add('pressing'), 1700));               // hover/press Quote
+    T.push(setTimeout(()=> s1btn.classList.remove('pressing'), 1950));
+    T.push(setTimeout(()=> show(2), 2200));                                       // → quote screen
+    T.push(setTimeout(()=>{ s2step.classList.add('hot'); s2price.textContent='$1,820'; s2total.textContent='$218,400'; }, 3500)); // adjust price
+    T.push(setTimeout(()=> s2step.classList.remove('hot'), 4150));
+    T.push(setTimeout(()=> s2btn.classList.add('pressing'), 4650));               // press Submit
+    T.push(setTimeout(()=>{ s2btn.classList.remove('pressing'); s2btn.innerHTML = spin + 'Submitting'; }, 4900));
+    T.push(setTimeout(()=> show(3), 5800));                                       // → submitted screen
+    T.push(setTimeout(loop, 9000));                                              // restart
+  }
+  setTimeout(loop, 1400);
 }
 </script>
 </body>
