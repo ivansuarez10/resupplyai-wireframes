@@ -362,7 +362,7 @@ function render(){
     `<span class="crit-chip">Set-aside: ${saText}</span>`+
     `<span class="crit-chip">Daily budget: ${moneyShort(c.budget)}</span>`+
     `<span class="crit-chip">Inspection: ${c.origin?'Origin OK':'Destination only'}</span>`+
-    `<span class="crit-chip">${c.id}</span>`;
+    `<span class="crit-chip mono">${c.id}</span>`;
 
   const body = document.getElementById('opsBody');
   body.innerHTML = '';

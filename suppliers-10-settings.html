@@ -43,7 +43,7 @@
   .btn-primary { background:var(--navy); color:#fff; transition: background .18s, transform .18s; }
   .btn-primary:hover { transform: translateY(-1px); box-shadow:0 8px 20px rgba(33,50,95,0.3); }
 
-  .toggle { width:44px; height:25px; border-radius:9999px; background:#cbd5e1; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+  .toggle { width:44px; height:25px; border-radius:9999px; background:#cbd5e1; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; border:0; padding:0; margin:0; -webkit-appearance:none; appearance:none; }
   .toggle.on { background: var(--primary); }
   .toggle::after { content:''; position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; transition:transform .2s; }
   .toggle.on::after { transform: translateX(19px); }
@@ -209,19 +209,19 @@
         <div>
           <div class="opt-row">
             <div><p class="text-sm font-bold text-slate-800">High-value match alerts</p><p class="text-xs text-slate-400">Instant ping when the DLA needs a top-dollar item you stock</p></div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <button type="button" class="toggle on" role="switch" aria-checked="true" onclick="toggleSwitch(this)"></button>
           </div>
           <div class="opt-row">
             <div><p class="text-sm font-bold text-slate-800">Trace requests</p><p class="text-xs text-slate-400">When the DLA asks for traceability, your quote is being considered</p></div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <button type="button" class="toggle on" role="switch" aria-checked="true" onclick="toggleSwitch(this)"></button>
           </div>
           <div class="opt-row">
             <div><p class="text-sm font-bold text-slate-800">Quote won / purchased</p><p class="text-xs text-slate-400">When a buyer wins with your quote and will purchase from you</p></div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <button type="button" class="toggle on" role="switch" aria-checked="true" onclick="toggleSwitch(this)"></button>
           </div>
           <div class="opt-row">
             <div><p class="text-sm font-bold text-slate-800">Inventory sync issues</p><p class="text-xs text-slate-400">If your Google Sheet or file fails to sync</p></div>
-            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <button type="button" class="toggle on" role="switch" aria-checked="true" onclick="toggleSwitch(this)"></button>
           </div>
         </div>
 
@@ -493,6 +493,18 @@ function disconnectSource(){
 function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeSidebar(); closeInvite(); closePwd(); closeSource(); } });
+
+// Accessible switches: keyboard-operable <button role="switch"> with aria-checked + label from its row
+function toggleSwitch(btn){
+  const on = btn.classList.toggle('on');
+  btn.setAttribute('aria-checked', on ? 'true' : 'false');
+}
+document.querySelectorAll('button.toggle[role="switch"]').forEach(btn=>{
+  if(!btn.getAttribute('aria-label')){
+    const lbl = btn.parentElement && btn.parentElement.querySelector('p');
+    if(lbl) btn.setAttribute('aria-label', lbl.textContent.trim());
+  }
+});
 </script>
 </body>
 </html>

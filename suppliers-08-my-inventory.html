@@ -97,6 +97,8 @@
   .toast.show { opacity:1; transform:translateY(0); }
   .row-saved-flash { animation: savedFlash 1s ease; }
   @keyframes savedFlash { 0%{background:rgba(42,61,136,0.12)} 100%{background:transparent} }
+  /* Respect reduced-motion: neutralize all animation/transition when requested */
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
 </style>
 </head>
 <body class="flex">
