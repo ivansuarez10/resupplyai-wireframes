@@ -25,6 +25,9 @@
   .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
   .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
     border-bottom:1px solid var(--line); }
+  /* KPI metric: borderless label + number (no box) */
+  .kpi-cell{ position:relative; }
+  .kpi-cell > .kpi-cap{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
   .bg-orb { display:none; }
 
@@ -145,7 +148,7 @@
       </button>
       <div>
       <h1 class="text-lg font-bold text-slate-900 leading-tight">My Inventory</h1>
-      <p class="text-xs text-slate-400 mt-0.5">1,284 items · <span class="src-chip" style="padding:2px 8px;font-size:11px">Synced from Google Sheet · 4h ago</span></p>
+      <p class="text-xs text-slate-500 mt-0.5">1,284 items · <span class="src-chip" style="padding:2px 8px;font-size:11px">Synced from Google Sheet · 4h ago</span></p>
       </div>
     </div>
     <div class="flex items-center gap-3 relative">
@@ -167,31 +170,31 @@
         <div style="max-height:360px;overflow-y:auto">
           <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
             <span class="notif-dot"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability, upload to stay in the running · 2h ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-500 mt-0.5">The DLA wants traceability, upload to stay in the running · 2h ago</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'">
             <span class="notif-dot"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Engine Cylinder Head</p><p class="text-xs text-slate-400 mt-0.5">1 quote needs documentation · 5h ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Engine Cylinder Head</p><p class="text-xs text-slate-500 mt-0.5">1 quote needs documentation · 5h ago</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-500 mt-0.5">Buyer is purchasing your stock · yesterday</p></div>
           </div>
           <div class="notif-row" onclick="location.href='suppliers-10-settings.html'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Inventory synced · 1,284 items updated</p><p class="text-xs text-slate-400 mt-0.5">Latest pull from your Google Sheet · yesterday</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Inventory synced · 1,284 items updated</p><p class="text-xs text-slate-500 mt-0.5">Latest pull from your Google Sheet · yesterday</p></div>
           </div>
           <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-10-settings.html'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">New login · Maria Reyes</p><p class="text-xs text-slate-400 mt-0.5">A teammate signed in from a new device · 2d ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">New login · Maria Reyes</p><p class="text-xs text-slate-500 mt-0.5">A teammate signed in from a new device · 2d ago</p></div>
           </div>
           <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-10-settings.html'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Teammate joined · Maria Reyes</p><p class="text-xs text-slate-400 mt-0.5">Set up her login under Hermes Technical · 3d ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Teammate joined · Maria Reyes</p><p class="text-xs text-slate-500 mt-0.5">Set up her login under Hermes Technical · 3d ago</p></div>
           </div>
           <div class="notif-row" data-extra style="display:none" onclick="location.href='suppliers-14-quote-status.html'">
             <span class="notif-dot read"></span>
-            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-400 mt-0.5">Assigned to a buyer, you're in the running · 4d ago</p></div>
+            <div><p class="text-sm font-bold text-slate-800 leading-snug">Quote assigned · Structural Panel</p><p class="text-xs text-slate-500 mt-0.5">Assigned to a buyer, you're in the running · 4d ago</p></div>
           </div>
         </div>
         <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><button id="seeMore" class="text-xs font-bold" style="color:var(--primary)" onclick="seeMore()">See more</button></div>
@@ -200,7 +203,7 @@
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
         <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
           <div class="avatar flex-shrink-0">HT</div>
-          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
+          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-500 truncate">Hermes Technical · Member</p></div>
         </div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-10-settings.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Settings</div>
@@ -217,19 +220,19 @@
 
     <!-- KPIs -->
     <div class="grid grid-cols-4 gap-4">
-      <div class="field"><span class="cap">Total items</span><p class="text-2xl font-bold text-slate-900">1,284</p></div>
-      <div class="field"><span class="cap">Matched ever</span><p class="text-2xl font-bold" style="color:var(--primary)">612</p></div>
-      <div class="field"><span class="cap">With NSN</span><p class="text-2xl font-bold text-slate-900">1,190</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">Total items</span><p class="text-2xl font-bold text-slate-900">1,284</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">Matched ever</span><p class="text-2xl font-bold" style="color:var(--primary)">612</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">With NSN</span><p class="text-2xl font-bold text-slate-900">1,190</p></div>
       <div class="field" style="border:1px solid rgba(42,61,136,0.2)"><span class="cap" style="color:var(--primary)">Needs attention</span><p class="text-2xl font-bold" style="color:var(--primary)">94</p></div>
     </div>
 
     <!-- toolbar -->
     <div class="flex items-center justify-between flex-wrap gap-3">
       <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input class="bg-white rounded-xl pl-9 pr-4 py-2 text-sm outline-none" style="border:1px solid rgba(33,50,95,0.08);box-shadow:0 4px 16px rgba(33,50,95,0.05);width:260px" placeholder="Search by NSN, P/N, description…">
       </div>
-      <p class="text-xs text-slate-400">Edit inline, changes save automatically and update your matches</p>
+      <p class="text-xs text-slate-500">Edit inline, changes save automatically and update your matches</p>
     </div>
 
     <!-- Inventory table -->
@@ -238,13 +241,13 @@
       <table class="w-full" style="min-width:920px">
         <thead>
           <tr style="background:#fafbff">
-            <th class="text-left px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Description</th>
-            <th class="text-left px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">P/N</th>
-            <th class="text-left px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">NSN</th>
-            <th class="text-left px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Stock</th>
-            <th class="text-left px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Lead time</th>
-            <th class="text-left px-3 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Condition</th>
-            <th class="text-right px-5 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Actions</th>
+            <th class="text-left px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Description</th>
+            <th class="text-left px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">P/N</th>
+            <th class="text-left px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">NSN</th>
+            <th class="text-left px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Stock</th>
+            <th class="text-left px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Lead time</th>
+            <th class="text-left px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Condition</th>
+            <th class="text-right px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody id="invBody">
@@ -274,10 +277,10 @@
         <div><label class="label">NSN</label><input class="field" id="m_nsn" placeholder="2530-01-687-4521"></div>
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="label">Alt Part Number <span class="text-slate-400 font-normal lowercase">(optional)</span></label><input class="field" id="m_altpn" placeholder="extra match key"></div>
-        <div><label class="label">Alt Description <span class="text-slate-400 font-normal lowercase">(optional)</span></label><input class="field" id="m_altdesc" placeholder="alternate wording"></div>
+        <div><label class="label">Alt Part Number <span class="text-slate-500 font-normal lowercase">(optional)</span></label><input class="field" id="m_altpn" placeholder="extra match key"></div>
+        <div><label class="label">Alt Description <span class="text-slate-500 font-normal lowercase">(optional)</span></label><input class="field" id="m_altdesc" placeholder="alternate wording"></div>
       </div>
-      <p class="text-xs text-slate-400" style="margin-top:-2px">NSN is the strongest match. Part Number, Alt P/N and Alt Description are extra keys that recover more valid matches.</p>
+      <p class="text-xs text-slate-500" style="margin-top:-2px">NSN is the strongest match. Part Number, Alt P/N and Alt Description are extra keys that recover more valid matches.</p>
       <div class="grid grid-cols-3 gap-3">
         <div><label class="label">Stock</label><input class="field" id="m_stock" placeholder="340"></div>
         <div><label class="label">Lead time</label><input class="field" id="m_lead" placeholder="14 days"></div>
@@ -336,7 +339,7 @@
       <button class="btn-ghost flex-1 font-bold py-3 rounded-xl text-sm" aria-label="Close" onclick="closeReimport()">Cancel</button>
       <button id="reApply" class="btn-primary flex-1 font-bold py-3 rounded-xl text-sm" style="opacity:.5;pointer-events:none" onclick="reApply()">Apply update</button>
     </div>
-    <p class="text-xs text-slate-400 text-center mt-3">Prefer auto-sync? <a href="suppliers-03-upload-inventory.html" class="font-bold" style="color:var(--primary)">Connect a Google Sheet instead →</a></p>
+    <p class="text-xs text-slate-500 text-center mt-3">Prefer auto-sync? <a href="suppliers-03-upload-inventory.html" class="font-bold" style="color:var(--primary)">Connect a Google Sheet instead →</a></p>
   </div>
 </div>
 
@@ -356,7 +359,7 @@ function loadMoreInv(btn){
     {desc:'Valve, Globe', pn:'VG-12', nsn:'4820-01-441-9921', stock:'120', lead:'18 days', cond:'New Surplus'}
   ];
   btn.textContent='Loading…';
-  setTimeout(()=>{ extra.forEach(e=>inventory.push(e)); render(); btn.outerHTML='<p class="text-sm text-slate-400">That\'s all your inventory.</p>'; }, 450);
+  setTimeout(()=>{ extra.forEach(e=>inventory.push(e)); render(); btn.outerHTML='<p class="text-sm text-slate-500">That\'s all your inventory.</p>'; }, 450);
 }
 function reSimulate(name){
   // a file was chosen via the picker (or dropped), show the simulated parse result

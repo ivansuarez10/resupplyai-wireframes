@@ -93,7 +93,7 @@
       <img src="logo-normal.png" alt="ResupplyAI" style="height:24px;width:auto;object-fit:contain">
       <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIERS</span>
     </div>
-    <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5" title="We match your stock to live DLA solicitations, there's nothing to show until it's in.">
+    <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5" title="We match your stock to live DLA solicitations, there's nothing to show until it's in.">
       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
       Required, your inventory powers your matches
     </span>
@@ -106,7 +106,7 @@
       <div class="flex-1 h-0.5 rounded" style="background:var(--primary)"></div>
       <div class="step-pill"><div class="step-dot active">2</div><span class="text-xs font-bold text-slate-700 hidden sm:inline">Add inventory</span></div>
       <div class="flex-1 h-0.5 rounded bg-slate-200"></div>
-      <div class="step-pill"><div class="step-dot todo">3</div><span class="text-xs font-bold text-slate-400 hidden sm:inline">See matches</span></div>
+      <div class="step-pill"><div class="step-dot todo">3</div><span class="text-xs font-bold text-slate-500 hidden sm:inline">See matches</span></div>
     </div>
   </div>
 
@@ -131,7 +131,7 @@
           </div>
         </div>
         <div class="mb-3">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Required</p>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Required</p>
           <div class="flex flex-wrap gap-2">
             <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Description</span>
             <span class="req-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Part Number (P/N)</span>
@@ -143,7 +143,7 @@
           </div>
         </div>
         <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Optional, add now or per match later</p>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Optional, add now or per match later</p>
           <div class="flex flex-wrap gap-2">
             <span class="opt-chip">OEM / Manufacturer</span>
             <span class="opt-chip">CoC</span>
@@ -169,7 +169,7 @@
         </div>
         <p class="text-lg font-bold text-slate-900 mb-1">Drag your Excel or CSV here</p>
         <p class="text-sm text-slate-500 mb-4">or <span class="font-bold" style="color:var(--primary)">browse your files</span>, export from any system, we'll map the columns</p>
-        <div class="flex items-center justify-center gap-3 text-xs text-slate-400">
+        <div class="flex items-center justify-center gap-3 text-xs text-slate-500">
           <span>.xlsx</span><span>·</span><span>.csv</span><span>·</span><span>.xls</span><span>·</span><span>up to 50MB</span>
         </div>
       </div>
@@ -223,7 +223,7 @@
 
         <label class="text-sm font-bold text-slate-700 mb-1.5 block">Google Sheet link</label>
         <input id="sheetUrl" class="map-select mb-2" style="padding:11px 14px;font-weight:400" placeholder="https://docs.google.com/spreadsheets/d/…">
-        <p class="text-xs text-slate-400 mb-5">Make sure sharing is set to "Anyone with the link can view", or authorize access below.</p>
+        <p class="text-xs text-slate-500 mb-5">Make sure sharing is set to "Anyone with the link can view", or authorize access below.</p>
 
         <div class="rounded-xl p-3 mb-5 flex items-start gap-2.5" style="background:rgba(42,61,136,0.04);border:1px solid rgba(42,61,136,0.1)">
           <svg class="w-4 h-4 mt-0.5 flex-shrink-0" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -252,11 +252,11 @@
       <div class="grid lg:grid-cols-5 gap-5">
         <!-- mapping -->
         <div class="lg:col-span-3 float-card p-6">
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Match your columns to ours</p>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Match your columns to ours</p>
           <p class="text-xs text-slate-500 mb-3">We auto-detected most. Confirm the required ones.</p>
 
           <div class="grid grid-cols-[1fr_24px_1fr] gap-2.5 pb-2 mb-1">
-            <p class="text-xs font-bold text-slate-400">YOUR COLUMN</p><span></span><p class="text-xs font-bold text-slate-400">RESUPPLYAI FIELD</p>
+            <p class="text-xs font-bold text-slate-500">YOUR COLUMN</p><span></span><p class="text-xs font-bold text-slate-500">RESUPPLYAI FIELD</p>
           </div>
 
           <div class="map-row" style="border-top:none">
@@ -304,15 +304,15 @@
         <!-- preview + confirm -->
         <div class="lg:col-span-2 space-y-5">
           <div class="float-card p-5">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Preview · first row</p>
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Preview · first row</p>
             <div class="space-y-2">
-              <div class="flex justify-between text-xs"><span class="text-slate-400">Description</span><span class="font-bold text-slate-800">Brake Drum Assy</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">P/N</span><span class="font-bold text-slate-800">BD-44871</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">NSN</span><span class="mono font-bold text-slate-800">2530-01-687-4521</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">Qty</span><span class="font-bold text-slate-800">340</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">Lead time</span><span class="font-bold text-slate-800">14 days</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">Condition</span><span class="font-bold text-slate-800">New</span></div>
-              <div class="flex justify-between text-xs"><span class="text-slate-400">UoM</span><span class="font-bold text-slate-800">EA</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">Description</span><span class="font-bold text-slate-800">Brake Drum Assy</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">P/N</span><span class="font-bold text-slate-800">BD-44871</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">NSN</span><span class="mono font-bold text-slate-800">2530-01-687-4521</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">Qty</span><span class="font-bold text-slate-800">340</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">Lead time</span><span class="font-bold text-slate-800">14 days</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">Condition</span><span class="font-bold text-slate-800">New</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-500">UoM</span><span class="font-bold text-slate-800">EA</span></div>
             </div>
           </div>
 
@@ -324,7 +324,7 @@
             <p class="text-xs text-slate-500">1,284 items ready to import. We'll start matching them against today's DLA solicitations immediately.</p>
           </div>
 
-          <p class="text-xs text-slate-400 mt-4 mb-3 leading-relaxed">By importing, you confirm this inventory is accurate, belongs to your company, and contains no export-controlled (ITAR/EAR) or restricted data. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
+          <p class="text-xs text-slate-500 mt-4 mb-3 leading-relaxed">By importing, you confirm this inventory is accurate, belongs to your company, and contains no export-controlled (ITAR/EAR) or restricted data. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
           <button onclick="finish()" class="btn-primary w-full font-bold py-3.5 rounded-xl text-sm">Import 1,284 items →</button>
         </div>
       </div>
@@ -377,7 +377,7 @@
           </div>
 
           <a href="suppliers-04-daily-matches.html" class="btn-primary inline-block font-bold px-9 py-4 rounded-xl text-sm">Go to Dashboard →</a>
-          <p class="text-xs text-slate-400 mt-4">Your matches refresh automatically every morning at 6 AM.</p>
+          <p class="text-xs text-slate-500 mt-4">Your matches refresh automatically every morning at 6 AM.</p>
         </div>
       </div>
     </div>

@@ -25,6 +25,9 @@
   .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
   .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
     border-bottom:1px solid var(--line); }
+  /* KPI metric: borderless label + number (no box) */
+  .kpi-cell{ position:relative; }
+  .kpi-cell > .kpi-cap{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
   .bg-orb { display:none; }
 
@@ -141,7 +144,7 @@
   </nav>
   <div class="px-4 py-3 mx-2 rounded-xl" style="background:rgba(42,61,136,0.06);border:1px solid rgba(42,61,136,0.1)">
     <p class="text-xs font-bold text-slate-500">Internal console · restricted</p>
-    <p class="text-xs text-slate-400 mt-0.5">Ivan S. · admin</p>
+    <p class="text-xs text-slate-500 mt-0.5">Ivan S. · admin</p>
   </div>
 </div>
 
@@ -152,7 +155,7 @@
   <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
     <div>
       <h1 class="text-lg font-bold text-slate-900 leading-tight">Operations</h1>
-      <p class="text-xs text-slate-400 mt-0.5" id="todayLine">—</p>
+      <p class="text-xs text-slate-500 mt-0.5" id="todayLine">—</p>
     </div>
     <div class="flex items-center gap-3">
       <div class="relative">
@@ -160,7 +163,7 @@
         <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
           <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
             <div class="avatar" style="cursor:default">IS</div>
-            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-500 truncate">ResupplyAI · Admin</p></div>
           </div>
           <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
             <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
@@ -199,7 +202,7 @@
     <div id="resultsCard" class="float-card overflow-hidden" style="display:none">
       <div class="px-5 py-3 flex items-center justify-between flex-wrap gap-2" style="border-bottom:1px solid rgba(33,50,95,0.06)">
         <p class="text-sm font-bold text-slate-900" id="resTitle">Results</p>
-        <p class="text-xs text-slate-400" id="resMeta"></p>
+        <p class="text-xs text-slate-500" id="resMeta"></p>
       </div>
       <div style="overflow-x:auto">
         <table class="res">
@@ -209,18 +212,18 @@
       </div>
       <div id="resEmpty" class="px-5 py-10 text-center" style="display:none">
         <p class="text-sm font-bold text-slate-500">No supplier has that part in stock right now.</p>
-        <p class="text-xs text-slate-400 mt-1">Try a partial NSN/PN, or a keyword like “bearing”.</p>
+        <p class="text-xs text-slate-500 mt-1">Try a partial NSN/PN, or a keyword like “bearing”.</p>
       </div>
     </div>
 
     <!-- TODAY KPIs -->
     <div>
-      <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Today at a glance</p>
+      <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Today at a glance</p>
       <div class="grid kpi grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="field card-enter"><span class="cap">Deadlines today</span><p class="text-2xl font-bold" style="color:var(--primary)">4</p><p class="text-xs text-slate-400 mt-0.5">quotes due before 5 PM ET</p></div>
-        <div class="field card-enter" style="animation-delay:.06s"><span class="cap">New quotes</span><p class="text-2xl font-bold text-slate-900">12</p><p class="text-xs text-slate-400 mt-0.5">unreviewed since 6 AM</p></div>
-        <div class="field card-enter" style="animation-delay:.12s;cursor:pointer" onclick="document.getElementById('sentPanel').scrollIntoView({behavior:'smooth',block:'center'})"><span class="cap">Batches to send</span><p class="text-2xl font-bold text-slate-900">3</p><p class="text-xs text-slate-400 mt-0.5"><span id="batchSentKpi" class="font-bold" style="color:var(--primary)">0</span> sent today →</p></div>
-        <div class="field card-enter" style="animation-delay:.18s"><span class="cap">Won profit · MTD</span><p class="text-2xl font-bold text-slate-900">$94,900</p><p class="text-xs text-slate-400 mt-0.5">10 awards this cycle</p></div>
+        <div class="kpi-cell card-enter"><span class="kpi-cap">Deadlines today</span><p class="text-2xl font-bold" style="color:var(--primary)">4</p><p class="text-xs text-slate-500 mt-0.5">quotes due before 5 PM ET</p></div>
+        <div class="kpi-cell card-enter" style="animation-delay:.06s"><span class="kpi-cap">New quotes</span><p class="text-2xl font-bold text-slate-900">12</p><p class="text-xs text-slate-500 mt-0.5">unreviewed since 6 AM</p></div>
+        <div class="kpi-cell card-enter" style="animation-delay:.12s;cursor:pointer" onclick="document.getElementById('sentPanel').scrollIntoView({behavior:'smooth',block:'center'})"><span class="kpi-cap">Batches to send</span><p class="text-2xl font-bold text-slate-900">3</p><p class="text-xs text-slate-500 mt-0.5"><span id="batchSentKpi" class="font-bold" style="color:var(--primary)">0</span> sent today →</p></div>
+        <div class="kpi-cell card-enter" style="animation-delay:.18s"><span class="kpi-cap">Won profit · MTD</span><p class="text-2xl font-bold text-slate-900">$94,900</p><p class="text-xs text-slate-500 mt-0.5">10 awards this cycle</p></div>
       </div>
     </div>
 
@@ -241,11 +244,11 @@
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Batches sent today</h3>
             <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.12);color:var(--primary)"><span id="sentCount">0</span> sent</span>
           </div>
-          <p class="text-xs text-slate-400 mb-1">Who you've sent a batch to today. Your running record per client.</p>
+          <p class="text-xs text-slate-500 mb-1">Who you've sent a batch to today. Your running record per client.</p>
           <div id="sentList"></div>
           <div class="flex items-center justify-between mt-3 pt-3" style="border-top:1px solid rgba(33,50,95,0.06)">
-            <p class="text-xs text-slate-400"><span id="sentTotalsLines" class="font-bold text-slate-700">0</span> solicitations across <span id="sentTotalsClients" class="font-bold text-slate-700">0</span> clients</p>
-            <p class="text-xs text-slate-400">Total profit <span id="sentTotalsProfit" class="font-bold" style="color:var(--primary)">$0</span></p>
+            <p class="text-xs text-slate-500"><span id="sentTotalsLines" class="font-bold text-slate-700">0</span> solicitations across <span id="sentTotalsClients" class="font-bold text-slate-700">0</span> clients</p>
+            <p class="text-xs text-slate-500">Total profit <span id="sentTotalsProfit" class="font-bold" style="color:var(--primary)">$0</span></p>
           </div>
         </div>
       </div>
@@ -257,7 +260,7 @@
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">Trace requests</h3>
             <span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:rgba(42,61,136,0.12);color:var(--primary)" id="traceCount">0</span>
           </div>
-          <p class="text-xs text-slate-400 mb-1">A DLA trace request means the buyer is checking references. The quote is being taken seriously.</p>
+          <p class="text-xs text-slate-500 mb-1">A DLA trace request means the buyer is checking references. The quote is being taken seriously.</p>
           <div id="traceList"></div>
         </div>
 
@@ -273,23 +276,23 @@
 
     <!-- QUICK LINKS -->
     <div>
-      <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Jump to</p>
+      <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Jump to</p>
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="quick" onclick="location.href='ops-01-assignment.html'">
           <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg></div>
-          <div><p class="font-bold text-slate-900 text-sm">Assignment Queue</p><p class="text-xs text-slate-400">Assign quotes to clients</p></div>
+          <div><p class="font-bold text-slate-900 text-sm">Assignment Queue</p><p class="text-xs text-slate-500">Assign quotes to clients</p></div>
         </div>
         <div class="quick" onclick="location.href='ops-03-suppliers.html'">
           <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
-          <div><p class="font-bold text-slate-900 text-sm">Suppliers</p><p class="text-xs text-slate-400">Certs, facilities, history</p></div>
+          <div><p class="font-bold text-slate-900 text-sm">Suppliers</p><p class="text-xs text-slate-500">Certs, facilities, history</p></div>
         </div>
         <div class="quick" onclick="location.href='ops-02-clients.html'">
           <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4z"/></svg></div>
-          <div><p class="font-bold text-slate-900 text-sm">Clients</p><p class="text-xs text-slate-400">Criteria & set-asides</p></div>
+          <div><p class="font-bold text-slate-900 text-sm">Clients</p><p class="text-xs text-slate-500">Criteria & set-asides</p></div>
         </div>
         <div class="quick" onclick="location.href='ops-04-awards.html'">
           <div class="quick-ic"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-          <div><p class="font-bold text-slate-900 text-sm">Awards</p><p class="text-xs text-slate-400">PO lifecycle & profit</p></div>
+          <div><p class="font-bold text-slate-900 text-sm">Awards</p><p class="text-xs text-slate-500">PO lifecycle & profit</p></div>
         </div>
       </div>
     </div>
@@ -351,7 +354,7 @@ function runSearch(){
   const body = document.getElementById('resBody');
   body.innerHTML = hits.map(it=>`
     <tr class="res-row" onclick="location.href='ops-03-suppliers.html?supplier=${encodeURIComponent(it.supplier)}'">
-      <td><p class="font-bold text-slate-900">${it.pn}</p><p class="text-slate-400" style="font-size:10.5px">${it.nsn} · ${it.desc}</p></td>
+      <td><p class="font-bold text-slate-900">${it.pn}</p><p class="text-slate-500" style="font-size:10.5px">${it.nsn} · ${it.desc}</p></td>
       <td><div class="flex items-center gap-2"><div class="avatar-sq">${initials(it.supplier)}</div><span class="font-bold text-slate-700">${it.supplier}</span></div></td>
       <td><span class="cond">${it.cond}</span></td>
       <td class="font-bold text-slate-800">${it.qty}</td>
@@ -372,7 +375,7 @@ document.getElementById('dueList').innerHTML = DUE.map(d=>`
     <div class="dot ${d.urgent?'':'soft'}"></div>
     <div class="min-w-0 flex-1">
       <p class="font-bold text-slate-900 text-sm truncate">${d.solic} · ${d.part}</p>
-      <p class="text-xs text-slate-400 truncate">${d.supplier}</p>
+      <p class="text-xs text-slate-500 truncate">${d.supplier}</p>
     </div>
     <span class="due-pill ${d.urgent?'urgent':''}">Due ${d.time}</span>
   </div>`).join('');
@@ -388,9 +391,9 @@ document.getElementById('traceList').innerHTML = TRACE.map(t=>`
     <div class="dot"></div>
     <div class="min-w-0 flex-1">
       <p class="font-bold text-slate-900 text-sm truncate">${t.solic}</p>
-      <p class="text-xs text-slate-400 truncate">${t.supplier} · buyer checking references</p>
+      <p class="text-xs text-slate-500 truncate">${t.supplier} · buyer checking references</p>
     </div>
-    <span class="text-xs text-slate-400 whitespace-nowrap">${t.when}</span>
+    <span class="text-xs text-slate-500 whitespace-nowrap">${t.when}</span>
   </div>`).join('');
 
 /* ---- Recent awards (placeholder, matches ops-04) ---- */
@@ -404,7 +407,7 @@ document.getElementById('awardList').innerHTML = AWARDS.map(a=>`
     <div class="avatar-sq">${initials(a.client)}</div>
     <div class="min-w-0 flex-1">
       <p class="font-bold text-slate-900 text-sm truncate">${a.part}</p>
-      <p class="text-xs text-slate-400 truncate">${a.client}</p>
+      <p class="text-xs text-slate-500 truncate">${a.client}</p>
     </div>
     <span class="font-bold text-sm whitespace-nowrap" style="color:var(--primary)">+$${a.profit.toLocaleString()}</span>
   </div>`).join('');
@@ -420,10 +423,10 @@ document.getElementById('sentList').innerHTML = SENT_TODAY.length ? SENT_TODAY.m
     <div class="avatar-sq">${initials(b.client)}</div>
     <div class="min-w-0 flex-1">
       <p class="font-bold text-slate-900 text-sm truncate">${b.client}</p>
-      <p class="text-xs text-slate-400 truncate">${b.n} solicitations · sent ${b.time}</p>
+      <p class="text-xs text-slate-500 truncate">${b.n} solicitations · sent ${b.time}</p>
     </div>
     <span class="font-bold text-sm whitespace-nowrap" style="color:var(--primary)">+$${b.profit.toLocaleString()}</span>
-  </div>`).join('') : '<p class="text-sm text-slate-400 py-3">No batches sent yet today.</p>';
+  </div>`).join('') : '<p class="text-sm text-slate-500 py-3">No batches sent yet today.</p>';
 document.getElementById('sentCount').textContent = SENT_TODAY.length;
 document.getElementById('batchSentKpi').textContent = SENT_TODAY.length;
 document.getElementById('sentTotalsLines').textContent = SENT_TODAY.reduce((s,b)=>s+b.n,0);

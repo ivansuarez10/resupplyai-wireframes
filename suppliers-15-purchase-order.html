@@ -125,14 +125,14 @@
           <p class="font-bold text-slate-900 text-sm">Notifications</p>
           <span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span>
         </div>
-        <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
-        <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
-        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
+        <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-500 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-14-quote-status.html?status=won'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-500 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-500">You're all caught up</span></div>
       </div>
       <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
         <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
           <div class="avatar flex-shrink-0">HT</div>
-          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div>
+          <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-500 truncate">Hermes Technical · Member</p></div>
         </div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
@@ -152,15 +152,15 @@
       <div style="max-width:640px">
         <div class="flex items-center gap-3 mb-3">
           <span class="st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:0.85em;height:0.85em;display:inline-block;vertical-align:-0.08em"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Won, close it out</span>
-          <span class="text-xs font-bold text-slate-400">Awarded Jun 16, 2026</span>
+          <span class="text-xs font-bold text-slate-500">Awarded Jun 16, 2026</span>
         </div>
         <h1 class="font-bold text-slate-900 leading-tight" style="font-size:34px;letter-spacing:-0.02em">Bracket, Support</h1>
         <p class="mono text-slate-500 text-sm mt-1.5">NSN 5340-01-201-9988 · P/N BRK-118 · Quote #RS-10455</p>
       </div>
       <div class="text-right">
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Order value</p>
+        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Order value</p>
         <p class="font-bold text-slate-900 leading-none" style="font-size:40px">$17,200</p>
-        <p class="text-sm font-bold text-slate-400 mt-1.5">200 units × $86</p>
+        <p class="text-sm font-bold text-slate-500 mt-1.5">200 units × $86</p>
       </div>
     </div>
 
@@ -201,7 +201,7 @@
               <div class="bd-row"><span class="bd-k">Buyer contact</span><span class="bd-v">po@apexfederal.com</span></div>
             </div>
           </div>
-          <p class="text-xs text-slate-400 mt-4">These details come from the buyer via ResupplyAI so you can issue your PO/invoice correctly. You can coordinate shipping with the buyer directly using the contact above.</p>
+          <p class="text-xs text-slate-500 mt-4">These details come from the buyer via ResupplyAI so you can issue your PO/invoice correctly. You can coordinate shipping with the buyer directly using the contact above.</p>
         </div>
 
         <!-- Upload PO -->
@@ -211,11 +211,11 @@
           <div class="upload" id="dropzone" onclick="document.getElementById('poInput').click()">
             <svg class="w-8 h-8 mx-auto mb-2" style="color:var(--primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
             <p class="text-sm font-bold text-slate-600">Drag your PO or <span style="color:var(--primary)">browse</span></p>
-            <p class="text-xs text-slate-400 mt-1">PDF, DOC, or image · up to 20 MB</p>
+            <p class="text-xs text-slate-500 mt-1">PDF, DOC, or image · up to 20 MB</p>
           </div>
           <input type="file" id="poInput" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" style="display:none" onchange="uploadPO(this)">
           <div id="poFile" style="display:none" class="mt-3 rounded-xl p-3.5 flex items-center justify-between" style="background:#fafbff;border:1px solid rgba(33,50,95,0.06)"></div>
-          <p class="text-xs text-slate-400 mt-3 leading-relaxed">By uploading, you confirm you have the right to share this document and that it contains no export-controlled (ITAR/EAR) or restricted material. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
+          <p class="text-xs text-slate-500 mt-3 leading-relaxed">By uploading, you confirm you have the right to share this document and that it contains no export-controlled (ITAR/EAR) or restricted material. <a href="suppliers-legal-terms.html" class="font-bold" style="color:var(--primary)">Terms</a></p>
           <button id="poSubmit" class="btn-primary w-full font-bold py-3.5 rounded-xl text-sm mt-3" style="display:none" onclick="submitPO()">Submit PO & finish →</button>
         </div>
       </div>

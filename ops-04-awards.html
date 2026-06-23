@@ -25,6 +25,9 @@
   .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
   .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
     border-bottom:1px solid var(--line); }
+  /* KPI metric: borderless label + number (no box) */
+  .kpi-cell{ position:relative; }
+  .kpi-cell > .kpi-cap{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
   .bg-orb { display:none; }
 
@@ -128,7 +131,7 @@
   </nav>
   <div class="px-4 py-3 mx-2 rounded-xl" style="background:rgba(42,61,136,0.06);border:1px solid rgba(42,61,136,0.1)">
     <p class="text-xs font-bold text-slate-500">Internal console · restricted</p>
-    <p class="text-xs text-slate-400 mt-0.5">Ivan S. · admin</p>
+    <p class="text-xs text-slate-500 mt-0.5">Ivan S. · admin</p>
   </div>
 </div>
 
@@ -139,7 +142,7 @@
   <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
     <div>
       <h1 class="text-lg font-bold text-slate-900 leading-tight">Awards</h1>
-      <p class="text-xs text-slate-400 mt-0.5">Solicitations the DLA awarded to your clients, tracked to PO upload</p>
+      <p class="text-xs text-slate-500 mt-0.5">Solicitations the DLA awarded to your clients, tracked to PO upload</p>
     </div>
     <div class="flex items-center gap-3">
       <div class="relative">
@@ -147,7 +150,7 @@
         <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
           <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
             <div class="avatar" style="cursor:default">IS</div>
-            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-500 truncate">ResupplyAI · Admin</p></div>
           </div>
           <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
             <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
@@ -177,10 +180,10 @@
 
     <!-- KPI strip -->
     <div class="grid kpi grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="field"><span class="cap">Total awards</span><p class="text-2xl font-bold text-slate-900" id="kTot">0</p></div>
-      <div class="field"><span class="cap">PO uploaded</span><p class="text-2xl font-bold" style="color:var(--primary)" id="kPo">0</p></div>
-      <div class="field"><span class="cap">Awaiting PO</span><p class="text-2xl font-bold text-slate-900" id="kWait">0</p></div>
-      <div class="field"><span class="cap">Supplier cost paid out</span><p class="text-2xl font-bold text-slate-900" id="kCost">$0</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">Total awards</span><p class="text-2xl font-bold text-slate-900" id="kTot">0</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">PO uploaded</span><p class="text-2xl font-bold" style="color:var(--primary)" id="kPo">0</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">Awaiting PO</span><p class="text-2xl font-bold text-slate-900" id="kWait">0</p></div>
+      <div class="kpi-cell"><span class="kpi-cap">Supplier cost paid out</span><p class="text-2xl font-bold text-slate-900" id="kCost">$0</p></div>
     </div>
 
     <!-- Filters + search -->
@@ -193,7 +196,7 @@
         <span class="tab" data-f="closed" onclick="setTab(this)">Closed</span>
       </div>
       <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input id="search" oninput="render()" class="bg-white rounded-xl pl-9 pr-4 py-2 text-sm outline-none" style="border:1px solid rgba(33,50,95,0.08);box-shadow:0 4px 16px rgba(33,50,95,0.05);width:240px" placeholder="Search solicitation, client, supplier…">
       </div>
     </div>
@@ -218,7 +221,7 @@
         </table>
       </div>
     </div>
-    <p id="emptyMsg" class="text-center text-sm text-slate-400 py-10" style="display:none">No awards match this filter.</p>
+    <p id="emptyMsg" class="text-center text-sm text-slate-500 py-10" style="display:none">No awards match this filter.</p>
   </div>
 </div>
 
@@ -303,7 +306,7 @@ function render(){
     tr.onclick = ()=> openDrawer(i);
     tr.innerHTML = `
       <td class="text-slate-500 font-bold">${a.date}</td>
-      <td><p class="font-bold text-slate-900">${a.part}</p><p class="mono text-slate-400" style="font-size:10.5px">${a.solic} · ${a.nsn}</p></td>
+      <td><p class="font-bold text-slate-900">${a.part}</p><p class="mono text-slate-500" style="font-size:10.5px">${a.solic} · ${a.nsn}</p></td>
       <td><div class="flex items-center gap-2 min-w-0"><div class="avatar-sq">${initials(a.client)}</div><span class="font-bold text-slate-700 truncate">${a.client}</span></div></td>
       <td class="text-slate-600">${a.supplier}</td>
       <td class="font-bold text-slate-800">${a.qty}</td>
@@ -344,7 +347,7 @@ function openDrawer(i){
       : n;
     return `<div class="step ${cls}">
       <div class="step-dot">${dot}</div>
-      <div><p class="text-sm font-bold ${n<=st.step?'text-slate-900':'text-slate-400'}">${s.t}</p><p class="text-xs text-slate-400 leading-snug">${s.d}</p></div>
+      <div><p class="text-sm font-bold ${n<=st.step?'text-slate-900':'text-slate-500'}">${s.t}</p><p class="text-xs text-slate-500 leading-snug">${s.d}</p></div>
     </div>`;
   }).join('');
 
@@ -355,43 +358,43 @@ function openDrawer(i){
       ? `<button class="btn-primary w-full font-bold py-3 rounded-xl text-sm" onclick="advance(${i})">Mark PO uploaded by supplier →</button>`
     : a.status==='po'
       ? `<button class="btn-primary w-full font-bold py-3 rounded-xl text-sm" onclick="advance(${i})">Close award (handed to buyer) →</button>`
-      : `<div class="text-center text-sm font-bold text-slate-400 py-3">Award closed. Nothing left to do here.</div>`;
+      : `<div class="text-center text-sm font-bold text-slate-500 py-3">Award closed. Nothing left to do here.</div>`;
 
   document.getElementById('drawerBody').innerHTML = `
     <div class="flex items-center gap-3">
       <span class="stt ${st.cls}">${st.label}</span>
-      <span class="text-xs text-slate-400">Awarded ${a.date}</span>
+      <span class="text-xs text-slate-500">Awarded ${a.date}</span>
     </div>
 
     <div class="flex items-center gap-3 p-3 rounded-2xl" style="background:rgba(42,61,136,0.05);border:1px solid rgba(42,61,136,0.1)">
       <div class="avatar-sq" style="width:40px;height:40px;border-radius:12px;font-size:13px">${initials(a.client)}</div>
       <div class="min-w-0">
         <p class="font-bold text-slate-900 truncate">${a.client}</p>
-        <p class="text-xs text-slate-400">CAGE ${a.cage} · fulfilled by <span class="font-bold text-slate-600">${a.supplier}</span></p>
+        <p class="text-xs text-slate-500">CAGE ${a.cage} · fulfilled by <span class="font-bold text-slate-600">${a.supplier}</span></p>
       </div>
     </div>
 
     <div>
-      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Line</p>
-      <div class="dla-line" style="border-top:none"><span class="text-slate-400">Part</span><span class="font-bold text-slate-800">${a.part}</span></div>
-      <div class="dla-line"><span class="text-slate-400">NSN</span><span class="mono font-bold text-slate-800">${a.nsn}</span></div>
-      <div class="dla-line"><span class="text-slate-400">Quantity</span><span class="font-bold text-slate-800">${a.qty} EA</span></div>
-      <div class="dla-line"><span class="text-slate-400">PO reference</span><span class="font-bold text-slate-800">${a.poRef || '<span style=\"color:#94a3b8\">— not issued yet</span>'}</span></div>
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Line</p>
+      <div class="dla-line" style="border-top:none"><span class="text-slate-500">Part</span><span class="font-bold text-slate-800">${a.part}</span></div>
+      <div class="dla-line"><span class="text-slate-500">NSN</span><span class="mono font-bold text-slate-800">${a.nsn}</span></div>
+      <div class="dla-line"><span class="text-slate-500">Quantity</span><span class="font-bold text-slate-800">${a.qty} EA</span></div>
+      <div class="dla-line"><span class="text-slate-500">PO reference</span><span class="font-bold text-slate-800">${a.poRef || '<span style=\"color:#94a3b8\">— not issued yet</span>'}</span></div>
     </div>
 
     <div class="rounded-2xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
       <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">Our profit</span><span class="text-2xl font-bold" style="color:var(--primary)">${money(a.profit)}</span></div>
-      <p class="text-xs text-slate-400 mt-1">Supplier cost ${money(a.cost)} · ${margin(a)}% margin</p>
-      <p class="text-xs text-slate-400 mt-2 italic">The price the government paid is not shown to suppliers, only the supplier's own quoted total.</p>
+      <p class="text-xs text-slate-500 mt-1">Supplier cost ${money(a.cost)} · ${margin(a)}% margin</p>
+      <p class="text-xs text-slate-500 mt-2 italic">The price the government paid is not shown to suppliers, only the supplier's own quoted total.</p>
     </div>
 
     <div>
-      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Lifecycle</p>
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Lifecycle</p>
       ${steps}
     </div>
 
     <div class="pt-1">${action}</div>
-    <p class="text-xs text-slate-400 text-center">ResupplyAI's job ends when the PO is uploaded. Shipment, invoice and payment happen between the client and supplier off-platform.</p>
+    <p class="text-xs text-slate-500 text-center">ResupplyAI's job ends when the PO is uploaded. Shipment, invoice and payment happen between the client and supplier off-platform.</p>
   `;
   document.getElementById('drawer').classList.add('show');
   document.getElementById('drawerBg').classList.add('show');

@@ -25,6 +25,9 @@
   .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
   .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
     border-bottom:1px solid var(--line); }
+  /* KPI metric: borderless label + number (no box) */
+  .kpi-cell{ position:relative; }
+  .kpi-cell > .kpi-cap{ display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
   body { background: #f5f7fc; color: #0f172a; overflow-x: hidden; }
   .bg-orb { display:none; }
 
@@ -144,7 +147,7 @@
   </nav>
   <div class="px-4 py-3 mx-2 rounded-xl" style="background:rgba(42,61,136,0.06);border:1px solid rgba(42,61,136,0.1)">
     <p class="text-xs font-bold text-slate-500">Internal console · restricted</p>
-    <p class="text-xs text-slate-400 mt-0.5">Ivan S. · admin</p>
+    <p class="text-xs text-slate-500 mt-0.5">Ivan S. · admin</p>
   </div>
 </div>
 
@@ -155,7 +158,7 @@
   <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
     <div id="topTitle">
       <h1 class="text-lg font-bold text-slate-900 leading-tight">Suppliers</h1>
-      <p class="text-xs text-slate-400 mt-0.5">The dealers behind your quotes: certs, facilities and quoting history</p>
+      <p class="text-xs text-slate-500 mt-0.5">The dealers behind your quotes: certs, facilities and quoting history</p>
     </div>
     <div class="flex items-center gap-3">
       <div class="relative">
@@ -163,7 +166,7 @@
         <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
           <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
             <div class="avatar" style="cursor:default">IS</div>
-            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-500 truncate">ResupplyAI · Admin</p></div>
           </div>
           <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
             <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
@@ -178,10 +181,10 @@
 
     <!-- KPI strip -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="field card-enter"><span class="cap">Suppliers</span><p class="text-2xl font-bold text-slate-900" id="kSup">0</p></div>
-      <div class="field card-enter" style="animation-delay:.06s"><span class="cap">Active this cycle</span><p class="text-2xl font-bold" style="color:var(--primary)" id="kAct">0</p></div>
-      <div class="field card-enter" style="animation-delay:.12s"><span class="cap">Manufacturers</span><p class="text-2xl font-bold text-slate-900" id="kMfr">0</p></div>
-      <div class="field card-enter" style="animation-delay:.18s"><span class="cap">Quotes (90 days)</span><p class="text-2xl font-bold text-slate-900" id="kQ">0</p></div>
+      <div class="kpi-cell card-enter"><span class="kpi-cap">Suppliers</span><p class="text-2xl font-bold text-slate-900" id="kSup">0</p></div>
+      <div class="kpi-cell card-enter" style="animation-delay:.06s"><span class="kpi-cap">Active this cycle</span><p class="text-2xl font-bold" style="color:var(--primary)" id="kAct">0</p></div>
+      <div class="kpi-cell card-enter" style="animation-delay:.12s"><span class="kpi-cap">Manufacturers</span><p class="text-2xl font-bold text-slate-900" id="kMfr">0</p></div>
+      <div class="kpi-cell card-enter" style="animation-delay:.18s"><span class="kpi-cap">Quotes (90 days)</span><p class="text-2xl font-bold text-slate-900" id="kQ">0</p></div>
     </div>
 
     <!-- Filters + search -->
@@ -194,13 +197,13 @@
         <span class="tab" data-f="Broker" onclick="setTab(this)">Brokers</span>
       </div>
       <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         <input id="search" oninput="render()" class="bg-white rounded-xl pl-9 pr-4 py-2 text-sm outline-none" style="border:1px solid rgba(33,50,95,0.08);box-shadow:0 4px 16px rgba(33,50,95,0.05);width:240px" placeholder="Search name, commodity, cert, CAGE…">
       </div>
     </div>
 
     <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4" id="grid"></div>
-    <p id="emptyMsg" class="text-center text-sm text-slate-400 py-10" style="display:none">No suppliers match this filter.</p>
+    <p id="emptyMsg" class="text-center text-sm text-slate-500 py-10" style="display:none">No suppliers match this filter.</p>
   </div>
 
   <!-- ============ PROFILE VIEW ============ -->
@@ -418,7 +421,7 @@ function render(){
           <div class="avatar-sq">${initials(s.name)}</div>
           <div class="min-w-0">
             <p class="font-bold text-slate-900 leading-tight truncate">${s.name}</p>
-            <p class="text-xs text-slate-400 truncate">${s.city}, ${s.state} · CAGE ${s.cage}</p>
+            <p class="text-xs text-slate-500 truncate">${s.city}, ${s.state} · CAGE ${s.cage}</p>
           </div>
         </div>
         <span class="ty ${ty.cls} flex-shrink-0">${ty.short}</span>
@@ -430,14 +433,14 @@ function render(){
 
       <div class="mb-3">
         <div class="flex items-center justify-between text-xs mb-1">
-          <span class="font-bold text-slate-400 uppercase tracking-wide" style="font-size:10px">Win rate</span>
+          <span class="font-bold text-slate-500 uppercase tracking-wide" style="font-size:10px">Win rate</span>
           <span class="font-bold" style="color:var(--primary)">${wr}% · ${s.stats.won}/${s.stats.submitted}</span>
         </div>
         <div class="perf"><div class="perf-fill" style="width:${wr}%"></div></div>
       </div>
 
       <div class="flex items-center justify-between pt-3 mt-auto" style="border-top:1px solid rgba(33,50,95,0.06)">
-        <p class="text-xs text-slate-400"><span class="font-bold text-slate-700">${s.stats.assigned}</span> assigned · <span class="font-bold text-slate-700">${s.stats.submitted}</span> quotes</p>
+        <p class="text-xs text-slate-500"><span class="font-bold text-slate-700">${s.stats.assigned}</span> assigned · <span class="font-bold text-slate-700">${s.stats.submitted}</span> quotes</p>
         <span class="st-c ${stt.cls}">${stt.label}</span>
       </div>`;
     g.appendChild(card);
@@ -492,7 +495,7 @@ function openProfile(i){
     const m = TLMETA[h.t] || TLMETA.submitted;
     return `<div class="tl-item">
       <div class="tl-dot ${m.cls}">${m.ic}</div>
-      <p class="text-xs text-slate-400 font-bold">${h.d}</p>
+      <p class="text-xs text-slate-500 font-bold">${h.d}</p>
       <p class="text-sm text-slate-700 leading-snug">${h.x}</p>
     </div>`;
   }).join('');
@@ -501,7 +504,7 @@ function openProfile(i){
     const m = QMETA[q.status];
     return `<tr>
       <td><p class="font-bold text-slate-800">${q.solic}</p></td>
-      <td><p class="font-bold text-slate-700">${q.part}</p><p class="mono text-slate-400" style="font-size:10.5px">${q.nsn}</p></td>
+      <td><p class="font-bold text-slate-700">${q.part}</p><p class="mono text-slate-500" style="font-size:10.5px">${q.nsn}</p></td>
       <td class="text-slate-600">${q.qty}</td>
       <td class="font-bold text-slate-800">${q.price}</td>
       <td><span class="qbadge ${m.cls}">${m.label}</span></td>
@@ -550,14 +553,14 @@ function openProfile(i){
       <div class="lg:col-span-5 space-y-6">
         <div class="float-card p-6">
           <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-1">Certifications &amp; registrations</h3>
-          <p class="text-xs text-slate-400 mb-2">Verified against SAM.gov / documents on file</p>
+          <p class="text-xs text-slate-500 mb-2">Verified against SAM.gov / documents on file</p>
           ${certRows}
         </div>
 
         <div class="float-card p-6">
           <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3">Facility</h3>
           <div class="grid grid-cols-2 gap-3">${photoTiles}</div>
-          <p class="text-xs text-slate-400 mt-3 italic">Reference photos supplied during onboarding.</p>
+          <p class="text-xs text-slate-500 mt-3 italic">Reference photos supplied during onboarding.</p>
         </div>
       </div>
 
@@ -567,8 +570,8 @@ function openProfile(i){
           <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3">Commodities they stock</h3>
           <div class="flex flex-wrap gap-2">${s.commodities.map(c=>`<span class="chip" style="font-size:12px;padding:6px 13px">${c}</span>`).join('')}</div>
           <div class="grid grid-cols-2 gap-4 mt-5 pt-5" style="border-top:1px solid rgba(33,50,95,0.06)">
-            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Avg lead time</p><p class="text-lg font-bold text-slate-900">${s.stats.avgLT} days</p></div>
-            <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wide">On-time delivery</p><p class="text-lg font-bold text-slate-900">${s.stats.onTime?s.stats.onTime+'%':'No deliveries yet'}</p></div>
+            <div><p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Avg lead time</p><p class="text-lg font-bold text-slate-900">${s.stats.avgLT} days</p></div>
+            <div><p class="text-xs font-bold text-slate-500 uppercase tracking-wide">On-time delivery</p><p class="text-lg font-bold text-slate-900">${s.stats.onTime?s.stats.onTime+'%':'No deliveries yet'}</p></div>
           </div>
         </div>
 
@@ -583,7 +586,7 @@ function openProfile(i){
               <tbody>${qrows}</tbody>
             </table>
           </div>
-          <p class="text-xs text-slate-400 mt-3">“Their price” is what the supplier quoted, never the price the government awarded.</p>
+          <p class="text-xs text-slate-500 mt-3">“Their price” is what the supplier quoted, never the price the government awarded.</p>
         </div>
 
         <div class="float-card p-6">
@@ -596,7 +599,7 @@ function openProfile(i){
 
   document.getElementById('directoryView').style.display='none';
   document.getElementById('profileView').style.display='block';
-  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-bold text-slate-900 leading-tight">${s.name}</h1><p class="text-xs text-slate-400 mt-0.5">Supplier profile · internal view</p>`;
+  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-bold text-slate-900 leading-tight">${s.name}</h1><p class="text-xs text-slate-500 mt-0.5">Supplier profile · internal view</p>`;
   attachHeroSpot();
   window.scrollTo(0,0);
   document.getElementById('profileView').scrollTop = 0;
@@ -605,7 +608,7 @@ function openProfile(i){
 function closeProfile(){
   document.getElementById('profileView').style.display='none';
   document.getElementById('directoryView').style.display='block';
-  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-bold text-slate-900 leading-tight">Suppliers</h1><p class="text-xs text-slate-400 mt-0.5">The dealers behind your quotes: certs, facilities and quoting history</p>`;
+  document.getElementById('topTitle').innerHTML = `<h1 class="text-lg font-bold text-slate-900 leading-tight">Suppliers</h1><p class="text-xs text-slate-500 mt-0.5">The dealers behind your quotes: certs, facilities and quoting history</p>`;
 }
 
 function attachHeroSpot(){

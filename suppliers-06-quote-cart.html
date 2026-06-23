@@ -82,12 +82,12 @@
       <button class="avatar flex-shrink-0" onclick="toggleMenu('userMenu', event)" aria-label="Account menu" style="cursor:pointer">HT</button>
       <div class="menu-pop" id="notifMenu" onclick="event.stopPropagation()">
         <div class="px-4 py-3 flex items-center justify-between" style="border-bottom:1px solid rgba(33,50,95,0.06)"><p class="font-bold text-slate-900 text-sm">Notifications</p><span class="text-xs font-bold" style="color:var(--primary);cursor:pointer" onclick="markAllRead()">Mark all read</span></div>
-        <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-400 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
-        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-400 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
-        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-400">You're all caught up</span></div>
+        <div class="notif-row" onclick="location.href='suppliers-11-trace-upload.html'"><span class="notif-dot"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">Trace requested · Brake Drum Assembly</p><p class="text-xs text-slate-500 mt-0.5">The DLA wants traceability · 2h ago</p></div></div>
+        <div class="notif-row" onclick="location.href='suppliers-15-purchase-order.html'"><span class="notif-dot read"></span><div><p class="text-sm font-bold text-slate-800 leading-snug">You won. Bracket, Support</p><p class="text-xs text-slate-500 mt-0.5">Upload your PO to close it out · yesterday</p></div></div>
+        <div class="px-4 py-2.5 text-center" style="border-top:1px solid rgba(33,50,95,0.06)"><span class="text-xs text-slate-500">You're all caught up</span></div>
       </div>
       <div class="menu-pop" id="userMenu" style="width:248px" onclick="event.stopPropagation()">
-        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-400 truncate">Hermes Technical · Member</p></div></div>
+        <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)"><div class="avatar flex-shrink-0">HT</div><div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Hector T.</p><p class="text-xs text-slate-500 truncate">Hermes Technical · Member</p></div></div>
         <div class="py-1">
           <div class="menu-item" onclick="location.href='suppliers-04-daily-matches.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Daily matches</div>
           <div class="menu-item" onclick="location.href='suppliers-07-my-quotes.html'"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> My quotes</div>
@@ -163,7 +163,7 @@ function render(){
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-bold text-slate-900">${it.name}</p>
-        <p class="text-xs text-slate-400">NSN ${it.nsn} · ${it.qty} units × ${fmt(it.unit)}/ea</p>
+        <p class="text-xs text-slate-500">NSN ${it.nsn} · ${it.qty} units × ${fmt(it.unit)}/ea</p>
       </div>
       <p class="text-sm font-bold text-slate-800">${fmt(it.value)}</p>
       <button onclick="removeItem(${idx})" class="text-slate-300 hover:text-red-400 transition-colors" title="Remove">

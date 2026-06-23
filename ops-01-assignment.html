@@ -140,7 +140,7 @@
   </nav>
   <div class="px-4 py-3 mx-2 rounded-xl" style="background:rgba(42,61,136,0.06);border:1px solid rgba(42,61,136,0.1)">
     <p class="text-xs font-bold text-slate-500">Internal console · restricted</p>
-    <p class="text-xs text-slate-400 mt-0.5">Ivan S. · admin</p>
+    <p class="text-xs text-slate-500 mt-0.5">Ivan S. · admin</p>
   </div>
 </div>
 
@@ -151,11 +151,11 @@
   <div class="px-6 py-4 flex items-center justify-between flex-wrap gap-3">
     <div>
       <h1 class="text-lg font-bold text-slate-900 leading-tight">Quote Assignment Console</h1>
-      <p class="text-xs text-slate-400 mt-0.5">169 active quotes from suppliers · sorted by DLA deadline</p>
+      <p class="text-xs text-slate-500 mt-0.5">169 active quotes from suppliers · sorted by DLA deadline</p>
     </div>
     <div class="flex items-center gap-3 flex-wrap">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-bold text-slate-400">Operating as</span>
+        <span class="text-xs font-bold text-slate-500">Operating as</span>
         <select class="client-select" id="clientSel" onchange="changeClient()">
           <option value="0">Loading clients…</option>
         </select>
@@ -165,7 +165,7 @@
         <div class="menu-pop" id="userMenu" onclick="event.stopPropagation()">
           <div class="px-4 py-3.5 flex items-center gap-3" style="border-bottom:1px solid rgba(33,50,95,0.06)">
             <div class="avatar" style="cursor:default">IS</div>
-            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-400 truncate">ResupplyAI · Admin</p></div>
+            <div class="min-w-0"><p class="font-bold text-slate-900 text-sm truncate">Ivan S.</p><p class="text-xs text-slate-500 truncate">ResupplyAI · Admin</p></div>
           </div>
           <div class="py-1" style="border-top:1px solid rgba(33,50,95,0.06)">
             <div class="menu-item" onclick="location.href='suppliers-09-login.html'" style="color:var(--navy)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg> Log out</div>
@@ -179,7 +179,7 @@
   <div class="px-6 mb-3">
     <div class="float-card px-5 py-3 flex items-center justify-between flex-wrap gap-3">
       <div class="flex items-center gap-2 flex-wrap" id="critBar"></div>
-      <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
+      <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
         <span class="crit-chip" style="background:linear-gradient(135deg,var(--primary),var(--navy));color:#fff">Suggested</span>
         <span>shown first, then all other available quotes</span>
       </div>
@@ -188,10 +188,10 @@
 
   <!-- KPIs -->
   <div class="px-6 mb-3 grid grid-cols-4 gap-3">
-    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Available</p><p class="text-xl font-bold text-slate-900" id="kAvail">0</p></div>
-    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Eligible</p><p class="text-xl font-bold" style="color:var(--primary)" id="kElig">0</p></div>
-    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">In batch</p><p class="text-xl font-bold text-slate-900" id="kBatch">0</p></div>
-    <div class="float-card p-3"><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Batch profit</p><p class="text-xl font-bold text-slate-900" id="kProfit">$0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Available</p><p class="text-xl font-bold text-slate-900" id="kAvail">0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Eligible</p><p class="text-xl font-bold" style="color:var(--primary)" id="kElig">0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-500 uppercase tracking-wider">In batch</p><p class="text-xl font-bold text-slate-900" id="kBatch">0</p></div>
+    <div class="float-card p-3"><p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Batch profit</p><p class="text-xl font-bold text-slate-900" id="kProfit">$0</p></div>
   </div>
 
   <!-- Table -->
@@ -266,18 +266,18 @@
   <div class="p-5 space-y-4">
     <!-- read-only DLA data -->
     <div>
-      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">DLA solicitation (scraped)</p>
-      <div class="dla-line" style="border-top:none"><span class="text-slate-400">NSN</span><span class="mono font-bold text-slate-800" id="dNsn">2840-00-837-2071</span></div>
-      <div class="dla-line"><span class="text-slate-400">Part No</span><span class="font-bold text-slate-800" id="dPn">3011095</span></div>
-      <div class="dla-line"><span class="text-slate-400">Approved mfr</span><span class="font-bold text-slate-800">Canadian Commercial Corp · 98247</span></div>
-      <div class="dla-line"><span class="text-slate-400">DLA qty</span><span class="font-bold text-slate-800">6 EA</span></div>
-      <div class="dla-line"><span class="text-slate-400">Quote due</span><span class="font-bold text-slate-800">06/18/26</span></div>
-      <div class="dla-line"><span class="text-slate-400">Last DLA price (DIBBS)</span><span class="font-bold text-slate-800">$16,688.94</span></div>
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">DLA solicitation (scraped)</p>
+      <div class="dla-line" style="border-top:none"><span class="text-slate-500">NSN</span><span class="mono font-bold text-slate-800" id="dNsn">2840-00-837-2071</span></div>
+      <div class="dla-line"><span class="text-slate-500">Part No</span><span class="font-bold text-slate-800" id="dPn">3011095</span></div>
+      <div class="dla-line"><span class="text-slate-500">Approved mfr</span><span class="font-bold text-slate-800">Canadian Commercial Corp · 98247</span></div>
+      <div class="dla-line"><span class="text-slate-500">DLA qty</span><span class="font-bold text-slate-800">6 EA</span></div>
+      <div class="dla-line"><span class="text-slate-500">Quote due</span><span class="font-bold text-slate-800">06/18/26</span></div>
+      <div class="dla-line"><span class="text-slate-500">Last DLA price (DIBBS)</span><span class="font-bold text-slate-800">$16,688.94</span></div>
     </div>
 
     <!-- editable -->
     <div>
-      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Editable before assigning</p>
+      <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Editable before assigning</p>
       <div class="grid grid-cols-2 gap-3">
         <div><label class="label">Delivery days</label><input class="field" value="88"></div>
         <div><label class="label">Quantity</label><input class="field" value="6"></div>
@@ -293,7 +293,7 @@
 
     <div class="rounded-xl p-4" style="background:linear-gradient(135deg, rgba(42,61,136,0.06), rgba(94,126,232,0.03));border:1px solid rgba(42,61,136,0.12)">
       <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">Gross profit</span><span class="text-xl font-bold" style="color:var(--primary)">$79,206.90</span></div>
-      <p class="text-xs text-slate-400 mt-0.5">Cost $900.00 · ROI 8,801%</p>
+      <p class="text-xs text-slate-500 mt-0.5">Cost $900.00 · ROI 8,801%</p>
     </div>
 
     <div class="flex gap-2">
@@ -358,7 +358,7 @@ function render(){
   // criteria bar
   const saText = (c.setAside && c.setAside.length) ? c.setAside.join(' · ') : 'Any';
   document.getElementById('critBar').innerHTML =
-    `<span class="text-xs font-bold text-slate-400 mr-1">${c.name} requires:</span>`+
+    `<span class="text-xs font-bold text-slate-500 mr-1">${c.name} requires:</span>`+
     `<span class="crit-chip">Set-aside: ${saText}</span>`+
     `<span class="crit-chip">Daily budget: ${moneyShort(c.budget)}</span>`+
     `<span class="crit-chip">Inspection: ${c.origin?'Origin OK':'Destination only'}</span>`+
@@ -406,9 +406,9 @@ function buildRow(i, isOther){
   tr.className = 'ops-row' + (inBatch?' inbatch':'') + (isOther?' other':'');
   tr.onclick = (e)=>{ if(!e.target.closest('.add-btn') && !e.target.closest('.mdbbs-input')) openDrawer(q); };
   tr.innerHTML = `
-    <td><p class="font-bold text-slate-900">${q.solic}</p><p class="text-slate-400" style="font-size:11px">${q.supplier}</p></td>
+    <td><p class="font-bold text-slate-900">${q.solic}</p><p class="text-slate-500" style="font-size:11px">${q.supplier}</p></td>
     <td class="font-bold ${urgent(q.due)?'':'text-slate-500'}" style="${urgent(q.due)?'color:var(--navy)':''}">${q.due}</td>
-    <td><p class="mono font-bold text-slate-800">${q.pn}</p><p class="mono text-slate-400" style="font-size:10px">${q.nsn}</p><p class="text-slate-400" style="font-size:10px">${q.mfr}</p></td>
+    <td><p class="mono font-bold text-slate-800">${q.pn}</p><p class="mono text-slate-500" style="font-size:10px">${q.nsn}</p><p class="text-slate-500" style="font-size:10px">${q.mfr}</p></td>
     <td class="text-slate-600">${q.type}</td>
     <td class="font-bold text-slate-800">${q.dqty}</td>
     <td class="font-bold text-slate-800">${q.dqty}</td>
@@ -418,7 +418,7 @@ function buildRow(i, isOther){
     <td><input class="mdbbs-input" value="${mdbbs.toFixed(2)}" onchange="editMdbbs(${i}, this.value)"></td>
     <td class="font-bold text-slate-800">${money(q.supp)}</td>
     <td>${q.notes.map(n=>`<span class="note-chip">${n}</span>`).join('') || '<span class="text-slate-300">—</span>'}</td>
-    <td><p class="font-bold text-slate-900">${moneyShort(profit)}</p><p class="text-slate-400" style="font-size:10px">${moneyShort(cost)}</p></td>
+    <td><p class="font-bold text-slate-900">${moneyShort(profit)}</p><p class="text-slate-500" style="font-size:10px">${moneyShort(cost)}</p></td>
     <td><span class="roi-pill ${roiCls}">${roi.toLocaleString()}%</span></td>
     <td><div class="add-btn ${inBatch?'added':''} ${canAdd||inBatch?'':'disabled'}" title="${dup?'Same P/N already in batch':'Add to batch'}" onclick="toggleBatch(${i})">${inBatch?'&#10003;':'+'}</div></td>`;
   return tr;
