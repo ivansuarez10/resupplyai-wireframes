@@ -182,9 +182,10 @@
      the monitor where the live dashboard runs. Monitor placement in the artwork is
      set by --mx/--my (screen center, % of canvas) and --mw (screen width, % of canvas). ===== */
   #heroScrub{ height:260vh; }
-  .hs-stage{ position:sticky; top:0; height:100vh; overflow:hidden; background:var(--navy); border-radius:0;
+  .hs-stage{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; background:var(--navy); border-radius:0;
     --mx:50.04%; --my:48.57%; --mw:15.6%; --cw:max(100vw, 177.7778vh);
     --co:1; --cy:0px; --zs:1; --tx:0px; --ty:0px; --sh:1; --vo:0; --fit:.26; }
+  @supports (height: 100dvh){ .hs-stage{ --cw:max(100vw, 177.7778dvh); } }
   .hs-canvas{ position:absolute; left:50%; top:50%; margin-left:calc(var(--cw) / -2); margin-top:calc(var(--cw) * 9 / 32 * -1);
     width:var(--cw); aspect-ratio:16/9;
     transform:translate(var(--tx), var(--ty)) scale(var(--zs)); transform-origin:var(--mx) var(--my);
@@ -215,8 +216,15 @@
     opacity:var(--po, 0); transform:translate(-50%, calc(14px - var(--po, 0) * 14px));
     will-change:opacity, transform; pointer-events:none; }
   .hs-veil{ position:absolute; inset:0; z-index:4; background:#fff; opacity:var(--vo); pointer-events:none; }
-  /* Static fallback: reduced motion and small screens get the calm hero, no scrub */
-  @media (prefers-reduced-motion: reduce), (max-width:767px){
+  /* Phones run the full scrub too: portrait crops the scene sides and the monitor stays
+     centered. Re-assert the panel-aspect height (the generic <=760px app-body rule above
+     sets height:auto) and give the copy a bit more headroom. */
+  @media (max-width:767px){
+    .hs-copy{ padding-top:10vh; }
+    .hs-screen .app-body{ height:calc(100vw / 1.76 - 38px); }
+  }
+  /* Static fallback: reduced motion gets the calm hero, no scrub */
+  @media (prefers-reduced-motion: reduce){
     #heroScrub{ height:auto; }
     .hs-stage{ position:relative; height:auto; padding:104px 16px 56px; }
     .hs-canvas{ position:static; width:auto; aspect-ratio:auto; margin:0; transform:none; }
@@ -282,7 +290,8 @@
 
     <!-- Scene: warehouse office artwork; the live dashboard sits on the monitor screen -->
     <div class="hs-canvas" id="hsCanvas" aria-hidden="true">
-      <img class="hs-img" src="hero-scene-v3.jpg" alt="">
+      <img class="hs-img" src="hero-scene-v3.jpg"
+        srcset="hero-scene-v3-md.jpg 2200w, hero-scene-v3.jpg 5504w" sizes="100vw" alt="">
     </div>
     <div class="hs-screen" id="hsScreen" aria-hidden="true">
       <div class="app-win">
@@ -727,8 +736,7 @@ if(rotWord && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
 // lives in the CSS; the JS reads it so there is a single source of truth.
 // Static fallback (reduced motion, <768px) is pure CSS; the JS simply never engages.
 const scrubSec = document.getElementById('heroScrub');
-if(scrubSec && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-   && window.matchMedia('(min-width: 768px)').matches){
+if(scrubSec && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   const stage = scrubSec.querySelector('.hs-stage');
   const copy = document.getElementById('hsCopy');
   const clamp = (v,a,b)=>Math.min(b,Math.max(a,v));
