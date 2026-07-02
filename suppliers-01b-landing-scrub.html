@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResupplyAI for Suppliers · Landing · Scroll intro prototype</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#131c38; --ink:#0e1220; --primary:#2a3d88; --accent:#5e7ee8; --line:#e7eaf2; --muted:#5b6478; }
+  *{ font-family:'Inter', system-ui, sans-serif; }
+  h1,h2,h3,.display{ font-family:'Manrope','Inter',sans-serif; letter-spacing:-0.02em; }
+  html{ scroll-behavior:smooth; }
+  body{ background:#fff; color:#0e1220; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+
+  .container{ max-width:1120px; margin:0 auto; }
+  .nav{ position:fixed; top:0; left:0; right:0; z-index:50; background:rgba(255,255,255,0.85); backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+  .navlink{ font-size:14px; font-weight:500; color:#475067; transition:color .15s; }
+  .navlink:hover{ color:#0e1220; }
+
+  .btn-primary{ background:var(--navy); color:#fff; font-weight:600; transition:background .18s, transform .18s; }
+  .btn-primary:hover{ background:#0c142b; transform:translateY(-1px); }
+  .btn-line{ background:#fff; color:#0e1220; border:1px solid var(--line); font-weight:600; transition:border-color .18s, background .18s; }
+  .btn-line:hover{ border-color:#c5cce0; background:#fafbff; }
+  .btn-onnavy{ background:#fff; color:var(--navy); font-weight:600; transition:transform .18s, box-shadow .18s; }
+  .btn-onnavy:hover{ transform:translateY(-1px); box-shadow:0 12px 30px rgba(0,0,0,0.25); }
+  .btn-ghost-navy{ background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.16); font-weight:600; transition:background .18s; }
+  .btn-ghost-navy:hover{ background:rgba(255,255,255,0.14); }
+
+  /* Deep navy surface, static, no animated blobs */
+  .surface-navy{ position:relative; background:var(--navy); border-radius:24px; overflow:hidden; }
+  .surface-navy::before{ content:''; position:absolute; inset:0; background:
+      radial-gradient(110% 120% at 88% -10%, rgba(94,126,232,0.20), transparent 46%),
+      radial-gradient(90% 90% at 0% 110%, rgba(42,61,136,0.35), transparent 50%); pointer-events:none; }
+  /* fine grain for a premium, non-flat feel */
+  .grain::after{ content:''; position:absolute; inset:0; opacity:.05; pointer-events:none; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* ===== Logistics identity ===== */
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; }
+  /* manifest grid: faint warehouse-floor grid on navy surfaces */
+  .surface-navy::after, .showcase::after, .hero-gradient::after, .hs-stage::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:34px 34px; }
+  /* field-framed block: a labelled manifest-form field */
+  .field{ position:relative; border:1px solid var(--line); border-radius:10px; padding:14px 14px 12px; }
+  .field > .cap{ position:absolute; top:-8px; left:11px; background:#fff; padding:0 6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:500; letter-spacing:.14em;
+    color:var(--muted); text-transform:uppercase; }
+  .field.on-navy{ border-color:rgba(255,255,255,0.16); }
+  .field.on-navy > .cap{ background:var(--navy); color:rgba(255,255,255,0.6); }
+  /* dock-edge ruler: ticked rule marking section edges */
+  .ruler{ height:13px; background-image:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 22px);
+    border-bottom:1px solid var(--line); }
+
+  .card{ background:#fff; border:1px solid var(--line); border-radius:16px; transition:border-color .2s, box-shadow .2s; }
+  .card.hoverable:hover{ border-color:#d3d9ea; box-shadow:0 18px 40px rgba(20,28,56,0.07); }
+
+  .eel{ width:38px; height:38px; border-radius:10px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--primary); background:#f7f8fc; }
+  .stepno{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12px; font-weight:600; color:var(--accent); letter-spacing:.04em; }
+
+  .mini-row{ border-top:1px solid rgba(255,255,255,0.07); }
+  .tag{ font-size:10px; font-weight:600; letter-spacing:.02em; padding:3px 8px; border-radius:6px; }
+
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){ .reveal{ transition:none; opacity:1; transform:none; } }
+
+  /* How-it-works sequential reveal */
+  .steps-track{ position:relative; height:2px; background:var(--line); border-radius:2px; margin-bottom:30px; overflow:hidden; }
+  .steps-track .fill{ position:absolute; top:0; left:0; bottom:0; width:0; background:var(--accent); border-radius:2px; transition:width 1.4s cubic-bezier(.16,1,.3,1); }
+  .steps-track.go .fill{ width:100%; }
+  .step-card{ opacity:0; transform:translateY(28px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
+  .step-card.go{ opacity:1; transform:translateY(0); }
+  .step-card .stepno{ color:#c3cbe4; transition:color .5s ease; }
+  .step-card.go .stepno{ color:var(--accent); }
+  .step-card:nth-child(2), .step-card:nth-child(2) .stepno{ transition-delay:.18s; }
+  .step-card:nth-child(3), .step-card:nth-child(3) .stepno{ transition-delay:.36s; }
+  @media (prefers-reduced-motion: reduce){ .step-card{ transition:none; opacity:1; transform:none; } .step-card .stepno{ color:var(--accent); } .steps-track .fill{ transition:none; width:100%; } }
+
+  /* Rotating word in the WHY heading */
+  .rot{ display:inline-block; color:var(--primary); white-space:nowrap; overflow:hidden; vertical-align:bottom; text-align:left; transition:opacity .34s cubic-bezier(.16,1,.3,1), transform .34s cubic-bezier(.16,1,.3,1); will-change:opacity, transform; }
+  .rot.swap{ opacity:0; transform:translateY(-10px); }
+  @media (prefers-reduced-motion: reduce){ .rot{ transition:none; } }
+
+  /* Hero card: multi-screen quote demo */
+  .demo-stage{ position:relative; height:352px; }
+  .demo-screen{ position:absolute; inset:0; background:#fff; opacity:0; z-index:1; transform:translateX(16px); transition:opacity .26s ease, transform .44s cubic-bezier(.16,1,.3,1); pointer-events:none; }
+  .demo-screen.active{ opacity:1; transform:none; z-index:2; }
+  .demo-screen.leaving{ opacity:0; transform:translateX(-16px); z-index:1; }
+  .qbtn{ display:inline-flex; align-items:center; gap:5px; transition:transform .16s ease, background .25s ease; }
+  .qbtn.pressing{ transform:scale(.95); }
+  .qbtn svg{ width:13px; height:13px; }
+  .qstep{ width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; background:#eef1f8; color:var(--primary); font-weight:700; font-size:13px; transition:background .25s ease, transform .25s ease; }
+  .qstep.hot{ background:var(--primary); color:#fff; transform:scale(1.1); }
+  .demo-screen[data-s="3"].active .s3badge{ animation:pop .5s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes pop{ from{ opacity:0; transform:scale(.4); } to{ opacity:1; transform:scale(1); } }
+  .qspin{ width:12px; height:12px; animation:qspin .7s linear infinite; }
+  @keyframes qspin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .qspin{ animation:none; } .demo-screen{ transition:none; } .demo-screen[data-s="3"].active .s3badge{ animation:none; } }
+  *:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  .rule{ height:1px; background:var(--line); }
+
+  /* ===== How-it-works mini-demos (looping, CSS-only) ===== */
+  .step-demo{ height:120px; border-radius:12px; background:#f6f8fd; border:1px solid #e7eaf6; padding:12px 13px; overflow:hidden; position:relative; margin-bottom:18px; }
+  .sd-h{ font-size:10px; font-weight:700; letter-spacing:.05em; color:#5b6478; text-transform:uppercase; margin-bottom:10px; }
+  /* demo 1 · upload */
+  .sd-file{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--primary); background:#fff; border:1px solid #e7eaf6; border-radius:7px; padding:5px 9px; }
+  .sd-file svg{ width:13px; height:13px; }
+  .sd-bar{ height:7px; border-radius:5px; background:#e7eaf6; margin-top:13px; overflow:hidden; }
+  .sd-bar i{ display:block; height:100%; width:0; background:var(--accent); border-radius:5px; animation:sdFill 3.8s cubic-bezier(.16,1,.3,1) infinite; }
+  @keyframes sdFill{ 0%,6%{width:0} 56%{width:100%} 94%,100%{width:100%} }
+  .sd-imp{ display:flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--muted); margin-top:10px; }
+  .sd-imp svg{ width:13px; height:13px; color:var(--primary); opacity:0; animation:sdDone 3.8s steps(1,end) infinite; }
+  @keyframes sdDone{ 0%,54%{opacity:0} 60%,100%{opacity:1} }
+  /* demo 2 · matches populating */
+  .sd-m{ display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid #e7eaf6; border-radius:8px; padding:6px 9px; margin-top:7px; opacity:0; transform:translateY(6px); animation:sdMatch 3.9s ease infinite; }
+  .sd-m:nth-child(3){ animation-delay:.45s } .sd-m:nth-child(4){ animation-delay:.9s }
+  @keyframes sdMatch{ 0%,4%{opacity:0;transform:translateY(7px)} 16%,84%{opacity:1;transform:translateY(0)} 96%,100%{opacity:0;transform:translateY(-4px)} }
+  .sd-nsn{ font-size:11px; font-weight:600; color:#334155; }
+  .sd-tag{ font-size:9px; font-weight:700; color:var(--primary); background:rgba(42,61,136,0.1); padding:2px 6px; border-radius:5px; }
+  /* demo 3 · quote → quoted */
+  .sd-q{ display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid #e7eaf6; border-radius:8px; padding:9px 11px; margin-top:14px; }
+  .sd-qi{ font-size:11px; } .sd-qi b{ color:#334155; } .sd-qi span{ color:#94a3b8; }
+  .sd-qbtn{ position:relative; font-size:10px; font-weight:700; color:#fff; background:var(--navy); border-radius:7px; padding:6px 0; width:74px; text-align:center; animation:sdPress 3.4s ease infinite; }
+  .sd-qbtn .l{ display:inline-flex; align-items:center; gap:4px; justify-content:center; }
+  .sd-qbtn .l svg{ width:11px; height:11px; }
+  .sd-qbtn .l2{ position:absolute; inset:0; opacity:0; animation:sdFade2 3.4s steps(1,end) infinite; }
+  .sd-qbtn .l1{ animation:sdFade1 3.4s steps(1,end) infinite; }
+  @keyframes sdFade1{ 0%,46%{opacity:1} 50%,96%{opacity:0} 100%{opacity:1} }
+  @keyframes sdFade2{ 0%,46%{opacity:0} 50%,96%{opacity:1} 100%{opacity:0} }
+  @keyframes sdPress{ 0%,44%{transform:scale(1)} 48%{transform:scale(.92)} 56%,100%{transform:scale(1)} }
+  @media (prefers-reduced-motion: reduce){
+    .sd-bar i{ animation:none; width:100% } .sd-imp svg{ animation:none; opacity:1 }
+    .sd-m{ animation:none; opacity:1; transform:none } .sd-qbtn,.sd-qbtn .l1,.sd-qbtn .l2{ animation:none }
+    .sd-qbtn .l1{ opacity:0 } .sd-qbtn .l2{ opacity:1 }
+  }
+
+  /* ===== Custom 2-tone monoline icon set (signature: navy line + accent detail) ===== */
+  .ico{ width:23px; height:23px; }
+  .ico-main{ fill:none; stroke:var(--primary); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .ico-ac{ fill:var(--accent); stroke:none; }
+  .ico-acs{ fill:none; stroke:var(--accent); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* ===== New sections: differentiation, trust, FAQ ===== */
+  .diff-n{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:13px; font-weight:600; color:var(--accent); letter-spacing:.02em; flex-shrink:0; padding-top:3px; }
+  .trust-item{ padding-top:16px; border-top:2px solid var(--primary); }
+  .faq details{ border-bottom:1px solid var(--line); }
+  .faq details:first-child{ border-top:1px solid var(--line); }
+  .faq summary{ list-style:none; cursor:pointer; padding:19px 2px; display:flex; align-items:center; justify-content:space-between; gap:18px;
+    font-family:'Manrope',sans-serif; font-weight:600; font-size:17px; letter-spacing:-0.01em; color:#0e1220; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary .chev{ width:18px; height:18px; flex-shrink:0; color:var(--muted); transition:transform .25s ease; }
+  .faq details[open] summary .chev{ transform:rotate(180deg); }
+  .faq .ans{ padding:0 2px 20px; font-size:15px; line-height:1.65; color:var(--muted); max-width:46rem; }
+
+  /* ===== Product showcase (navy band) ===== */
+  .showcase{ position:relative; background:var(--navy); border-radius:26px; overflow:hidden; }
+  .showcase::before{ content:''; position:absolute; inset:0; pointer-events:none; background:
+    radial-gradient(120% 130% at 85% -15%, rgba(94,126,232,0.22), transparent 48%),
+    radial-gradient(90% 90% at -5% 110%, rgba(42,61,136,0.40), transparent 52%); }
+  .app-win{ background:#fff; border-radius:14px; box-shadow:0 50px 110px rgba(0,0,0,0.5); overflow:hidden; border:1px solid rgba(255,255,255,0.08); }
+  .app-bar{ height:38px; background:#f1f3f9; display:flex; align-items:center; padding:0 14px; border-bottom:1px solid #e5e8f0; }
+  .app-dot{ width:10px; height:10px; border-radius:50%; background:#d2d7e2; margin-right:7px; }
+  .app-url{ flex:1; margin-left:8px; height:22px; background:#fff; border:1px solid #e5e8f0; border-radius:7px; font-size:11px; color:#8a93a8; display:flex; align-items:center; padding:0 11px; }
+  .app-body{ display:flex; height:402px; background:#f5f7fc; }
+  .app-side{ width:188px; background:#fff; border-right:1px solid #eef1f8; padding:16px 0; flex-shrink:0; }
+  .app-side .brand{ display:flex; align-items:center; gap:7px; padding:0 16px 18px; }
+  .app-nav{ display:flex; align-items:center; gap:9px; margin:2px 10px; padding:8px 12px; border-radius:9px; font-size:12.5px; font-weight:600; color:#64748b; }
+  .app-nav.on{ background:rgba(42,61,136,0.09); color:var(--primary); }
+  .app-nav svg{ width:15px; height:15px; flex-shrink:0; }
+  .app-main{ flex:1; padding:18px 20px; overflow:hidden; }
+  .app-q{ background:var(--navy); border-radius:14px; padding:15px 18px; display:flex; align-items:center; justify-content:space-between; color:#fff; }
+  .app-row{ background:#fff; border:1px solid #eef1f8; border-radius:11px; padding:11px 14px; display:flex; align-items:center; gap:14px; margin-top:9px; }
+  .app-badge{ font-size:9px; font-weight:700; letter-spacing:.03em; padding:2px 7px; border-radius:5px; white-space:nowrap; }
+  .app-qbtn{ font-size:11px; font-weight:600; color:#fff; background:var(--navy); padding:6px 15px; border-radius:8px; white-space:nowrap; }
+  @media (max-width:760px){ .app-side{ display:none; } .app-body{ height:auto; } .app-row{ flex-wrap:wrap; } }
+
+  /* ===== Scroll-scrub hero (prototype): warehouse office scene, camera pushes into
+     the monitor where the live dashboard runs. Monitor placement in the artwork is
+     set by --mx/--my (screen center, % of canvas) and --mw (screen width, % of canvas). ===== */
+  #heroScrub{ height:260vh; }
+  .hs-stage{ position:sticky; top:0; height:100vh; overflow:hidden; background:var(--navy); border-radius:0;
+    --mx:50.04%; --my:48.57%; --mw:15.6%; --cw:max(100vw, 177.7778vh);
+    --co:1; --cy:0px; --zs:1; --tx:0px; --ty:0px; --sh:1; --vo:0; --fit:.26; }
+  .hs-canvas{ position:absolute; left:50%; top:50%; margin-left:calc(var(--cw) / -2); margin-top:calc(var(--cw) * 9 / 32 * -1);
+    width:var(--cw); aspect-ratio:16/9;
+    transform:translate(var(--tx), var(--ty)) scale(var(--zs)); transform-origin:var(--mx) var(--my);
+    will-change:transform; }
+  .hs-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:fill; display:block; }
+  /* The dashboard lives OUTSIDE the scaled canvas, in its own layer anchored to the
+     monitor screen point (--scx/--scy) with its own scale (--sfit). Rendering it at
+     100vw layout width means the final raster is ~1:1, so text ends crisp instead of
+     being a GPU-stretched copy of a tiny raster. */
+  .hs-screen{ position:absolute; left:var(--scx, 50%); top:var(--scy, 50%);
+    width:0; height:0; pointer-events:none; opacity:var(--so, .22); }
+  .hs-screen .app-win{ position:absolute; top:0; left:0; width:100vw;
+    transform:translate(-50%,-50%) scale(var(--sfit, .19)); transform-origin:center;
+    border-radius:6px; box-shadow:none; }
+  /* Dashboard height matches the measured panel aspect (1.76) and sits just inside
+     the iMac's black bezel, so the frame stays visible: it is never full-bleed glass. */
+  .hs-screen .app-body{ height:calc(100vw / 1.76 - 38px); }
+  .hs-shade{ position:absolute; inset:0; z-index:1; pointer-events:none; opacity:var(--sh); background:
+    linear-gradient(180deg, rgba(14,18,32,0.86) 0%, rgba(14,18,32,0.55) 48%, rgba(14,18,32,0.28) 100%); }
+  .hs-copy{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center;
+    text-align:center; padding-top:12vh; opacity:var(--co); transform:translateY(var(--cy));
+    will-change:opacity, transform; }
+  .hs-copy.gone{ pointer-events:none; }
+  /* Mid-push caption: the supporting line rides the zoom in the lower-left corner,
+     appearing after the headline exits so it never competes with it. */
+  .hs-cap{ position:absolute; z-index:2; left:50%; bottom:9vh; width:min(36rem, 76vw); text-align:center;
+    font-size:15px; line-height:1.75; color:rgba(255,255,255,0.80);
+    opacity:var(--po, 0); transform:translate(-50%, calc(14px - var(--po, 0) * 14px));
+    will-change:opacity, transform; pointer-events:none; }
+  .hs-veil{ position:absolute; inset:0; z-index:4; background:#fff; opacity:var(--vo); pointer-events:none; }
+  /* Static fallback: reduced motion and small screens get the calm hero, no scrub */
+  @media (prefers-reduced-motion: reduce), (max-width:767px){
+    #heroScrub{ height:auto; }
+    .hs-stage{ position:relative; height:auto; padding:104px 16px 56px; }
+    .hs-canvas{ position:static; width:auto; aspect-ratio:auto; margin:0; transform:none; }
+    .hs-img, .hs-shade{ display:none; }
+    .hs-screen{ position:static; transform:none; width:min(1000px, 94vw); aspect-ratio:auto;
+      margin:44px auto 0; pointer-events:auto; opacity:1; height:auto; }
+    .hs-screen .app-win{ position:static; width:100%; transform:none; border-radius:14px;
+      box-shadow:0 30px 70px rgba(0,0,0,0.32); }
+    .hs-screen .app-body{ height:auto; min-height:280px; }
+    .hs-copy{ opacity:1; transform:none; padding-top:0; }
+    .hs-cap{ position:static; opacity:1; transform:none; width:auto; max-width:31rem; margin:18px auto 0;
+      text-align:center; color:rgba(255,255,255,0.74); }
+    .hs-veil{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container px-5 h-16 flex items-center justify-between">
+    <a href="suppliers-01-landing.html" class="flex items-baseline gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:22px;width:auto;object-fit:contain">
+      <span class="text-sm font-medium" style="color:var(--muted)">Suppliers</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#how" class="navlink">How it works</a>
+      <a href="#why" class="navlink">Why ResupplyAI</a>
+      <a href="suppliers-contact.html" class="navlink">Contact</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="suppliers-09-login.html" class="navlink px-3 py-2">Sign in</a>
+      <a href="suppliers-02-signup.html" class="btn-primary text-sm px-4 py-2 rounded-lg">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO · scroll-scrub intro: copy exits, the camera pushes into the product window -->
+<section id="heroScrub">
+  <div class="hs-stage">
+    <div class="hs-copy px-4" id="hsCopy">
+      <h1 class="text-white text-[2.6rem] md:text-[3.6rem] leading-[1.02] font-extrabold mb-8" style="letter-spacing:-0.035em; max-width:17ch">
+        Your inventory is what the DLA is buying.
+      </h1>
+      <div class="flex flex-wrap justify-center gap-3 mb-10">
+        <a href="suppliers-02-signup.html" class="btn-onnavy text-sm px-6 py-3.5 rounded-xl">Upload your inventory</a>
+        <a href="#how" class="btn-ghost-navy text-sm px-6 py-3.5 rounded-xl">See how it works</a>
+      </div>
+      <div class="flex items-stretch gap-4 w-full" style="max-width:34rem">
+        <div class="field on-navy" style="flex:1"><span class="cap">DLA on contract</span>
+          <p class="display text-[2.1rem] font-bold text-white leading-none">$55.4B</p>
+          <p class="text-xs mt-1" style="color:rgba(255,255,255,0.5)">obligated in FY2025</p></div>
+        <div class="field on-navy" style="flex:1"><span class="cap">Cost to you</span>
+          <p class="display text-[2.1rem] font-bold text-white leading-none">$0</p>
+          <p class="text-xs mt-1" style="color:rgba(255,255,255,0.5)">to join and to quote</p></div>
+      </div>
+    </div>
+
+    <!-- Mid-push caption: rides the camera move once the headline has exited -->
+    <p class="hs-cap" id="hsCap">
+      Every morning, ResupplyAI matches your stock against the day's DLA solicitations and shows you exactly which items are worth quoting. You sell more of what you already carry, and it costs you nothing.
+    </p>
+
+    <!-- Scene: warehouse office artwork; the live dashboard sits on the monitor screen -->
+    <div class="hs-canvas" id="hsCanvas" aria-hidden="true">
+      <img class="hs-img" src="hero-scene-v3.jpg" alt="">
+    </div>
+    <div class="hs-screen" id="hsScreen" aria-hidden="true">
+      <div class="app-win">
+        <div class="app-bar"><span class="app-dot"></span><span class="app-dot"></span><span class="app-dot"></span><span class="app-url">app.resupply.ai/matches</span></div>
+        <div class="app-body">
+          <div class="app-side">
+            <div class="brand"><img src="logo-normal.png" alt="" style="height:18px;width:auto;object-fit:contain"><span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span></div>
+            <div class="app-nav on"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Daily Matches</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Quotes</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>My Inventory</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3c.4-1.8 2.9-1.8 3.4 0a1.7 1.7 0 002.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 001 2.5c1.8.5 1.8 3 0 3.4a1.7 1.7 0 00-1 2.6c.9 1.5-.8 3.3-2.4 2.4a1.7 1.7 0 00-2.6 1c-.4 1.8-2.9 1.8-3.4 0a1.7 1.7 0 00-2.5-1c-1.6.9-3.3-.9-2.4-2.4a1.7 1.7 0 00-1-2.6c-1.8-.4-1.8-2.9 0-3.4a1.7 1.7 0 001-2.5c-.9-1.6.9-3.3 2.4-2.4 1 .6 2.3.1 2.5-1z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
+          </div>
+          <div class="app-main">
+            <p class="text-[11px] font-bold uppercase tracking-widest mb-2.5" style="color:#5b6478">Today's quote queue</p>
+            <div class="app-q">
+              <div><p class="text-xl font-bold leading-none mb-1.5">12 of 47 reviewed</p><p class="text-xs" style="color:rgba(255,255,255,0.62)">2 high-value left · $236,400 quoted</p></div>
+              <span class="text-xs font-semibold px-4 py-2.5 rounded-lg" style="background:#fff;color:var(--navy)">Quote all in-stock</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:var(--navy);color:#fff">HIGH VALUE</span><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">2530-01-687-4521 · Brake Drum Assembly</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 120 · Jun 19</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$1,840</span>
+              <span class="app-qbtn flex-shrink-0" style="background:#fff;color:var(--navy);border:1px solid #e7eaf6"><svg style="width:11px;height:11px;display:inline;vertical-align:-1px;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Quoted</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:var(--navy);color:#fff">HIGH VALUE</span><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">1560-01-445-8821 · Structural Panel</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 45 · Jun 20</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$4,210</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+            <div class="app-row" style="opacity:.62">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">P/N match · confirm part</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">5320-01-119-8876 · Rivet, Solid</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 5,000 · Jun 27</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$0.85</span>
+              <span class="app-qbtn flex-shrink-0" style="background:#fff;color:var(--navy);border:1px solid #e7eaf6">Details</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">4730-01-556-1243 · Hose Assembly</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 80 · Jul 1</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$210</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+            <div class="app-row" style="opacity:.85">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">5340-01-234-8823 · Bracket</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 500 · Jul 3</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$92</span>
+              <span class="app-qbtn flex-shrink-0" style="background:#fff;color:var(--navy);border:1px solid #e7eaf6"><svg style="width:11px;height:11px;display:inline;vertical-align:-1px;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Quoted</span>
+            </div>
+            <div class="app-row" style="opacity:.68">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">5305-01-112-3344 · Screw, Machine</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 1,200 · Jul 8</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$14</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+            <div class="app-row" style="opacity:.45">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">5306-01-338-2901 · Bolt, Machine</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 2,400 · Jul 10</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$2.10</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hs-shade"></div>
+
+    <div class="hs-veil"></div>
+  </div>
+</section>
+
+<section class="px-4 pt-10 pb-2">
+  <div class="container">
+    <p class="text-sm text-center" style="color:var(--muted)">For dealers, distributors and manufacturers registered to sell to the DLA.</p>
+    <div class="ruler mt-10"></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="px-4 py-20">
+  <div class="container">
+    <div class="grid lg:grid-cols-12 gap-10 items-start reveal">
+      <div class="lg:col-span-5">
+        <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-slate-900 leading-[1.1]">You already sell to the DLA. You just can't see every order that fits your shelf.</h2>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <p class="text-lg leading-relaxed" style="color:var(--muted)">
+          The DLA posts thousands of solicitations a day. A handful match your stock exactly, but finding them by hand, one email at a time, isn't realistic. So the right orders pass you by and good inventory sits on the shelf.
+        </p>
+        <p class="text-lg leading-relaxed mt-4" style="color:var(--muted)">
+          ResupplyAI does the matching for you, every morning, against everything you carry.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="ruler"></div></div>
+
+<!-- DIFFERENTIATION -->
+<section class="px-4 py-20">
+  <div class="container">
+    <div class="grid lg:grid-cols-12 gap-10 items-start">
+      <div class="lg:col-span-5 reveal">
+        <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-slate-900 leading-[1.1]">Most tools help you chase contracts. We bring the orders to your shelf.</h2>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7 reveal" style="display:flex;flex-direction:column;gap:22px">
+        <div class="flex gap-4">
+          <span class="diff-n">01</span>
+          <div><h3 class="text-base font-semibold text-slate-900 mb-1">Inventory-first, not bid-first</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">You don't hunt solicitations. We match the DLA's daily demand against the stock you already carry.</p></div>
+        </div>
+        <div class="flex gap-4">
+          <span class="diff-n">02</span>
+          <div><h3 class="text-base font-semibold text-slate-900 mb-1">Free, you only earn with a sale</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">No subscription, no per-bid fees. You make money when a buyer wins an award with your quote and buys from you.</p></div>
+        </div>
+        <div class="flex gap-4">
+          <span class="diff-n">03</span>
+          <div><h3 class="text-base font-semibold text-slate-900 mb-1">Done-for-you matching</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">Reading thousands of solicitations is our job. Yours is to quote the few that fit, or skip them.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="ruler"></div></div>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="px-4 py-20">
+  <div class="container">
+    <div class="max-w-2xl mb-12 reveal">
+      <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-slate-900 leading-tight">From your shelf to a DLA quote in three steps.</h2>
+    </div>
+    <div class="steps-track" aria-hidden="true"><span class="fill"></span></div>
+    <div class="grid md:grid-cols-3 gap-6" id="stepsGrid">
+      <div class="card hoverable p-6 step-card">
+        <div class="step-demo">
+          <p class="sd-h">Importing</p>
+          <span class="sd-file"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-6 4h6m2 4H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/></svg> inventory.xlsx</span>
+          <div class="sd-bar"><i></i></div>
+          <div class="sd-imp"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> 1,284 items synced</div>
+        </div>
+        <p class="stepno mb-3">STEP 01</p>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">Upload your inventory</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Drop in an Excel or CSV, or connect your stock system. NSN, part number, condition, quantity, lead time. Do it once, we keep it in sync.</p>
+      </div>
+      <div class="card hoverable p-6 step-card">
+        <div class="step-demo">
+          <p class="sd-h">Today's matches</p>
+          <div class="sd-m"><span class="mono sd-nsn">2530-01-687-4521</span><span class="sd-tag">Match</span></div>
+          <div class="sd-m"><span class="mono sd-nsn">5340-01-234-8823</span><span class="sd-tag">Match</span></div>
+          <div class="sd-m"><span class="mono sd-nsn">5305-01-112-3344</span><span class="sd-tag">Match</span></div>
+        </div>
+        <p class="stepno mb-3">STEP 02</p>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">Get your daily matches</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Each morning, see the DLA solicitations that line up with your stock, ranked by urgency and volume, priced from your own sheet.</p>
+      </div>
+      <div class="card hoverable p-6 step-card">
+        <div class="step-demo">
+          <p class="sd-h">Brake Drum Assembly</p>
+          <div class="sd-q">
+            <span class="sd-qi"><b>120 EA</b> <span>· $1,840</span></span>
+            <span class="sd-qbtn">
+              <span class="l l1">Quote</span>
+              <span class="l l2"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Quoted</span>
+            </span>
+          </div>
+          <p class="sd-h" style="margin:11px 0 0">Assigned to an active buyer</p>
+        </div>
+        <p class="stepno mb-3">STEP 03</p>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">Quote what you want</h3>
+        <p class="text-sm leading-relaxed" style="color:var(--muted)">Confirm the stock and the price, and we assign your quote to an active buyer. If they win the award, they buy from you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT SHOWCASE (navy band) -->
+<section class="px-4 pt-8 pb-20">
+  <div class="container">
+    <div class="showcase p-7 md:p-14 reveal">
+      <div class="relative max-w-2xl mb-9" style="z-index:1">
+        <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-white leading-tight mb-3">Your whole day, in one screen.</h2>
+        <p class="text-lg" style="color:rgba(255,255,255,0.72)">Every match ranked and ready, priced from your own sheet. Quote what fits, skip the rest. A few minutes a day.</p>
+      </div>
+      <div class="relative app-win" style="z-index:1">
+        <div class="app-bar"><span class="app-dot"></span><span class="app-dot"></span><span class="app-dot"></span><span class="app-url">app.resupply.ai/matches</span></div>
+        <div class="app-body">
+          <div class="app-side">
+            <div class="brand"><img src="logo-normal.png" alt="" style="height:18px;width:auto;object-fit:contain"><span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(42,61,136,0.1);color:var(--primary)">SUPPLIER</span></div>
+            <div class="app-nav on"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Daily Matches</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>My Quotes</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>My Inventory</div>
+            <div class="app-nav"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.3 4.3c.4-1.8 2.9-1.8 3.4 0a1.7 1.7 0 002.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 001 2.5c1.8.5 1.8 3 0 3.4a1.7 1.7 0 00-1 2.6c.9 1.5-.8 3.3-2.4 2.4a1.7 1.7 0 00-2.6 1c-.4 1.8-2.9 1.8-3.4 0a1.7 1.7 0 00-2.5-1c-1.6.9-3.3-.9-2.4-2.4a1.7 1.7 0 00-1-2.6c-1.8-.4-1.8-2.9 0-3.4a1.7 1.7 0 001-2.5c-.9-1.6.9-3.3 2.4-2.4 1 .6 2.3.1 2.5-1z"/><circle cx="12" cy="12" r="3"/></svg>Settings</div>
+          </div>
+          <div class="app-main">
+            <p class="text-[11px] font-bold uppercase tracking-widest mb-2.5" style="color:#5b6478">Today's quote queue</p>
+            <div class="app-q">
+              <div><p class="text-xl font-bold leading-none mb-1.5">12 of 47 reviewed</p><p class="text-xs" style="color:rgba(255,255,255,0.62)">2 high-value left · $236,400 quoted</p></div>
+              <span class="text-xs font-semibold px-4 py-2.5 rounded-lg" style="background:#fff;color:var(--navy)">Quote all in-stock</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:var(--navy);color:#fff">HIGH VALUE</span><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">2530-01-687-4521 · Brake Drum Assembly</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 120 · Jun 19</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$1,840</span>
+              <span class="app-qbtn flex-shrink-0" style="background:#fff;color:var(--navy);border:1px solid #e7eaf6"><svg style="width:11px;height:11px;display:inline;vertical-align:-1px;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Quoted</span>
+            </div>
+            <div class="app-row">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:var(--navy);color:#fff">HIGH VALUE</span><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">1560-01-445-8821 · Structural Panel</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 45 · Jun 20</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$4,210</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+            <div class="app-row" style="opacity:.62">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">P/N match · confirm part</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">5320-01-119-8876 · Rivet, Solid</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 5,000 · Jun 27</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$0.85</span>
+              <span class="app-qbtn flex-shrink-0" style="background:#fff;color:var(--navy);border:1px solid #e7eaf6">Details</span>
+            </div>
+            <div class="app-row" style="opacity:.32">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1"><span class="app-badge" style="background:rgba(42,61,136,0.1);color:var(--primary)">NSN match</span></div>
+                <p class="mono text-sm font-semibold text-slate-900 truncate">4730-01-556-1243 · Hose Assembly</p>
+              </div>
+              <div class="text-xs text-slate-500 flex-shrink-0 hidden sm:block">DLA needs 80 · Jul 1</div>
+              <span class="text-sm font-semibold text-slate-800 flex-shrink-0">$210</span>
+              <span class="app-qbtn flex-shrink-0">Quote</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why" class="px-4 py-20">
+  <div class="container">
+    <div class="max-w-2xl mb-12 reveal">
+      <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-slate-900 leading-tight">Built to <span class="rot" id="rotWord">move</span> the inventory you already hold.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-x-12 gap-y-10">
+      <div class="reveal flex gap-4">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><path class="ico-main" d="M4.5 13a8 8 0 0 1 8-8M8.5 13a4 4 0 0 1 4-4"/><circle class="ico-ac" cx="12.5" cy="13" r="2.1"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">High-value alerts</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">When the DLA needs something it has paid well for in the past and you carry it, we flag it. You don't miss the orders that matter most.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-4" style="transition-delay:.08s">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><path class="ico-main" d="M6.3 4.4l9.7 5.7-4.3 1.2-1.8 4.2-3.6-11.1z"/><path class="ico-acs" d="M16 5.6a4.2 4.2 0 0 1 2.7 3"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">Quote in two clicks</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">Confirm stock, set your price, attach docs, done. No more reading through hundreds of solicitations to find the few that fit.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-4" style="transition-delay:.12s">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><circle class="ico-main" cx="12" cy="12" r="8.4"/><path class="ico-acs" d="M6.5 6.5l11 11"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">No fees, ever</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">No subscription, no listing fees. You only ever make a sale when a buyer wins an award with your quote and purchases from you.</p>
+        </div>
+      </div>
+      <div class="reveal flex gap-4" style="transition-delay:.16s">
+        <div class="eel flex-shrink-0"><svg class="ico" viewBox="0 0 24 24"><path class="ico-main" d="M12 3.2l7 2.6v5.2c0 4.2-3 7.4-7 8.6-4-1.2-7-4.4-7-8.6V5.8L12 3.2z"/><circle class="ico-ac" cx="12" cy="10.6" r="1.5"/><path class="ico-acs" d="M12 12.1v2.3"/></svg></div>
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-1.5">Your buyers stay private</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)">You quote to ResupplyAI and we handle the assignment. No bidding wars, no exposing your pricing to competitors. Just the sale.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="ruler"></div></div>
+
+<!-- TRUST & SECURITY -->
+<section class="px-4 py-20">
+  <div class="container">
+    <div class="max-w-2xl mb-12 reveal">
+      <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-slate-900 leading-tight">Built for the way the government handles data.</h2>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
+      <div class="trust-item reveal"><h3 class="text-base font-semibold text-slate-900 mb-1.5">Your pricing stays private</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">You quote to ResupplyAI, never into an open board. Competitors never see your numbers.</p></div>
+      <div class="trust-item reveal" style="transition-delay:.06s"><h3 class="text-base font-semibold text-slate-900 mb-1.5">You control your buyers</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">We route your quote to an active buyer and handle the assignment, no bidding wars, no exposure.</p></div>
+      <div class="trust-item reveal" style="transition-delay:.12s"><h3 class="text-base font-semibold text-slate-900 mb-1.5">Export-control aware</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">At every upload you confirm your files carry no export-controlled (ITAR/EAR) or restricted material.</p></div>
+      <div class="trust-item reveal" style="transition-delay:.18s"><h3 class="text-base font-semibold text-slate-900 mb-1.5">Encrypted &amp; access-controlled</h3><p class="text-sm leading-relaxed" style="color:var(--muted)">Data is encrypted in transit and scoped to your company account.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="container px-4"><div class="ruler"></div></div>
+
+<!-- FAQ -->
+<section class="px-4 py-20">
+  <div class="container" style="max-width:48rem">
+    <div class="mb-8 reveal">
+      <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-slate-900 leading-tight">Questions suppliers ask.</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>Is ResupplyAI really free? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Yes, no subscription and no listing fees. We only make money when a buyer wins an award with your quote and purchases from you.</p>
+      </details>
+      <details>
+        <summary>Do you see or share my pricing? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Your pricing stays private. You quote to ResupplyAI and we assign it to a buyer. Your competitors never see your numbers, and there's no open bidding war.</p>
+      </details>
+      <details>
+        <summary>Who are the buyers? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Companies actively bidding on DLA solicitations. We route your quote to one that fits, and you only sell if they win the award.</p>
+      </details>
+      <details>
+        <summary>What about export-controlled (ITAR/EAR) parts? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">At every upload you confirm your files contain no export-controlled or otherwise restricted material. Only share what you're authorized to share through the platform.</p>
+      </details>
+      <details>
+        <summary>How fast will I see matches? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">Upload your inventory today and see your first matches tomorrow morning, refreshed every day against the latest solicitations.</p>
+      </details>
+      <details>
+        <summary>Do I have to quote everything? <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="ans">No. Quote the matches you want and skip the rest. Most suppliers spend just a few minutes a day in the queue.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-4 pt-6 pb-20">
+  <div class="container">
+    <div class="surface-navy grain p-10 md:p-16 reveal">
+      <div class="relative max-w-2xl" style="z-index:1">
+        <h2 class="text-[2rem] md:text-[2.75rem] font-bold text-white leading-tight mb-4">Stop sending quotes one at a time.</h2>
+        <p class="text-lg mb-8" style="color:rgba(255,255,255,0.72)">Upload your inventory today and see your first matches tomorrow morning. Free to join.</p>
+        <a href="suppliers-02-signup.html" class="btn-onnavy inline-block text-sm px-7 py-4 rounded-xl">Create a free supplier account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="px-4 py-10">
+  <div class="container flex flex-col md:flex-row items-center justify-between gap-4 pt-8" style="border-top:1px solid var(--line)">
+    <div class="flex items-baseline gap-2">
+      <img src="logo-normal.png" alt="ResupplyAI" style="height:20px;width:auto;object-fit:contain">
+      <span class="text-sm font-medium" style="color:var(--muted)">Suppliers</span>
+    </div>
+    <div class="flex items-center gap-6 text-sm font-medium" style="color:var(--muted)">
+      <a href="suppliers-legal-terms.html" class="hover:text-slate-900 transition-colors">Terms</a>
+      <a href="suppliers-legal-privacy.html" class="hover:text-slate-900 transition-colors">Privacy</a>
+      <a href="suppliers-contact.html" class="hover:text-slate-900 transition-colors">Contact</a>
+    </div>
+    <p class="text-sm" style="color:#9aa3b8">© 2026 ResupplyAI</p>
+  </div>
+  <p class="container text-xs text-center mt-6" style="color:#aab2c5;max-width:760px">ResupplyAI uses automated matching (AI) to surface opportunities and rank them; a person on our team reviews and assigns every quote. It's decision support, it doesn't guarantee an award.</p>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } }); }, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// How-it-works step cascade
+const stepsGrid = document.getElementById('stepsGrid');
+const stepsTrack = document.querySelector('.steps-track');
+let stepsDone = false;
+function revealSteps(){ if(stepsDone) return; stepsDone = true; if(stepsTrack) stepsTrack.classList.add('go'); if(stepsGrid) stepsGrid.querySelectorAll('.step-card').forEach(c=>c.classList.add('go')); }
+if(stepsGrid){
+  const so = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ revealSteps(); so.disconnect(); } }); }, {threshold:.2});
+  so.observe(stepsGrid);
+}
+
+// Safety net: fast scroll or anchor jumps can skip an IntersectionObserver. On scroll,
+// reveal anything that has reached the viewport so nothing is ever left blank.
+let revTicking = false;
+function revealCheck(){
+  revTicking = false; const vh = window.innerHeight;
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>{ if(el.getBoundingClientRect().top < vh*0.92) el.classList.add('visible'); });
+  if(!stepsDone && stepsGrid && stepsGrid.getBoundingClientRect().top < vh*0.85) revealSteps();
+}
+window.addEventListener('scroll', ()=>{ if(!revTicking){ revTicking = true; requestAnimationFrame(revealCheck); } }, {passive:true});
+window.addEventListener('resize', revealCheck, {passive:true});
+revealCheck();
+
+// Rotating word: move → quote → sell, every 3s
+const rotWord = document.getElementById('rotWord');
+if(rotWord && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const words = ['move','quote','sell'];
+  let widths = [], i = 0, started = false;
+  // measure each word's exact width so the span fits it precisely (no trailing gap, no jump)
+  function measure(){
+    const prev = rotWord.style.width; rotWord.style.width = 'auto';
+    widths = words.map(word=>{ rotWord.textContent = word; return Math.ceil(rotWord.getBoundingClientRect().width); });
+    rotWord.textContent = words[i];
+    rotWord.style.width = widths[i] + 'px';
+  }
+  function start(){ if(started) return; started = true; measure();
+    setInterval(()=>{
+      rotWord.classList.add('swap');
+      setTimeout(()=>{ i = (i+1) % words.length; rotWord.textContent = words[i]; rotWord.style.width = widths[i] + 'px'; rotWord.classList.remove('swap'); }, 340);
+    }, 3000);
+  }
+  // measure only after the heading font (Manrope) has loaded — measuring with the
+  // fallback font gives wider numbers and leaves an extra gap before "the".
+  if(document.fonts && document.fonts.ready){ document.fonts.ready.then(start); }
+  setTimeout(start, 1200);                                   // fallback if fonts.ready stalls
+  let rtm; window.addEventListener('resize', ()=>{ clearTimeout(rtm); rtm = setTimeout(()=>{ if(started) measure(); }, 200); }, {passive:true});
+}
+
+// Scroll-scrub hero: maps scroll progress inside #heroScrub to a camera push into the
+// monitor of the warehouse-office scene, where the live dashboard runs. Transform and
+// opacity only, driven through CSS custom properties. Monitor placement (--mx/--my/--mw)
+// lives in the CSS; the JS reads it so there is a single source of truth.
+// Static fallback (reduced motion, <768px) is pure CSS; the JS simply never engages.
+const scrubSec = document.getElementById('heroScrub');
+if(scrubSec && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+   && window.matchMedia('(min-width: 768px)').matches){
+  const stage = scrubSec.querySelector('.hs-stage');
+  const copy = document.getElementById('hsCopy');
+  const clamp = (v,a,b)=>Math.min(b,Math.max(a,v));
+  const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1);
+  const easeInOut = t=>t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  const cs = getComputedStyle(stage);
+  const MX = parseFloat(cs.getPropertyValue('--mx'))/100;   // monitor screen center x, fraction of canvas
+  const MY = parseFloat(cs.getPropertyValue('--my'))/100;   // monitor screen center y
+  const MW = parseFloat(cs.getPropertyValue('--mw'))/100;   // monitor screen width
+  let mxPx, myPx, cw, zsEnd;
+  function measure(){
+    const vw = window.innerWidth, vh = window.innerHeight;
+    cw = Math.max(vw, vh*16/9);                             // canvas covers the viewport at 16:9
+    const ch2 = cw*9/16;
+    mxPx = (vw-cw)/2 + MX*cw;                               // monitor center in viewport px at scale 1
+    myPx = (vh-ch2)/2 + MY*ch2;
+    zsEnd = vw/(MW*cw) * 1.04;                              // screen fills the viewport, slight overshoot
+  }
+  function render(p){
+    const exit = seg(p, .04, .26);                 // copy fades and lifts away
+    const shade = seg(p, .10, .42);                // contrast shade over the scene clears
+    const push = easeInOut(seg(p, .10, .90));      // camera push toward the monitor
+    const zs = 1 + (zsEnd-1)*push;
+    const tx = (window.innerWidth/2 - mxPx)*push;  // monitor center drifts to viewport center
+    const ty = (window.innerHeight/2 - myPx)*push;
+    stage.style.setProperty('--co', (1-exit).toFixed(3));
+    stage.style.setProperty('--cy', (-44*exit).toFixed(1)+'px');
+    stage.style.setProperty('--sh', (1-shade).toFixed(3));
+    stage.style.setProperty('--zs', zs.toFixed(4));
+    stage.style.setProperty('--tx', tx.toFixed(1)+'px');
+    stage.style.setProperty('--ty', ty.toFixed(1)+'px');
+    // dashboard layer: anchored to the monitor screen point, scaled to the screen width
+    stage.style.setProperty('--scx', (mxPx + tx).toFixed(1)+'px');
+    stage.style.setProperty('--scy', (myPx + ty).toFixed(1)+'px');
+    stage.style.setProperty('--sfit', (MW*cw*zs/window.innerWidth).toFixed(4));
+    stage.style.setProperty('--so', (.22 + .78*seg(p, .06, .34)).toFixed(3));  // screen "turns on" as you approach
+    stage.style.setProperty('--po', (seg(p, .30, .42) * (1 - seg(p, .55, .66))).toFixed(3));  // caption in, rides, out
+    stage.style.setProperty('--vo', seg(p, .88, 1).toFixed(3));
+    copy.classList.toggle('gone', exit > .9);
+  }
+  // Fluid camera: the rendered progress chases the scroll progress with critically-damped
+  // smoothing, so wheel steps glide instead of stepping (same feel as a scrubbed video).
+  let pTarget = 0, pShown = -1, raf = 0;
+  function targetP(){
+    const total = scrubSec.offsetHeight - window.innerHeight;
+    return total > 0 ? clamp(-scrubSec.getBoundingClientRect().top/total, 0, 1) : 0;
+  }
+  function tick(){
+    raf = 0;
+    pTarget = targetP();
+    const d = pTarget - pShown;
+    if(Math.abs(d) > .0004){
+      pShown += d * .14;
+      render(pShown);
+      raf = requestAnimationFrame(tick);
+    } else if(pShown !== pTarget){
+      pShown = pTarget; render(pShown);
+    }
+  }
+  function wake(){ if(!raf) raf = requestAnimationFrame(tick); }
+  window.addEventListener('scroll', wake, {passive:true});
+  window.addEventListener('resize', ()=>{ measure(); wake(); }, {passive:true});
+  measure(); pShown = pTarget = targetP(); render(pShown);
+}
+</script>
+</body>
+</html>
