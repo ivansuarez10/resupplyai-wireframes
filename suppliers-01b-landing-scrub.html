@@ -195,7 +195,7 @@
   /* ===== Scroll-scrub hero (prototype): warehouse office scene, camera pushes into
      the monitor where the live dashboard runs. Monitor placement in the artwork is
      set by --mx/--my (screen center, % of canvas) and --mw (screen width, % of canvas). ===== */
-  #heroScrub{ height:260vh; }
+  #heroScrub{ height:300vh; }
   .hs-stage{ position:sticky; top:0; height:100vh; height:100dvh; overflow:hidden; background:var(--navy); border-radius:0;
     --mx:50.04%; --my:48.57%; --mw:15.6%; --cw:max(100vw, 177.7778vh);
     --co:1; --cy:0px; --zs:1; --tx:0px; --ty:0px; --sh:1; --vo:0; --fit:.26; }
@@ -223,12 +223,6 @@
     text-align:center; padding-top:12vh; opacity:var(--co); transform:translateY(var(--cy));
     will-change:opacity, transform; }
   .hs-copy.gone{ pointer-events:none; }
-  /* Mid-push caption: the supporting line rides the zoom in the lower-left corner,
-     appearing after the headline exits so it never competes with it. */
-  .hs-cap{ position:absolute; z-index:2; left:50%; bottom:9vh; width:min(36rem, 76vw); text-align:center;
-    font-size:15px; line-height:1.75; color:rgba(255,255,255,0.80);
-    opacity:var(--po, 0); transform:translate(-50%, calc(14px - var(--po, 0) * 14px));
-    will-change:opacity, transform; pointer-events:none; }
   .hs-veil{ position:absolute; inset:0; z-index:4; background:#fff; opacity:var(--vo); pointer-events:none; }
   /* Phones run the full scrub too: portrait crops the scene sides and the monitor stays
      centered. Re-assert the panel-aspect height (the generic <=760px app-body rule above
@@ -249,8 +243,6 @@
       box-shadow:0 30px 70px rgba(0,0,0,0.32); }
     .hs-screen .app-body{ height:auto; min-height:280px; }
     .hs-copy{ opacity:1; transform:none; padding-top:0; }
-    .hs-cap{ position:static; opacity:1; transform:none; width:auto; max-width:31rem; margin:18px auto 0;
-      text-align:center; color:rgba(255,255,255,0.74); }
     .hs-veil{ display:none; }
   }
 </style>
@@ -297,11 +289,6 @@
           <p class="text-xs mt-1" style="color:rgba(255,255,255,0.5)">to join and to quote</p></div>
       </div>
     </div>
-
-    <!-- Mid-push caption: rides the camera move once the headline has exited -->
-    <p class="hs-cap" id="hsCap">
-      Every morning, ResupplyAI matches your stock against the day's DLA solicitations and shows you exactly which items are worth quoting. You sell more of what you already carry, and it costs you nothing.
-    </p>
 
     <!-- Scene: warehouse office artwork; the live dashboard sits on the monitor screen -->
     <div class="hs-canvas" id="hsCanvas" aria-hidden="true">
@@ -399,10 +386,14 @@
   </div>
 </section>
 
-<section class="px-4 pt-10 pb-2">
-  <div class="container">
-    <p class="text-sm text-center" style="color:var(--muted)">For dealers, distributors and manufacturers registered to sell to the DLA.</p>
-    <div class="ruler mt-10"></div>
+<!-- Landing statement: the value line greets you as you come out of the zoom -->
+<section class="px-4 pt-24 pb-2">
+  <div class="container" style="max-width:56rem">
+    <p class="reveal display text-center text-[1.45rem] md:text-[2rem] font-semibold leading-[1.35]" style="color:var(--ink); letter-spacing:-0.02em">
+      Every morning, ResupplyAI matches your stock against the day's DLA solicitations and shows you exactly which items are worth quoting. You sell more of what you already carry, and it costs you nothing.
+    </p>
+    <p class="reveal text-sm mt-9 text-center" style="color:var(--muted)">For dealers, distributors and manufacturers registered to sell to the DLA.</p>
+    <div class="ruler mt-12"></div>
   </div>
 </section>
 
@@ -756,7 +747,7 @@ if(scrubSec && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   const copy = document.getElementById('hsCopy');
   const clamp = (v,a,b)=>Math.min(b,Math.max(a,v));
   const seg = (p,a,b)=>clamp((p-a)/(b-a),0,1);
-  const easeInOut = t=>t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  const easeInOut = t=>-(Math.cos(Math.PI*t)-1)/2;   // sine in-out: gentler mid-flight acceleration
   const cs = getComputedStyle(stage);
   const MX = parseFloat(cs.getPropertyValue('--mx'))/100;   // monitor screen center x, fraction of canvas
   const MY = parseFloat(cs.getPropertyValue('--my'))/100;   // monitor screen center y
@@ -788,7 +779,6 @@ if(scrubSec && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     stage.style.setProperty('--scy', (myPx + ty).toFixed(1)+'px');
     stage.style.setProperty('--sfit', (MW*cw*zs/window.innerWidth).toFixed(4));
     stage.style.setProperty('--so', (.22 + .78*seg(p, .06, .34)).toFixed(3));  // screen "turns on" as you approach
-    stage.style.setProperty('--po', (seg(p, .30, .42) * (1 - seg(p, .55, .66))).toFixed(3));  // caption in, rides, out
     stage.style.setProperty('--vo', seg(p, .88, 1).toFixed(3));
     copy.classList.toggle('gone', exit > .9);
     // dark glass nav while the hero scene is behind it; light glass once the veil whitens
@@ -804,9 +794,15 @@ if(scrubSec && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   function tick(){
     raf = 0;
     pTarget = targetP();
+    // if the sticky stage is already scrolling out of view, snap: a lagging camera
+    // would otherwise show the unveiled scene at the seam
+    if(pTarget === 1 && scrubSec.getBoundingClientRect().bottom < window.innerHeight + 120){
+      if(pShown !== 1){ pShown = 1; render(1); }
+      return;
+    }
     const d = pTarget - pShown;
     if(Math.abs(d) > .0004){
-      pShown += d * .14;
+      pShown += d * .09;
       render(pShown);
       raf = requestAnimationFrame(tick);
     } else if(pShown !== pTarget){
